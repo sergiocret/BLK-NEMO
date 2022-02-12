@@ -9,14 +9,14 @@
 Welcome to NEMO home page!
 ==========================
 
-NEMO_ for *Nucleus for European Modelling of the Ocean* is a state-of-the-art modelling framework for
+NEMO_  (*Nucleus for European Modelling of the Ocean*) is a state-of-the-art modelling framework for
 research activities and forecasting services in ocean and climate sciences,
 developed in a sustainable way by the NEMO European consortium since 2008.
 
-This page intends to help to get started using NEMO platform and to orientate users to the different levels of information. 
+This page intends to help you to get started using the NEMO platform and to orientate you to the different levels of information. 
 It starts here with NEMO release 4.2.0. 
 
-Reminder: [Former web platform forge](https://forge.ipsl.jussieu.fr/nemo) (SVN+Trac) contains previous documentation and releases since the beginning of the project up to of NEMO 4.0.
+Reminder: [The former web platform forge](https://forge.ipsl.jussieu.fr/nemo) (SVN+Trac) contains the previous documentation and releases from the beginning of the project up to NEMO 4.0.
 
 
 Getting started
