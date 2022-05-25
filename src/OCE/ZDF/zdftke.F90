@@ -691,8 +691,8 @@ CONTAINS
       ENDIF
       !
       IF(sn_cfctl%l_prtctl) THEN
-         CALL prt_ctl( tab3d_1=en   , clinfo1=' tke  - e: ', tab3d_2=p_avt, clinfo2=' t: ', kdim=jpk)
-         CALL prt_ctl( tab3d_1=p_avm, clinfo1=' tke  - m: ', kdim=jpk )
+         CALL prt_ctl( tab3d_1=en   , clinfo1=' tke  - e: ', tab3d_2=p_avt, clinfo2=' t: ' )
+         CALL prt_ctl( tab3d_1=p_avm, clinfo1=' tke  - m: ' )
       ENDIF
       !
    END SUBROUTINE tke_avn
@@ -762,6 +762,11 @@ CONTAINS
             CASE DEFAULT
                CALL ctl_stop( 'zdf_tke_init: wrong value for nn_mxlice, should be 0,1,2,3 or 4')
             END SELECT
+            IF     ( (nn_mxlice>0).AND.(nn_ice==0) ) THEN
+               CALL ctl_stop( 'zdf_tke_init: with no ice at all, nn_mxlice must be 0 ') 
+            ELSEIF ( (nn_mxlice>1).AND.(nn_ice==1) ) THEN
+               CALL ctl_stop( 'zdf_tke_init: with no ice model, nn_mxlice must be 0 or 1')
+            ENDIF
          ENDIF
          WRITE(numout,*) '      Langmuir cells parametrization              ln_lc     = ', ln_lc
          WRITE(numout,*) '         coef to compute vertical velocity of LC     rn_lc  = ', rn_lc

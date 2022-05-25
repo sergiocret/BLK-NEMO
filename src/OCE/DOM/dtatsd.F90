@@ -128,7 +128,6 @@ CONTAINS
       !!
       !! ** Method  : - call fldread routine
       !!              - ORCA_R2: add some hand made alteration to read data
-      !!              - 'key_orca_lev10' interpolates on 10 times more levels
       !!              - s- or mixed z-s coordinate: vertical interpolation on model mesh
       !!              - ln_tsd_dmp=F: deallocates the T-S data structure
       !!                as T-S data are no are used
@@ -237,6 +236,10 @@ CONTAINS
          END_2D
          !
       ELSE                                !==   z- or zps- coordinate   ==!
+         !
+         ! We must keep this definition in a case different from the general case of s-coordinate as we don't
+         ! want to use "underground" values (levels below ocean bottom) to be able to start the model from
+         ! masked temp and sal (read for example in a restart or in output.init)
          !
          DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpk )
             ptsd(ji,jj,jk,jp_tem) = ptsd(ji,jj,jk,jp_tem) * tmask(ji,jj,jk)    ! Mask

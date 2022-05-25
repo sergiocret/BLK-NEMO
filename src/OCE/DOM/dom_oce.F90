@@ -199,6 +199,7 @@ MODULE dom_oce
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:), TARGET ::   tmask, umask, vmask, wmask, fmask   !: land/ocean mask at T-, U-, V-, W- and F-pts
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:), TARGET ::   wumask, wvmask                      !: land/ocean mask at WU- and WV-pts
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:), TARGET ::   fe3mask                             !: land/ocean mask at F-pts
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) :: tmask_upd, umask_upd, vmask_upd                 !: land/ocean mask at F-pts
 
    !!----------------------------------------------------------------------
    !! calendar variables
@@ -338,6 +339,11 @@ CONTAINS
          !
       ii = ii+1
       ALLOCATE( wmask(jpi,jpj,jpk) , wumask(jpi,jpj,jpk), wvmask(jpi,jpj,jpk) , STAT=ierr(ii) )
+         !
+#if defined key_agrif
+      ii = ii+1
+      ALLOCATE( tmask_upd(jpi,jpj) , umask_upd(jpi,jpj), vmask_upd(jpi,jpj) , STAT=ierr(ii) )
+#endif
       !
       dom_oce_alloc = MAXVAL(ierr)
       !

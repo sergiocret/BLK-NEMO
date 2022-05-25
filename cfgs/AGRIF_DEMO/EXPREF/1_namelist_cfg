@@ -30,12 +30,13 @@
    ln_linssh   = .false.   !  =T  linear free surface  ==>>  model level are fixed in time
    !
    rn_Dt      = 5400.     !  time step for the dynamics and tracer
+   ln_meshmask = .false.  !  =T create a mesh file
 /
 !-----------------------------------------------------------------------
 &namcfg        !   parameters of the configuration                      (default: user defined GYRE)
 !-----------------------------------------------------------------------
    ln_read_cfg = .true.    !  (=T) read the domain configuration file
-      cn_domcfg = "ORCA_R2_zps_domcfg_agrif"    ! domain configuration filename
+      cn_domcfg = "domain_cfg.nc"    ! domain configuration filename
       !
       ln_closea    = .false.    !  F => suppress closed seas (defined by closea_mask field) 
       !                         !       from the bathymetry at runtime.
@@ -84,7 +85,7 @@
                      ! Type of air-sea fluxes 
    ln_blk      = .true.    !  Bulk formulation                          (T => fill namsbc_blk )
                      ! Sea-ice :
-   nn_ice      = 2         !  =0 no ice boundary condition
+   nn_ice      = 0         !  =0 no ice boundary condition
       !                    !  =1 use observed ice-cover                 (  => fill namsbc_iif )
       !                    !  =2 or 3 for SI3 and CICE, respectively
                      ! Misc. options of sbc : 
@@ -360,6 +361,10 @@
 !-----------------------------------------------------------------------
 &namzdf_tke    !   turbulent eddy kinetic dependent vertical diffusion  (ln_zdftke =T)
 !-----------------------------------------------------------------------
+      nn_mxlice = 0           ! type of scaling under sea-ice
+      !                       !    = 0 no scaling under sea-ice
+      !                       !    = 1 scaling with constant sea-ice thickness
+      !                       !    = 2 scaling with mean sea-ice thickness ( only with SI3 sea-ice model )
 /
 !!======================================================================
 !!                  ***  Diagnostics namelists  ***                   !!

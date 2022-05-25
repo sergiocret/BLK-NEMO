@@ -195,14 +195,14 @@ CONTAINS
       CALL eos( ts(:,:,:,:,Kmm), rhd, rhop, gdept_0(:,:,:) ) ! In any case, we need rhop
       !
       IF(sn_cfctl%l_prtctl) THEN                 ! print control
-         CALL prt_ctl(tab3d_1=ts(:,:,:,jp_tem,Kmm), clinfo1=' tn      - : ', mask1=tmask,  kdim=jpk   )
-         CALL prt_ctl(tab3d_1=ts(:,:,:,jp_sal,Kmm), clinfo1=' sn      - : ', mask1=tmask,  kdim=jpk   )
-         CALL prt_ctl(tab3d_1=uu(:,:,:,Kmm)               , clinfo1=' uu(:,:,:,Kmm)      - : ', mask1=umask,  kdim=jpk   )
-         CALL prt_ctl(tab3d_1=vv(:,:,:,Kmm)               , clinfo1=' vv(:,:,:,Kmm)      - : ', mask1=vmask,  kdim=jpk   )
-         CALL prt_ctl(tab3d_1=ww               , clinfo1=' ww      - : ', mask1=tmask,  kdim=jpk   )
-         CALL prt_ctl(tab3d_1=avt              , clinfo1=' kz      - : ', mask1=tmask,  kdim=jpk   )
-         CALL prt_ctl(tab3d_1=uslp             , clinfo1=' slp  - u : ', tab3d_2=vslp, clinfo2=' v : ', kdim=jpk)
-         CALL prt_ctl(tab3d_1=wslpi            , clinfo1=' slp  - wi: ', tab3d_2=wslpj, clinfo2=' wj: ', kdim=jpk)
+         CALL prt_ctl(tab3d_1=ts(:,:,:,jp_tem,Kmm), clinfo1=' tn      - : ', mask1=tmask )
+         CALL prt_ctl(tab3d_1=ts(:,:,:,jp_sal,Kmm), clinfo1=' sn      - : ', mask1=tmask )
+         CALL prt_ctl(tab3d_1=uu(:,:,:,Kmm)               , clinfo1=' uu(:,:,:,Kmm)      - : ', mask1=umask )
+         CALL prt_ctl(tab3d_1=vv(:,:,:,Kmm)               , clinfo1=' vv(:,:,:,Kmm)      - : ', mask1=vmask )
+         CALL prt_ctl(tab3d_1=ww               , clinfo1=' ww      - : ', mask1=tmask )
+         CALL prt_ctl(tab3d_1=avt              , clinfo1=' kz      - : ', mask1=tmask )
+         CALL prt_ctl(tab3d_1=uslp             , clinfo1=' slp  - u : ', tab3d_2=vslp, clinfo2=' v : ' )
+         CALL prt_ctl(tab3d_1=wslpi            , clinfo1=' slp  - wi: ', tab3d_2=wslpj, clinfo2=' wj: ' )
       ENDIF
       !
       IF( ln_timing )   CALL timing_stop( 'dta_dyn')
@@ -675,10 +675,10 @@ CONTAINS
 
       ! Partial steps: before Horizontal DErivative
       IF( ln_zps  .AND. .NOT. ln_isfcav)                            &
-         &            CALL zps_hde    ( kt, Kmm, jpts, pts, gtsu, gtsv,  &  ! Partial steps: before horizontal gradient
+         &            CALL zps_hde    ( kt, jpts, pts, gtsu, gtsv,  &  ! Partial steps: before horizontal gradient
          &                                        rhd, gru , grv    )  ! of t, s, rd at the last ocean level
       IF( ln_zps .AND.        ln_isfcav)                            &
-         &            CALL zps_hde_isf( kt, Kmm, jpts, pts, gtsu, gtsv, gtui, gtvi, &  ! Partial steps for top cell (ISF)
+         &            CALL zps_hde_isf( kt, jpts, pts, gtsu, gtsv, gtui, gtvi, &  ! Partial steps for top cell (ISF)
          &                                        rhd, gru , grv , grui, grvi )  ! of t, s, rd at the first ocean level
 
          rn2b(:,:,:) = rn2(:,:,:)                ! needed for zdfmxl
@@ -730,8 +730,8 @@ CONTAINS
       CALL eos    ( ts(:,:,:,:,Kmm), rhd, rhop, gdept_0(:,:,:) ) ! In any case, we need rhop
 
       IF(sn_cfctl%l_prtctl) THEN                     ! print control
-         CALL prt_ctl(tab3d_1=ts(:,:,:,jp_tem,Kmm), clinfo1=' tn      - : ', mask1=tmask,  kdim=jpk   )
-         CALL prt_ctl(tab3d_1=ts(:,:,:,jp_sal,Kmm), clinfo1=' sn      - : ', mask1=tmask,  kdim=jpk   )
+         CALL prt_ctl(tab3d_1=ts(:,:,:,jp_tem,Kmm), clinfo1=' tn      - : ', mask1=tmask )
+         CALL prt_ctl(tab3d_1=ts(:,:,:,jp_sal,Kmm), clinfo1=' sn      - : ', mask1=tmask )
       ENDIF
       !
       IF( ln_timing )   CALL timing_stop( 'dta_dyn_sed')

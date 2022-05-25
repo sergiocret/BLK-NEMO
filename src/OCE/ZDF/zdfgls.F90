@@ -891,8 +891,8 @@ CONTAINS
       p_avt(A2D(nn_hls),1) = 0._wp
       !
       IF(sn_cfctl%l_prtctl) THEN
-         CALL prt_ctl( tab3d_1=en   , clinfo1=' gls  - e: ', tab3d_2=p_avt, clinfo2=' t: ', kdim=jpk)
-         CALL prt_ctl( tab3d_1=p_avm, clinfo1=' gls  - m: ', kdim=jpk )
+         CALL prt_ctl( tab3d_1=en   , clinfo1=' gls  - e: ', tab3d_2=p_avt, clinfo2=' t: ' )
+         CALL prt_ctl( tab3d_1=p_avm, clinfo1=' gls  - m: ' )
       ENDIF
       !
    END SUBROUTINE zdf_gls
@@ -967,8 +967,13 @@ CONTAINS
             CASE( 2 )   ;   WRITE(numout,*) '   ==>>>   scaling with mean     sea-ice thickness'
             CASE( 3 )   ;   WRITE(numout,*) '   ==>>>   scaling with max      sea-ice thickness'
             CASE DEFAULT
-               CALL ctl_stop( 'zdf_tke_init: wrong value for nn_mxlice, should be 0,1,2,3 ')
+               CALL ctl_stop( 'zdf_gls_init: wrong value for nn_mxlice, should be 0,1,2,3 ')
          END SELECT
+         IF     ( (nn_mxlice>0).AND.(nn_ice==0) ) THEN
+            CALL ctl_stop( 'zdf_gls_init: with no ice at all, nn_mxlice must be 0 ') 
+         ELSEIF ( (nn_mxlice>1).AND.(nn_ice==1) ) THEN
+            CALL ctl_stop( 'zdf_gls_init: with no ice model, nn_mxlice must be 0 or 1')
+         ENDIF
          WRITE(numout,*)
       ENDIF
 

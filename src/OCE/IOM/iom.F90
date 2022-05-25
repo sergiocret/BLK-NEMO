@@ -751,7 +751,7 @@ CONTAINS
       ! =============
       clname   = trim(cdname)
       IF ( .NOT. Agrif_Root() .AND. .NOT. lliof ) THEN
-         iln    = INDEX(clname,'/')
+         iln    = INDEX(clname,'/', BACK=.TRUE.)
          cltmpn = clname(1:iln)
          clname = clname(iln+1:LEN_TRIM(clname))
          clname=TRIM(cltmpn)//TRIM(Agrif_CFixed())//'_'//TRIM(clname)
@@ -1376,7 +1376,7 @@ CONTAINS
             RETURN
          ENDIF
          !
-      ELSE        ! read using XIOS. Only if KEY_IOMPUT is defined
+      ELSE        ! read using XIOS. Only if key_xios is defined
 #if defined key_xios
 !would be good to be able to check which context is active and swap only if current is not restart
          idvar = iom_varid( kiomid, cdvar )

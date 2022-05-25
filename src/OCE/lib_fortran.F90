@@ -79,59 +79,34 @@ MODULE lib_fortran
 CONTAINS
 
 #  define GLOBSUM_CODE
-
 #     define DIM_1d
-#     define FUNCTION_GLOBSUM           glob_sum_1d
-#     include "lib_fortran_generic.h90"
-#     undef FUNCTION_GLOBSUM
+#        include "lib_fortran_generic.h90"
 #     undef DIM_1d
-
 #     define DIM_2d
-#     define OPERATION_GLOBSUM
-#     define FUNCTION_GLOBSUM           glob_sum_2d
-#     include "lib_fortran_generic.h90"
-#     undef FUNCTION_GLOBSUM
-#     undef OPERATION_GLOBSUM
+#        include "lib_fortran_generic.h90"
 #     undef DIM_2d
-
 #     define DIM_3d
-#     define OPERATION_GLOBSUM
-#     define FUNCTION_GLOBSUM           glob_sum_3d
-#     include "lib_fortran_generic.h90"
-#     undef FUNCTION_GLOBSUM
-#     undef OPERATION_GLOBSUM
+#        include "lib_fortran_generic.h90"
 #     undef DIM_3d
-
 #  undef GLOBSUM_CODE
 
-
 #  define GLOBMINMAX_CODE
-
 #     define DIM_2d
-#     define OPERATION_GLOBMIN
-#     define FUNCTION_GLOBMINMAX           glob_min_2d
-#     include "lib_fortran_generic.h90"
-#     undef FUNCTION_GLOBMINMAX
-#     undef OPERATION_GLOBMIN
-#     define OPERATION_GLOBMAX
-#     define FUNCTION_GLOBMINMAX           glob_max_2d
-#     include "lib_fortran_generic.h90"
-#     undef FUNCTION_GLOBMINMAX
-#     undef OPERATION_GLOBMAX
+#        define OPERATION_GLOBMIN
+#           include "lib_fortran_generic.h90"
+#        undef OPERATION_GLOBMIN
+#        define OPERATION_GLOBMAX
+#           include "lib_fortran_generic.h90"
+#        undef OPERATION_GLOBMAX
 #     undef DIM_2d
-
 #     define DIM_3d
-#     define OPERATION_GLOBMIN
-#     define FUNCTION_GLOBMINMAX           glob_min_3d
-#     include "lib_fortran_generic.h90"
-#     undef FUNCTION_GLOBMINMAX
-#     undef OPERATION_GLOBMIN
-#     define OPERATION_GLOBMAX
-#     define FUNCTION_GLOBMINMAX           glob_max_3d
-#     include "lib_fortran_generic.h90"
-#     undef FUNCTION_GLOBMINMAX
-#     undef OPERATION_GLOBMAX
-#     undef DIM_3d
+#        define OPERATION_GLOBMIN
+#           include "lib_fortran_generic.h90"
+#        undef OPERATION_GLOBMIN
+#        define OPERATION_GLOBMAX
+#           include "lib_fortran_generic.h90"
+#        undef OPERATION_GLOBMAX
+#     undef DIM_3
 #  undef GLOBMINMAX_CODE
 
 !                          ! FUNCTION local_sum !

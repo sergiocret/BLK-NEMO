@@ -30,6 +30,9 @@ MODULE restart
    USE usrdef_istate, ONLY : usr_def_istate_ssh   ! user defined ssh initial state 
    USE trdmxl_oce     ! ocean active mixed layer tracers trends variables
    USE diu_bulk       ! ???
+#if defined key_agrif
+   USE agrif_oce_interp
+#endif
    !
    USE in_out_manager ! I/O manager
    USE iom            ! I/O module
@@ -378,6 +381,10 @@ CONTAINS
             IF(lwp) WRITE(numout,*)
             IF(lwp) WRITE(numout,*) '      Euler first time step : ssh(Kbb) = ssh(Kmm)'
             ssh(:,:,Kbb) = ssh(:,:,Kmm)
+#if defined key_agrif
+            ! Set ghosts points from parent 
+            IF (.NOT.Agrif_Root()) CALL Agrif_istate_ssh( Kbb, Kmm, Kaa, .true. )
+#endif
             !
          ELSE                                  !*  MLF: read ssh at Kbb
             IF(lwp) WRITE(numout,*)
@@ -412,7 +419,10 @@ CONTAINS
             CALL usr_def_istate_ssh( tmask, ssh(:,:,Kbb) )
             !
          ENDIF
-         !
+#if defined key_agrif
+            ! Set ghosts points from parent 
+            IF (.NOT.Agrif_Root()) CALL Agrif_istate_ssh( Kbb, Kmm, Kaa, .true. )
+#endif
 #if defined key_RK3
          ssh(:,:,Kmm) = 0._wp                  !* RK3: set Kmm to 0 for AGRIF
 #else

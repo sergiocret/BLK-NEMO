@@ -217,6 +217,16 @@ CONTAINS
       !
       CALL usr_def_fmask( cn_cfg, nn_cfg, fmask )
       !
+#if defined key_agrif
+      ! Reset masks defining updated points over parent grids
+      !  = 1 : updated point from child(s)
+      !  = 0 : point not updated
+      ! 
+      tmask_upd(:,:) = 0._wp
+      umask_upd(:,:) = 0._wp
+      vmask_upd(:,:) = 0._wp
+#endif     
+      !
    END SUBROUTINE dom_msk
    
    !!======================================================================
