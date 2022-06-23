@@ -115,7 +115,6 @@ CONTAINS
          IF(lrxios) CALL iom_context_finalize(      cr_toprst_cxt          )
          IF(lwm) CALL FLUSH( numont )                     ! flush namelist output
       ENDIF
-      IF( lrst_trc )            CALL trc_rst_wri  ( kt, Kmm, Kaa, Kbb  )       ! write tracer restart file
       IF( lk_trdmxl_trc  )      CALL trd_mxl_trc  ( kt,      Kaa       )       ! trends: Mixed-layer
       !
       IF( ln_top_euler ) THEN 
@@ -124,6 +123,8 @@ CONTAINS
          ! "before" fields = "now" fields.
          tr(:,:,:,:,Kmm) = tr(:,:,:,:,Kaa)
       ENDIF
+      !
+      IF( lrst_trc ) CALL trc_rst_wri( kt, Kmm, Kaa, Kbb )   ! write tracer restart file
       !
       IF (ll_trcstat) THEN
          ztrai = 0._wp                                                   !  content of all tracers
