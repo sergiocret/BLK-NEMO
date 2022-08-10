@@ -31,6 +31,10 @@ MODULE restart
    USE trdmxl_oce     ! ocean active mixed layer tracers trends variables
    USE diu_bulk       ! ???
 #if defined key_agrif
+#if defined key_si3
+   USE iceistate, ONLY: rsshadj, nn_iceini_file
+   USE sbc_oce, ONLY: ln_ice_embd
+#endif
    USE agrif_oce_interp
 #endif
    !
@@ -420,8 +424,22 @@ CONTAINS
             !
          ENDIF
 #if defined key_agrif
-            ! Set ghosts points from parent 
-            IF (.NOT.Agrif_Root()) CALL Agrif_istate_ssh( Kbb, Kmm, Kaa, .true. )
+         ! Set ghosts points from parent 
+         IF (.NOT.Agrif_Root()) THEN 
+            CALL Agrif_istate_ssh( Kbb, Kmm, Kaa, .true. ) 
+#if defined key_si3
+            IF ( (nn_ice/=2).AND.((Agrif_Parent(nn_ice)==2).AND.                 &
+                              &   (.NOT.(Agrif_Parent(ln_rstart)                 & 
+                              &     .OR.(Agrif_Parent(nn_iceini_file)==2))).AND. &
+                              &   (.NOT.Agrif_Parent(ln_ice_embd))               &
+                              &  )) THEN
+               WHERE( ssmask(:,:) == 1._wp )
+                  ssh(:,:,Kmm) = ssh(:,:,Kmm) - Agrif_Parent(rsshadj)
+                  ssh(:,:,Kbb) = ssh(:,:,Kbb) - Agrif_Parent(rsshadj) 
+               ENDWHERE
+            ENDIF
+#endif
+         ENDIF
 #endif
 #if defined key_RK3
          ssh(:,:,Kmm) = 0._wp                  !* RK3: set Kmm to 0 for AGRIF
