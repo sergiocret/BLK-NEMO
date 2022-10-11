@@ -21,6 +21,9 @@ MODULE sbcfwb
    USE phycst         ! physical constants
    USE sbcrnf         ! ocean runoffs
    USE sbcssr         ! Sea-Surface damping terms
+#if defined key_agrif
+   USE agrif_oce , ONLY: Kmm_a
+#endif
    !
    USE in_out_manager ! I/O manager
    USE iom            ! IOM
@@ -37,8 +40,13 @@ MODULE sbcfwb
    REAL(wp) ::   rn_fwb0   ! initial freshwater adjustment flux [kg/m2/s] (nn_fwb = 2 only)
    REAL(wp) ::   a_fwb     ! annual domain averaged freshwater budget from the previous year
    REAL(wp) ::   a_fwb_b   ! annual domain averaged freshwater budget from the year before or at initial state
-   REAL(wp) ::   a_fwb_ini ! initial domain averaged freshwater budget
    REAL(wp) ::   area      ! global mean ocean surface (interior domain)
+   REAL(wp) ::   emp_corr  ! current, globally constant, emp correction
+#if defined key_agrif
+!$AGRIF_DO_NOT_TREAT
+   REAL(wp) ::   agrif_sum ! global sum used for agrif
+!$AGRIF_END_DO_NOT_TREAT
+#endif
 
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -67,8 +75,9 @@ CONTAINS
       INTEGER, INTENT( in ) ::   Kmm      ! ocean time level index
       !
       INTEGER  ::   ios, inum, ikty       ! local integers
-      REAL(wp) ::   z_fwf, z_fwf_nsrf, zsum_fwf, zsum_erp                ! local scalars
-      REAL(wp) ::   zsurf_neg, zsurf_pos, zsurf_tospread, zcoef          !   -      -
+      INTEGER  ::   ji, jj, istart, iend, jstart, jend
+      REAL(wp) ::   z_fwf, z_fwf_nsrf, zsum_fwf, zsum_erp         ! local scalars
+      REAL(wp) ::   zsurf_neg, zsurf_pos, zsurf_tospread          !   -      -
       REAL(wp), ALLOCATABLE, DIMENSION(:,:) ::   ztmsk_neg, ztmsk_pos, z_wgt ! 2D workspaces
       REAL(wp), ALLOCATABLE, DIMENSION(:,:) ::   ztmsk_tospread, zerp_cor    !   -      -
       REAL(wp)   ,DIMENSION(1) ::   z_fwfprv  
@@ -99,8 +108,20 @@ CONTAINS
          !
          IF( kn_fwb == 3 .AND. nn_sssr /= 2 )   CALL ctl_stop( 'sbc_fwb: nn_fwb = 3 requires nn_sssr = 2, we stop ' )
          IF( kn_fwb == 3 .AND. ln_isfcav    )   CALL ctl_stop( 'sbc_fwb: nn_fwb = 3 with ln_isfcav = .TRUE. not working, we stop ' )
+#if defined key_agrif
+         IF((kn_fwb == 3).AND.(Agrif_maxlevel()/=0)) CALL ctl_stop( 'sbc_fwb: nn_fwb = 3 not yet implemented with AGRIF zooms ' ) 
+#endif
          !
-         area = glob_sum( 'sbcfwb', e1e2t(:,:) * tmask(:,:,1))           ! interior global domain surface
+         IF ( Agrif_Root() ) THEN
+#if defined key_agrif
+            agrif_sum = 0.0_wp                         ! set work scalar to 0
+            CALL Agrif_step_child(glob_sum_area_agrif) ! integrate over grids 
+            area = agrif_sum
+#else
+            area = glob_sum( 'sbcfwb', e1e2t(:,:) * tmask(:,:,1))         ! interior global domain surface
+#endif
+            IF (lwp) WRITE(numout,*) 'Domain area (km**2):', area/1000._wp/1000._wp
+         ENDIF
          ! isf cavities are excluded because it can feedback to the melting with generation of inhibition of plumes
          ! and in case of no melt, it can generate HSSW.
          !
@@ -116,77 +137,173 @@ CONTAINS
       !
       CASE ( 1 )                             !==  global mean fwf set to zero  ==!
          !
+#if ! defined key_agrif
          IF( MOD( kt-1, kn_fsbc ) == 0 ) THEN
-            y_fwfnow(1) = local_sum( e1e2t(:,:) * ( emp(:,:) - rnf(:,:) - fwfisf_cav(:,:) - fwfisf_par(:,:) - snwice_fmass(:,:) ) )
-            CALL mpp_delay_sum( 'sbcfwb', 'fwb', y_fwfnow(:), z_fwfprv(:), kt == nitend - nn_fsbc + 1 )
-            z_fwfprv(1) = z_fwfprv(1) / area
-            zcoef = z_fwfprv(1) * rcp
-            emp(:,:) = emp(:,:) - z_fwfprv(1)        * tmask(:,:,1)
-            qns(:,:) = qns(:,:) + zcoef * sst_m(:,:) * tmask(:,:,1) ! account for change to the heat budget due to fw correction
-            ! outputs
-            IF( iom_use('hflx_fwb_cea') )  CALL iom_put( 'hflx_fwb_cea', zcoef * sst_m(:,:) * tmask(:,:,1) )
-            IF( iom_use('vflx_fwb_cea') )  CALL iom_put( 'vflx_fwb_cea', z_fwfprv(1)        * tmask(:,:,1) )
+            z_fwfprv(1) = glob_sum( 'sbcfwb', e1e2t(:,:) * (  emp(:,:) - rnf(:,:)               & 
+                        &                                   - fwfisf_cav(:,:) - fwfisf_par(:,:) & 
+                        &                                   - snwice_fmass(:,:) ) ) / area
+            emp_corr = -z_fwfprv(1)
+            emp(:,:) = emp(:,:) + emp_corr * tmask(:,:,1)
+            qns(:,:) = qns(:,:) - emp_corr * rcp * sst_m(:,:) * tmask(:,:,1) ! account for change to the heat budget due to fw correction
          ENDIF
+#else                                            
+         IF ( Agrif_Root() ) THEN
+            IF ( Agrif_maxlevel()==0 ) THEN
+               ! No child grid, correct "now" fluxes (i.e. as in the "no agrif" case)
+               IF( MOD( kt-1, kn_fsbc ) == 0 ) THEN
+                  emp_corr = -glob_sum( 'sbcfwb', e1e2t(:,:) * (  emp(:,:) - rnf(:,:)                & 
+                             &                                   - fwfisf_cav(:,:) - fwfisf_par(:,:) & 
+                             &                                   - snwice_fmass(:,:) ) ) / area 
+              ENDIF
+            ELSE
+               !
+               ! Volume is here corrected according to the budget computed in the past, e.g. between
+               ! the last two consecutive calls to the surface module. Hence, the volume is allowed to drift slightly during
+               ! the current time step. 
+               !
+               IF( kt == nit000 ) THEN                                                               ! initialisation
+                  !                                                                                  ! 
+                  IF ( ln_rstart .AND. iom_varid( numror, 'a_fwb',      ldstop = .FALSE. ) > 0     & ! read from restart file
+                     &           .AND. iom_varid( numror, 'emp_corr',   ldstop = .FALSE. ) > 0 ) THEN
+                     IF(lwp)   WRITE(numout,*) 'sbc_fwb : reading freshwater-budget from restart file'
+                     CALL iom_get( numror, 'a_fwb'     , a_fwb    )
+                     CALL iom_get( numror, 'emp_corr'  , emp_corr )
+                     !                                                                                 
+                  ELSE                                                                               
+                     emp_corr = 0._wp
+                     a_fwb    = 999._wp
+                     a_fwb_b  = 999._wp   
+                  END IF
+                  !
+                  IF(lwp)   WRITE(numout,*)
+                  IF(lwp)   WRITE(numout,*)'sbc_fwb : initial freshwater correction flux = ', emp_corr , 'kg/m2/s'
+                  !
+               ENDIF
+               !
+               IF( MOD( kt-1, kn_fsbc ) == 0 ) THEN
+                  a_fwb_b   = a_fwb                            ! time swap
+                  agrif_sum = 0._wp                            ! set work scalar to 0
+                  CALL Agrif_step_child(glob_sum_volume_agrif) ! integrate over grids 
+                  a_fwb = agrif_sum * rho0 / area
+                  IF ( a_fwb_b == 999._wp ) a_fwb_b = a_fwb
+                  emp_corr = (a_fwb - a_fwb_b) / ( rn_Dt * REAL(kn_fsbc, wp) ) + emp_corr
+               ENDIF    
+               !   
+            ENDIF 
+         ELSE ! child grid if any
+            IF( MOD( kt-1, kn_fsbc ) == 0 ) THEN
+                emp_corr  =  Agrif_parent(emp_corr) 
+            ENDIF  
+         ENDIF
+         !
+         IF( MOD( kt-1, kn_fsbc ) == 0 ) THEN        ! correct the freshwater fluxes on all grids
+            emp(:,:) = emp(:,:) + emp_corr * tmask(:,:,1)
+            qns(:,:) = qns(:,:) - emp_corr * rcp * sst_m(:,:) * tmask(:,:,1) ! account for change to the heat budget due to fw correction
+         ENDIF
+
+         IF ( Agrif_Root() ) THEN
+            ! Output restart information (root grid only)
+            IF( lrst_oce ) THEN
+               IF(lwp) WRITE(numout,*)
+               IF(lwp) WRITE(numout,*) 'sbc_fwb : writing FW-budget adjustment to ocean restart file at it = ', kt
+               IF(lwp) WRITE(numout,*) '~~~~'
+               CALL iom_rstput( kt, nitrst, numrow, 'a_fwb'  ,   a_fwb   )
+               CALL iom_rstput( kt, nitrst, numrow, 'emp_corr', emp_corr )
+            END IF
+            !
+            IF( kt == nitend .AND. lwp ) THEN
+               WRITE(numout,*) 'sbc_fwb : freshwater-budget at the end of simulation (year now) = ', emp_corr  , 'kg/m2/s'
+            END IF
+         END IF
+#endif
+         ! outputs
+         IF( MOD( kt-1, kn_fsbc ) == 0 ) THEN
+            IF( iom_use('hflx_fwb_cea') )  CALL iom_put( 'hflx_fwb_cea', -emp_corr * rcp * sst_m(:,:) * tmask(:,:,1) )
+            IF( iom_use('vflx_fwb_cea') )  CALL iom_put( 'vflx_fwb_cea', -emp_corr * tmask(:,:,1) )
+         ENDIF   
          !
       CASE ( 2 )                             !==  fw adjustment based on fw budget at the end of the previous year  ==!
          !                                                simulation is supposed to start 1st of January
-         IF( kt == nit000 ) THEN                                                                 ! initialisation
-            !                                                                                    ! set the fw adjustment (a_fwb)
-            IF ( ln_rstart .AND. iom_varid( numror, 'a_fwb_b', ldstop = .FALSE. ) > 0     &      !    as read from restart file
-               &           .AND. iom_varid( numror, 'a_fwb',   ldstop = .FALSE. ) > 0 ) THEN
-               IF(lwp)   WRITE(numout,*) 'sbc_fwb : reading freshwater-budget from restart file'
-               CALL iom_get( numror, 'a_fwb_b', a_fwb_b )
-               CALL iom_get( numror, 'a_fwb'  , a_fwb )
+         IF ( Agrif_Root() ) THEN
+            IF( kt == nit000 ) THEN                                                                 ! initialisation
+               !                                                                                    ! 
+               IF ( ln_rstart .AND. iom_varid( numror, 'a_fwb',      ldstop = .FALSE. ) > 0     &   ! read from restart file
+                  &           .AND. iom_varid( numror, 'a_fwb_b',    ldstop = .FALSE. ) > 0     & 
+                  &           .AND. iom_varid( numror, 'emp_corr',   ldstop = .FALSE. ) > 0 ) THEN
+                  IF(lwp)   WRITE(numout,*) 'sbc_fwb : reading freshwater-budget from restart file'
+                  CALL iom_get( numror, 'a_fwb'     , a_fwb    )
+                  CALL iom_get( numror, 'a_fwb_b'   , a_fwb_b  )
+                  CALL iom_get( numror, 'emp_corr'  , emp_corr )
+               ELSE                                                                                 !    as specified in namelist
+                  IF(lwp)   WRITE(numout,*) 'sbc_fwb : setting freshwater-budget from namelist rn_fwb0'
+                  emp_corr = rn_fwb0
+                  a_fwb    = 999._wp
+                  a_fwb_b  = 999._wp    
+               END IF
                !
-               a_fwb_ini = a_fwb_b
-            ELSE                                                                                 !    as specified in namelist
-               IF(lwp)   WRITE(numout,*) 'sbc_fwb : setting freshwater-budget from namelist rn_fwb0'
-               a_fwb   = rn_fwb0
-               a_fwb_b = 0._wp   ! used only the first year then it is replaced by a_fwb_ini
+               IF(lwp)   WRITE(numout,*)
+               IF(lwp)   WRITE(numout,*)'sbc_fwb : initial freshwater correction flux = ', emp_corr , 'kg/m2/s'
                !
-               a_fwb_ini = glob_sum( 'sbcfwb', e1e2t(:,:) * ( ssh(:,:,Kmm) + snwice_mass(:,:) * r1_rho0 ) ) &
-                  &      * rho0 / ( area * rday * REAL(nyear_len(1), wp) )
-            END IF
-            !
-            IF(lwp)   WRITE(numout,*)
-            IF(lwp)   WRITE(numout,*)'sbc_fwb : freshwater-budget at the end of previous year = ', a_fwb    , 'kg/m2/s'
-            IF(lwp)   WRITE(numout,*)'          freshwater-budget at initial state            = ', a_fwb_ini, 'kg/m2/s'
-            !
-         ELSE
-            ! at the end of year n:
-            ikty = nyear_len(1) * 86400 / NINT(rn_Dt)
-            IF( MOD( kt, ikty ) == 0 ) THEN   ! Update a_fwb at the last time step of a year
-               !                                It should be the first time step of a year MOD(kt-1,ikty) but then the restart would be wrong
-               !                                Hence, we make a small error here but the code is restartable
-               a_fwb_b = a_fwb_ini
-               ! mean sea level taking into account ice+snow
-               a_fwb   = glob_sum( 'sbcfwb', e1e2t(:,:) * ( ssh(:,:,Kmm) + snwice_mass(:,:) * r1_rho0 ) )
-               a_fwb   = a_fwb * rho0 / ( area * rday * REAL(nyear_len(1), wp) )   ! convert in kg/m2/s
             ENDIF
             !
+            ! at the end of year n:
+            ikty = nyear_len(1) * 86400 / NINT(rn_Dt)
+            IF( MOD( kt-1, ikty ) == 0 ) THEN   ! Update a_fwb at the last time step of a year
+               a_fwb_b = a_fwb
+               ! mean sea level taking into account ice+snow
+#if defined key_agrif
+               agrif_sum = 0.0_wp                           ! set work scalar to 0
+               CALL Agrif_step_child(glob_sum_volume_agrif) ! integrate over grids
+               a_fwb = agrif_sum
+#else                  
+               a_fwb   = glob_sum( 'sbcfwb', e1e2t(:,:) * ( ssh(:,:,Kmm) + snwice_mass_b(:,:) * r1_rho0 ) )
+#endif
+               a_fwb = a_fwb * rho0 / area
+               !
+               ! Special case if less than a year has been performed:
+               ! hence namelist rn_fwb0 still rules
+               IF ( a_fwb_b == 999._wp ) a_fwb_b = a_fwb
+               !
+               emp_corr = ( a_fwb - a_fwb_b ) / ( rday * REAL(nyear_len(0), wp) ) + emp_corr
+               IF(lwp)   WRITE(numout,*)
+               IF(lwp)   WRITE(numout,*)'sbc_fwb : Compute new global mass at step = ', kt
+               IF(lwp)   WRITE(numout,*)'sbc_fwb : New      averaged liquid height (ocean + snow + ice) = ',    a_fwb * r1_rho0, 'm'
+               IF(lwp)   WRITE(numout,*)'sbc_fwb : Previous averaged liquid height (ocean + snow + ice) = ',  a_fwb_b * r1_rho0, 'm'
+               IF(lwp)   WRITE(numout,*)'sbc_fwb : Implied freshwater-budget correction flux = ', emp_corr , 'kg/m2/s'
+            ENDIF
+#if defined key_agrif
+         ELSE ! child grid if any
+            IF( MOD( kt-1, kn_fsbc ) == 0 ) THEN
+                emp_corr  =  Agrif_parent(emp_corr) 
+            ENDIF
+#endif
          ENDIF
          !
-         IF( MOD( kt-1, kn_fsbc ) == 0 ) THEN         ! correct the freshwater fluxes using previous year budget minus initial state
-            zcoef = ( a_fwb - a_fwb_b )
-            emp(:,:) = emp(:,:) + zcoef * tmask(:,:,1)
-            qns(:,:) = qns(:,:) - zcoef * rcp * sst_m(:,:) * tmask(:,:,1) ! account for change to the heat budget due to fw correction
+         IF( MOD( kt-1, kn_fsbc ) == 0 ) THEN         ! correct the freshwater fluxes
+            emp(:,:) = emp(:,:) + emp_corr * tmask(:,:,1)
+            qns(:,:) = qns(:,:) - emp_corr * rcp * sst_m(:,:) * tmask(:,:,1) ! account for change to the heat budget due to fw correction
             ! outputs
-            IF( iom_use('hflx_fwb_cea') )  CALL iom_put( 'hflx_fwb_cea', -zcoef * rcp * sst_m(:,:) * tmask(:,:,1) )
-            IF( iom_use('vflx_fwb_cea') )  CALL iom_put( 'vflx_fwb_cea', -zcoef * tmask(:,:,1) )
+            IF( iom_use('hflx_fwb_cea') )  CALL iom_put( 'hflx_fwb_cea', -emp_corr * rcp * sst_m(:,:) * tmask(:,:,1) )
+            IF( iom_use('vflx_fwb_cea') )  CALL iom_put( 'vflx_fwb_cea', -emp_corr * tmask(:,:,1) )
          ENDIF
-         ! Output restart information
-         IF( lrst_oce ) THEN
-            IF(lwp) WRITE(numout,*)
-            IF(lwp) WRITE(numout,*) 'sbc_fwb : writing FW-budget adjustment to ocean restart file at it = ', kt
-            IF(lwp) WRITE(numout,*) '~~~~'
-            CALL iom_rstput( kt, nitrst, numrow, 'a_fwb_b', a_fwb_b )
-            CALL iom_rstput( kt, nitrst, numrow, 'a_fwb',   a_fwb   )
-         END IF
-         !
-         IF( kt == nitend .AND. lwp ) THEN
-            WRITE(numout,*) 'sbc_fwb : freshwater-budget at the end of simulation (year now) = ', a_fwb  , 'kg/m2/s'
-            WRITE(numout,*) '          freshwater-budget at initial state                    = ', a_fwb_b, 'kg/m2/s'
-         ENDIF
+
+         IF ( Agrif_Root() ) THEN
+            ! Output restart information (root grid only)
+            IF( lrst_oce ) THEN
+               IF(lwp) WRITE(numout,*)
+               IF(lwp) WRITE(numout,*) 'sbc_fwb : writing FW-budget adjustment to ocean restart file at it = ', kt
+               IF(lwp) WRITE(numout,*) '~~~~'
+               CALL iom_rstput( kt, nitrst, numrow, 'a_fwb',   a_fwb   )
+               CALL iom_rstput( kt, nitrst, numrow, 'a_fwb_b', a_fwb_b )
+               CALL iom_rstput( kt, nitrst, numrow, 'emp_corr',emp_corr)
+            END IF
+            !
+            IF( kt == nitend .AND. lwp ) THEN
+               IF(lwp)   WRITE(numout,*)'sbc_fwb : Previous          year averaged liquid height (ocean + snow + ice) = ',    a_fwb * r1_rho0, 'm'
+               IF(lwp)   WRITE(numout,*)'sbc_fwb : Previous previous year averaged liquid height (ocean + snow + ice) = ',  a_fwb_b * r1_rho0, 'm'
+               IF(lwp)   WRITE(numout,*)'sbc_fwb : freshwater-budget correction flux = ', emp_corr , 'kg/m2/s'
+            END IF
+         END IF 
          !
       CASE ( 3 )                             !==  global fwf set to zero and spread out over erp area  ==!
          !
@@ -251,6 +368,31 @@ CONTAINS
       END SELECT
       !
    END SUBROUTINE sbc_fwb
+
+#if defined key_agrif
+   SUBROUTINE glob_sum_area_agrif()
+      !!---------------------------------------------------------------------
+      !!           ***  compute area with embedded zooms ***
+      !!----------------------------------------------------------------------
+
+      agrif_sum = agrif_sum + glob_sum( 'sbcfwb', e1e2t(:,:) * tmask_agrif(:,:))
+
+   END SUBROUTINE glob_sum_area_agrif   
+
+   SUBROUTINE glob_sum_volume_agrif()
+      !!---------------------------------------------------------------------
+      !!           ***  Compute volume with embedded zooms  ***
+      !!----------------------------------------------------------------------
+
+      IF ( nn_ice==2 ) THEN
+         agrif_sum = agrif_sum + glob_sum( 'sbcfwb', e1e2t(:,:) * tmask_agrif(:,:) * ( ssh(:,:,Kmm_a) + snwice_mass_b(:,:) * r1_rho0 ))
+      ELSE
+         agrif_sum = agrif_sum + glob_sum( 'sbcfwb', e1e2t(:,:) * tmask_agrif(:,:) * ssh(:,:,Kmm_a) )
+      ENDIF
+
+   END SUBROUTINE glob_sum_volume_agrif 
+
+#endif
 
    !!======================================================================
 END MODULE sbcfwb

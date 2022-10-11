@@ -31,7 +31,7 @@ MODULE iceupdate
    USE lib_fortran    ! fortran utilities (glob_sum + no signed zero)
    USE lbclnk         ! lateral boundary conditions (or mpp links)
    USE timing         ! Timing
-
+   USE oce
    IMPLICIT NONE
    PRIVATE
 
@@ -446,12 +446,15 @@ CONTAINS
                CALL iom_get( numrir, jpdom_auto, 'snwice_mass_b', snwice_mass_b )
             ELSE                                     ! start from rest
                IF(lwp) WRITE(numout,*) '   ==>>   previous run without snow-ice mass output then set it'
-               snwice_mass  (:,:) = tmask(:,:,1) * ( rhos * vt_s(:,:) + rhoi * vt_i(:,:) )
+               snwice_mass  (:,:) = tmask(:,:,1) * ( rhos * vt_s(:,:) + rhoi * vt_i(:,:) & 
+                                                &  + rhow * (vt_ip(:,:) + vt_il(:,:))  )
                snwice_mass_b(:,:) = snwice_mass(:,:)
             ENDIF
          ELSE                                   !* Start from rest
+!JC: I think this is useless with what is now done in ice_istate
             IF(lwp) WRITE(numout,*) '   ==>>   start from rest: set the snow-ice mass'
-            snwice_mass  (:,:) = tmask(:,:,1) * ( rhos * vt_s(:,:) + rhoi * vt_i(:,:) )
+            snwice_mass  (:,:) = tmask(:,:,1) * ( rhos * vt_s(:,:) + rhoi * vt_i(:,:) & 
+                                             &  + rhow * (vt_ip(:,:) + vt_il(:,:))  )
             snwice_mass_b(:,:) = snwice_mass(:,:)
          ENDIF
          !

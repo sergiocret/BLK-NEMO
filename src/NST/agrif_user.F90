@@ -99,6 +99,7 @@
       CALL agrif_declare_variable((/1,1    /),(/ind2-1,ind3-1    /),(/'x','y'        /),(/1,1    /),(/jpi,jpj        /),        r3f_id)
 #endif
       CALL agrif_declare_variable((/2,2,0  /),(/ind2  ,ind3  ,0  /),(/'x','y','N'    /),(/1,1,1  /),(/jpi,jpj,jpk    /),e3t0_interp_id)
+      CALL agrif_declare_variable((/2,2    /),(/ind2  ,ind3      /),(/'x','y'        /),(/1,1    /),(/jpi,jpj        /),      tmask_id)
       CALL agrif_declare_variable((/2,2    /),(/ind2  ,ind3      /),(/'x','y'        /),(/1,1    /),(/jpi,jpj        /),       mbkt_id)
       CALL agrif_declare_variable((/2,2    /),(/ind2  ,ind3      /),(/'x','y'        /),(/1,1    /),(/jpi,jpj        /),        ht0_id)
       CALL agrif_declare_variable((/2,2    /),(/ind2  ,ind3      /),(/'x','y'        /),(/1,1    /),(/jpi,jpj        /), e1e2t_frac_id)   
@@ -127,6 +128,7 @@
 #endif
       CALL Agrif_Set_bcinterp(e3t0_interp_id,interp =AGRIF_linear  )
       CALL Agrif_Set_interp  (e3t0_interp_id,interp =AGRIF_linear  )
+      CALL Agrif_Set_bcinterp(      tmask_id,interp =AGRIF_constant)
       CALL Agrif_Set_bcinterp(       mbkt_id,interp =AGRIF_constant)
       CALL Agrif_Set_interp  (       mbkt_id,interp =AGRIF_constant)
       CALL Agrif_Set_bcinterp(        ht0_id,interp =AGRIF_constant)
@@ -168,6 +170,7 @@
       ! extend the interpolation zone by 1 more point than necessary:
       ! RB check here
       CALL Agrif_Set_bc( e3t0_interp_id, (/-nn_sponge_len*imaxrho-2,ind1-1/) )
+      CALL Agrif_Set_bc(       tmask_id, (/-imaxrho*nn_shift_bar,ind1-1/) )
       CALL Agrif_Set_bc(        mbkt_id, (/-nn_sponge_len*imaxrho-2,ind1-1/) )
       CALL Agrif_Set_bc(         ht0_id, (/-nn_sponge_len*imaxrho-2,ind1-1/) )
       CALL Agrif_Set_bc(  e1e2t_frac_id, (/-nn_sponge_len*imaxrho-2,ind1-1/) )
@@ -198,6 +201,7 @@
       CALL Agrif_Set_Updatetype(        r3f_id,update  = Agrif_Update_Copy   )
 #endif 
 #endif      
+      CALL Agrif_Set_Updatetype(      tmask_id,update  = AGRIF_Update_Average)
 
       CALL Agrif_Set_ExternalMapping(nemo_mapping)
       !
@@ -242,6 +246,8 @@
       ht0_parent( :,:) = 0._wp
       mbkt_parent(:,:) = 0
       !
+      ! Build tmask_agrif such that it is zero outside barotropic dynamical interface:
+      CALL Agrif_Bc_variable(tmask_id ,calledweight=1.,procname=interp_tmask_agrif)
 !     CALL Agrif_Bc_variable(ht0_id ,calledweight=1.,procname=interpht0 )
 !     CALL Agrif_Bc_variable(mbkt_id,calledweight=1.,procname=interpmbkt)
       CALL Agrif_Init_Variable(ht0_id,        procname=interpht0 )
@@ -410,29 +416,17 @@
       hbdy(:,:) = 0._wp
       ssh(:,:,Krhs_a) = 0._wp
 
-      IF ( ln_dynspg_ts ) THEN
-         Agrif_UseSpecialValue = ln_spc_dyn
-         use_sign_north = .TRUE.
-         sign_north = -1.
-         CALL Agrif_Bc_variable(ub2b_interp_id,calledweight=1.,procname=interpub2b)   ! must be called before unb_id to define ubdy
-         CALL Agrif_Bc_variable(vb2b_interp_id,calledweight=1.,procname=interpvb2b)   ! must be called before vnb_id to define vbdy
-         CALL Agrif_Bc_variable( unb_interp_id,calledweight=1.,procname=interpunb )
-         CALL Agrif_Bc_variable( vnb_interp_id,calledweight=1.,procname=interpvnb )
-         use_sign_north = .FALSE.
-         ubdy(:,:) = 0._wp
-         vbdy(:,:) = 0._wp
-      ELSEIF ( ln_dynspg_EXP ) THEN 
-         Agrif_UseSpecialValue = ln_spc_dyn
-         use_sign_north = .TRUE.
-         sign_north = -1.
-         ubdy(:,:) = 0._wp
-         vbdy(:,:) = 0._wp
-         CALL Agrif_Bc_variable( unb_interp_id,calledweight=1.,procname=interpunb )
-         CALL Agrif_Bc_variable( vnb_interp_id,calledweight=1.,procname=interpvnb )
-         use_sign_north = .FALSE.
-         ubdy(:,:) = 0._wp
-         vbdy(:,:) = 0._wp
-      ENDIF
+      Agrif_UseSpecialValue = ln_spc_dyn
+      use_sign_north = .TRUE.
+      sign_north = -1.
+      ubdy(:,:) = 0._wp
+      vbdy(:,:) = 0._wp
+      CALL Agrif_Bc_variable( unb_interp_id,calledweight=1.,procname=interpunb )
+      CALL Agrif_Bc_variable( vnb_interp_id,calledweight=1.,procname=interpvnb )
+      use_sign_north = .FALSE.
+      ubdy(:,:) = 0._wp
+      vbdy(:,:) = 0._wp
+
       Agrif_UseSpecialValue = .FALSE. 
       l_vremap              = .FALSE.
 
