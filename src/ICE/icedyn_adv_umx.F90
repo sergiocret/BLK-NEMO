@@ -32,7 +32,7 @@ MODULE icedyn_adv_umx
 
    PUBLIC   ice_dyn_adv_umx   ! called by icedyn_adv.F90
    !
-   INTEGER, PARAMETER ::   np_advS = 1         ! advection for S and T:    dVS/dt = -div(      uVS     ) => np_advS = 1
+   INTEGER, PARAMETER ::   np_advS = 2         ! advection for S and T:    dVS/dt = -div(      uVS     ) => np_advS = 1
    !                                                                    or dVS/dt = -div( uA * uHS / u ) => np_advS = 2
    !                                                                    or dVS/dt = -div( uV * uS  / u ) => np_advS = 3
    INTEGER, PARAMETER ::   np_limiter = 1      ! limiter: 1 = nonosc
