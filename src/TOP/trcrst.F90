@@ -133,9 +133,14 @@ CONTAINS
          CALL iom_get( numrtr, jpdom_auto, 'TRN'//ctrcnm(jn), tr(:,:,:,jn,Kmm) )
       END DO
 
-      DO jn = 1, jptra
-         CALL iom_get( numrtr, jpdom_auto, 'TRB'//ctrcnm(jn), tr(:,:,:,jn,Kbb) )
-      END DO
+      IF( l_1st_euler .OR. ln_top_euler ) THEN
+         IF(lwp) WRITE(numout,*) '               + adjustment for forward Euler time stepping'
+         tr(:,:,:,1:jptra,Kbb) = tr(:,:,:,1:jptra,Kmm)
+      ELSE
+         DO jn = 1, jptra
+            CALL iom_get( numrtr, jpdom_auto, 'TRB'//ctrcnm(jn), tr(:,:,:,jn,Kbb) )
+         END DO
+      END IF
       !
       IF(.NOT.lrxios) CALL iom_delay_rst( 'READ', 'TOP', numrtr )   ! read only TOP delayed global communication variables
    END SUBROUTINE trc_rst_read

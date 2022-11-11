@@ -54,12 +54,7 @@ CONTAINS
       IF(lwp) WRITE(numout,*)
       IF(lwp) WRITE(numout,*) ' trc_sms_age:  AGE model'
       IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
-
-      IF( l_1st_euler .OR. ln_top_euler ) THEN
-         tr(:,:,:,jp_age,Kbb) = tr(:,:,:,jp_age,Kmm)
-      ENDIF
-
-
+      !
       DO jk = 1, nla_age
          tr(:,:,jk,jp_age,Krhs) = rn_age_kill_rate * tr(:,:,jk,jp_age,Kbb)
       END DO
