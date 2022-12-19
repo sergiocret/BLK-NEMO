@@ -1672,7 +1672,7 @@ CONTAINS
                p_taui(ji,jj) = zztmp1 * ( frcv(jpr_itx1)%z3(ji+1,jj  ,1) + frcv(jpr_itx1)%z3(ji,jj,1) )
                p_tauj(ji,jj) = zztmp2 * ( frcv(jpr_ity1)%z3(ji  ,jj+1,1) + frcv(jpr_ity1)%z3(ji,jj,1) )
             END_2D
-            CALL lbc_lnk( 'sbccpl', p_taui, 'U',  -1., p_tauj, 'V',  -1. )
+            CALL lbc_lnk( 'sbccpl', p_taui, 'U',  -1._wp, p_tauj, 'V',  -1._wp )
          END SELECT
 
       ENDIF

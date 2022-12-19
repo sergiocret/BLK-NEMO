@@ -546,8 +546,8 @@ CONTAINS
             CALL Agrif_dyn( kt )
 # endif
       !                                        ! local domain boundaries  (T-point, unchanged sign)
-      CALL lbc_lnk( 'finalize_lbc', puu(:,:,:,       Kaa), 'U', -1., pvv(:,:,:       ,Kaa), 'V', -1.   &
-                       &          , pts(:,:,:,jp_tem,Kaa), 'T',  1., pts(:,:,:,jp_sal,Kaa), 'T',  1. )
+      CALL lbc_lnk( 'finalize_lbc', puu(:,:,:,       Kaa), 'U', -1._wp, pvv(:,:,:       ,Kaa), 'V', -1._wp   &
+                       &          , pts(:,:,:,jp_tem,Kaa), 'T',  1._wp, pts(:,:,:,jp_sal,Kaa), 'T',  1._wp )
       !
       ! lbc_lnk needed for zdf_sh2 when using nn_hls = 2, moved here to allow tiling in zdf_phy
       IF( nn_hls == 2 .AND. l_zdfsh2 ) CALL lbc_lnk( 'stp', avm_k, 'W', 1.0_wp )

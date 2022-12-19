@@ -101,7 +101,7 @@ CONTAINS
          taum(ji,jj) = zmod
          wndm(ji,jj) = SQRT( zmod * zcoef )
       END_2D
-      CALL lbc_lnk( 'usrdef_sbc', taum(:,:), 'T', 1. , wndm(:,:), 'T', 1. )
+      CALL lbc_lnk( 'usrdef_sbc', taum(:,:), 'T', 1._wp , wndm(:,:), 'T', 1._wp )
       !
    END SUBROUTINE usrdef_sbc_oce
 

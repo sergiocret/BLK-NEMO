@@ -125,7 +125,7 @@ CONTAINS
          windu(ji,jj) = Umax/sqrt(d*1000)*(d-2*mig(ji)*res)/((d-2*mig(ji)*res)**2+(d-2*mjg(jj)*res)**2*Rwind**2)**(1/4)*min(kt*30./21600,1.)
          windv(ji,jj) = Umax/sqrt(d*1000)*(d-2*mjg(jj)*res)/((d-2*mig(ji)*res)**2+(d-2*mjg(jj)*res)**2*Rwind**2)**(1/4)*Rwind*min(kt*30./21600,1.)
       END_2D
-      CALL lbc_lnk( 'usrdef_sbc', windu, 'U', -1., windv, 'V', -1. )
+      CALL lbc_lnk( 'usrdef_sbc', windu, 'U', -1._wp, windv, 'V', -1._wp )
 
       wndm_ice(:,:) = 0._wp      !!gm brutal....
 
@@ -138,7 +138,7 @@ CONTAINS
          zwndj_t = (  windv(ji,jj) - r_vfac * 0.5 * ( v_ice(ji,jj-1) + v_ice(ji,jj) )  )
          wndm_ice(ji,jj) = SQRT( zwndi_t * zwndi_t + zwndj_t * zwndj_t ) * tmask(ji,jj,1)
       END_2D
-      CALL lbc_lnk( 'usrdef_sbc', wndm_ice, 'T',  1. )
+      CALL lbc_lnk( 'usrdef_sbc', wndm_ice, 'T',  1._wp )
 
       !!gm brutal....
       utau_ice  (:,:) = 0._wp
@@ -155,7 +155,7 @@ CONTAINS
          vtau_ice(ji,jj) = 0.5 * zrhoa * Cd_atm * ( wndm_ice(ji,jj+1  ) + wndm_ice(ji,jj) )            &
             &          * ( 0.5 * (windv(ji,jj+1) + windv(ji,jj) ) - r_vfac * v_ice(ji,jj) )
       END_2D
-      CALL lbc_lnk( 'usrdef_sbc', utau_ice, 'U', -1., vtau_ice, 'V', -1. )
+      CALL lbc_lnk( 'usrdef_sbc', utau_ice, 'U', -1._wp, vtau_ice, 'V', -1._wp )
       !
    END SUBROUTINE usrdef_sbc_ice_tau
 

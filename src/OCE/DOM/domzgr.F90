@@ -139,7 +139,7 @@ CONTAINS
       IF( .NOT. ( l_Jperio .OR. l_NFold ) ) THEN                   ! N closed:
          zmsk(:,mj0(jpjglo-nn_hls):mj1(jpjglo-nn_hls)  ) = 0._wp   ! last    line of inner global domain at 0
       ENDIF
-      CALL lbc_lnk( 'usrdef_zgr', zmsk, 'T', 1. )             ! set halos
+      CALL lbc_lnk( 'usrdef_zgr', zmsk, 'T', 1._wp )             ! set halos
       k_top(:,:) = k_top(:,:) * NINT( zmsk(:,:) )
       !
 !!gm to be remove when removing the OLD definition of e3 scale factors so that gde3w disappears

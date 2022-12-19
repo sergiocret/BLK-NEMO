@@ -443,8 +443,8 @@ CONTAINS
             vtau(ji,jj) = vtau(ji,jj) * ( tauoc_wave(ji,jj) + tauoc_wave(ji,jj-1) ) * 0.5_wp
          END_2D
          !
-         CALL lbc_lnk( 'sbcwave', utau, 'U', -1. )
-         CALL lbc_lnk( 'sbcwave', vtau, 'V', -1. )
+         CALL lbc_lnk( 'sbcwave', utau, 'U', -1._wp )
+         CALL lbc_lnk( 'sbcwave', vtau, 'V', -1._wp )
          !
          taum(:,:) = taum(:,:)*tauoc_wave(:,:)
          !
@@ -454,8 +454,8 @@ CONTAINS
       ELSEIF( ln_wave .AND. ln_taw ) THEN                  ! Wave stress reduction
          utau(:,:) = utau(:,:) - tawx(:,:) + twox(:,:)
          vtau(:,:) = vtau(:,:) - tawy(:,:) + twoy(:,:)
-         CALL lbc_lnk( 'sbcwave', utau, 'U', -1. )
-         CALL lbc_lnk( 'sbcwave', vtau, 'V', -1. )
+         CALL lbc_lnk( 'sbcwave', utau, 'U', -1._wp )
+         CALL lbc_lnk( 'sbcwave', vtau, 'V', -1._wp )
          !
          DO_2D( 0, 0, 0, 0)
              taum(ji,jj) = sqrt((.5*(utau(ji-1,jj)+utau(ji,jj)))**2 + (.5*(vtau(ji,jj-1)+vtau(ji,jj)))**2)
@@ -465,7 +465,7 @@ CONTAINS
             &                                'If not requested select ln_taw=.false.' )
          !
       ENDIF
-      CALL lbc_lnk( 'sbcmod', taum(:,:), 'T', 1. )
+      CALL lbc_lnk( 'sbcmod', taum(:,:), 'T', 1._wp )
       !
       IF( ln_icebergs ) THEN  ! save pure stresses (with no ice-ocean stress) for use by icebergs
          utau_icb(:,:) = utau(:,:) ; vtau_icb(:,:) = vtau(:,:) 

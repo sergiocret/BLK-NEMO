@@ -110,7 +110,6 @@ CONTAINS
       INTEGER  ::   irgb                     ! local integers
       REAL(wp) ::   zchl, zcoef, z1_2        ! local scalars
       REAL(wp) ::   zc0 , zc1 , zc2 , zc3    !    -         -
-      REAL(wp) ::   zzc0, zzc1, zzc2, zzc3   !    -         -
       REAL(wp) ::   zz0 , zz1 , ze3t, zlui   !    -         -
       REAL(wp) ::   zCb, zCmax, zpsi, zpsimax, zrdpsi, zCze
       REAL(wp) ::   zlogc, zlogze, zlogCtot, zlogCze
@@ -287,8 +286,9 @@ CONTAINS
       !
       ! sea-ice: store the 1st ocean level attenuation coefficient
       DO_2D_OVR( nn_hls, nn_hls, nn_hls, nn_hls )
-         IF( qsr(ji,jj) /= 0._wp ) THEN   ;   fraqsr_1lev(ji,jj) = qsr_hc(ji,jj,1) / ( r1_rho0_rcp * qsr(ji,jj) )
-         ELSE                             ;   fraqsr_1lev(ji,jj) = 1._wp
+         zz0 = r1_rho0_rcp * qsr(ji,jj)   ! test zz0 and not qsr for rounding errors in single precision
+         IF( zz0 /= 0._wp ) THEN   ;   fraqsr_1lev(ji,jj) = qsr_hc(ji,jj,1) / zz0
+         ELSE                      ;   fraqsr_1lev(ji,jj) = 1._wp
          ENDIF
       END_2D
       !
