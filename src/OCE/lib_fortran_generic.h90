@@ -55,12 +55,12 @@
          ijs = 1   ;   ije = jpj
       ENDIF
       !
-      ctmp = CMPLX( 0.e0, 0.e0, dp )   ! warning ctmp is cumulated
+      ctmp = CMPLX( 0._dp, 0._dp, dp )   ! warning ctmp is cumulated
       DO jk = 1, ipk
         DO jj = ijs, ije
           DO ji = iis, iie
              ztmp =  ARRAY_IN(ji,jj,jk) * MASK_ARRAY(ji,jj)
-             CALL DDPDD( CMPLX( ztmp, 0.e0, dp ), ctmp )
+             CALL DDPDD( CMPLX( ztmp, 0._wp, dp ), ctmp )
           END DO
         END DO
       END DO
@@ -110,7 +110,6 @@
       !
       !!-----------------------------------------------------------------------
       !
-      COMPLEX(dp)::   ctmp
       REAL(wp)   ::   ztmp
       INTEGER    ::   jk       ! dummy loop indices
       INTEGER    ::   ipk      ! dimensions

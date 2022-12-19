@@ -136,7 +136,7 @@ CONTAINS
                zwx(ji,jj,jk) =  0.5_wp * pU(ji,jj,jk) * zC4t_u
                zwy(ji,jj,jk) =  0.5_wp * pV(ji,jj,jk) * zC4t_v
             END_3D
-            IF (nn_hls==1) CALL lbc_lnk( 'traadv_cen', zwx, 'U', -1. , zwy, 'V', -1. )
+            IF (nn_hls==1) CALL lbc_lnk( 'traadv_cen', zwx, 'U', -1._wp , zwy, 'V', -1._wp )
             !
          CASE DEFAULT
             CALL ctl_stop( 'traadv_cen: wrong value for nn_cen' )

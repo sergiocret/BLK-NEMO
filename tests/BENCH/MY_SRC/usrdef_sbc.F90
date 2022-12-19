@@ -109,7 +109,7 @@ CONTAINS
          vtau_ice(ji,jj) = 0.1_wp + zztmp
       END_2D
 
-      CALL lbc_lnk( 'usrdef_sbc', utau_ice, 'U', -1., vtau_ice, 'V', -1. )
+      CALL lbc_lnk( 'usrdef_sbc', utau_ice, 'U', -1._wp, vtau_ice, 'V', -1._wp )
 #endif
       !
    END SUBROUTINE usrdef_sbc_ice_tau
