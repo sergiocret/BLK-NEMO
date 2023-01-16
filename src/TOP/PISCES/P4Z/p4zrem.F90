@@ -95,15 +95,13 @@ CONTAINS
       ! recent version of PISCES with bacteria.
       ! ----------------------------------------------------------------
       DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
-         zdep = MAX( hmld(ji,jj), heup_01(ji,jj) )
+         zdep = MAX( hmld(ji,jj), heup_01(ji,jj), gdept(ji,jj,1,Kmm) )
          IF ( gdept(ji,jj,jk,Kmm) < zdep ) THEN
             zdepbac(ji,jj,jk) = 0.6 * ( MAX(0.0, tr(ji,jj,jk,jpzoo,Kbb) + tr(ji,jj,jk,jpmes,Kbb) ) * 1.0E6 )**0.6 * 1.E-6
             ztempbac(ji,jj)   = zdepbac(ji,jj,jk)
-!         IF( gdept(ji,jj,jk,Kmm) >= zdep ) THEN
          ELSE
             zdepmin = MIN( 1., zdep / gdept(ji,jj,jk,Kmm) )
             zdepbac (ji,jj,jk) = zdepmin**0.683 * ztempbac(ji,jj)
-!            zdepeff(ji,jj,jk) = zdepeff(ji,jj,jk) * zdepmin**0.3
             zdepeff(ji,jj,jk) = zdepeff(ji,jj,jk) * zdepmin**0.6
          ENDIF
       END_3D
@@ -180,8 +178,8 @@ CONTAINS
          ! Bacteries are obliged to take up iron from the water. Some
          ! studies (especially at Papa) have shown this uptake to be significant
          ! ----------------------------------------------------------
-         zbactfer = feratb * 0.6_wp * xstep * tgfunc(ji,jj,jk) * xlimbacl(ji,jj,jk) * tr(ji,jj,jk,jpfer,Kbb)    &
-           &       / ( xkferb + tr(ji,jj,jk,jpfer,Kbb) ) * zdepeff(ji,jj,jk) * zdepbac(ji,jj,jk)
+         zbactfer = feratb * 0.6_wp * xstep * tgfunc(ji,jj,jk) * xlimbacl(ji,jj,jk) * biron(ji,jj,jk)    &
+           &       / ( xkferb + biron(ji,jj,jk) ) * zdepeff(ji,jj,jk) * zdepbac(ji,jj,jk)
          
          ! Only the transfer of iron from its dissolved form to particles
          ! is treated here. The GGE of bacteria supposed to be equal to 

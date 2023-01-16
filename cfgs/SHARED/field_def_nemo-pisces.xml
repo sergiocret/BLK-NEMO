@@ -183,6 +183,9 @@
     <field id="PPNEWN"      long_name="New Primary production of nanophyto"     unit="molC/m3/s"  grid_ref="grid_T_3D" />
     <field id="PPNEWP"      long_name="New Primary production of picophyto"     unit="molC/m3/s"  grid_ref="grid_T_3D" />
     <field id="PPNEWD"      long_name="New Primary production of diatoms"       unit="molC/m3/s"  grid_ref="grid_T_3D" />
+    <field id="GPPHYN"      long_name="Gross Primary production of nanophyto"   unit="molC/m3/s"  grid_ref="grid_T_3D" />
+    <field id="GPPHYP"      long_name="Gross Primary production of picophyto"   unit="molC/m3/s"  grid_ref="grid_T_3D" />
+    <field id="GPPHYD"      long_name="Gross Primary production of diatoms"     unit="molC/m3/s"  grid_ref="grid_T_3D" />
     <field id="PBSi"        long_name="Primary production of Si diatoms"        unit="molC/m3/s"  grid_ref="grid_T_3D" />
     <field id="PFeN"        long_name="Primary production of nano iron"         unit="molC/m3/s"  grid_ref="grid_T_3D" />
     <field id="PFeP"        long_name="Primary production of pico iron"         unit="molC/m3/s"  grid_ref="grid_T_3D" />

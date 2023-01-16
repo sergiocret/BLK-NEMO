@@ -242,7 +242,7 @@ CONTAINS
          ! Excess carbon in the food is used preferentially
          ! when activated by zmetexcess
          ! ------------------------------------------------
-         zexcess  = zgraztotc * zepsherf * (1.0 - zepshert) * zmetexcess
+         zexcess  = zgraztotc * zepsherq * zepsherf * (1.0 - zepshert) * zmetexcess
          zbasresb = MAX(0., zrespz - zexcess)
          zbasresi = zexcess + MIN(0., zrespz - zexcess)  
          zrespirc = srespir * zepsherv * zgraztotc + zbasresb

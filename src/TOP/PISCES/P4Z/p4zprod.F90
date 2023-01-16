@@ -27,7 +27,6 @@ MODULE p4zprod
 
    REAL(wp), PUBLIC ::   pislopen     !:  P-I slope of nanophytoplankton
    REAL(wp), PUBLIC ::   pisloped     !:  P-I slope of diatoms
-   REAL(wp), PUBLIC ::   xadap        !:  Adaptation factor to low light 
    REAL(wp), PUBLIC ::   excretn      !:  Excretion ratio of nanophyto
    REAL(wp), PUBLIC ::   excretd      !:  Excretion ratio of diatoms
    REAL(wp), PUBLIC ::   bresp        !:  Basal respiration rate
@@ -69,8 +68,8 @@ CONTAINS
       INTEGER, INTENT(in) ::   Kbb, Kmm, Krhs  ! time level indices
       !
       INTEGER  ::   ji, jj, jk
-      REAL(wp) ::   zsilfac, znanotot, zdiattot, zconctemp, zconctemp2
-      REAL(wp) ::   zratio, zmax, zsilim, ztn, zadap, zlim, zsiborn
+      REAL(wp) ::   zsilfac, znanotot, zdiattot
+      REAL(wp) ::   zratio, zmax, zsilim, ztn, zlim, zsiborn
       REAL(wp) ::   zpptot, zpnewtot, zpregtot, zprochln, zprochld
       REAL(wp) ::   zproddoc, zprodsil, zprodfer, zprodlig
       REAL(wp) ::   zpislopen, zpisloped, zfact
@@ -112,8 +111,9 @@ CONTAINS
 
          DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
             IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN
+               zval = 24.0
                IF( gdepw(ji,jj,jk+1,Kmm) <= hmld(ji,jj) ) THEN
-                  zval = MIN(1., heup_01(ji,jj) / ( hmld(ji,jj) + rtrn ))
+                  zval = zval * MIN(1., heup_01(ji,jj) / ( hmld(ji,jj) + rtrn ))
                ENDIF
                zmxl_chl(ji,jj,jk) = zval / 24.
                zmxl_fac(ji,jj,jk) = 1.0 - exp( -0.26 * zval )
@@ -143,23 +143,19 @@ CONTAINS
       ! -----------------------------------------------------------------------
       DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
          IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN
-            ztn         = MAX( 0., ts(ji,jj,jk,jp_tem,Kmm) - 15. )
-            zadap       = xadap * ztn / ( 2.+ ztn )
-            zconctemp   = MAX( 0.e0 , tr(ji,jj,jk,jpdia,Kbb) - xsizedia )
-            zconctemp2  = tr(ji,jj,jk,jpdia,Kbb) - zconctemp
             !
             ! The initial slope of the PI curve can be increased for nano
             ! to account for photadaptation, for instance in the DCM
             ! This parameterization is adhoc and should be either 
             ! improved or removed in future versions of the model
-
             ! Nanophytoplankton
-            zpislopeadn(ji,jj,jk) = pislopen * ( 1.+ zadap  * EXP( -0.25 * enano(ji,jj,jk) ) )  &
-            &                   * tr(ji,jj,jk,jpnch,Kbb) /( tr(ji,jj,jk,jpphy,Kbb) * 12. + rtrn)
+            zpislopeadn(ji,jj,jk) = pislopen * tr(ji,jj,jk,jpnch,Kbb)  &
+            &                   /( tr(ji,jj,jk,jpphy,Kbb) * 12. + rtrn)
 
             ! Diatoms
-            zpislopeadd(ji,jj,jk) = (pislopen * zconctemp2 + pisloped * zconctemp) / ( tr(ji,jj,jk,jpdia,Kbb) + rtrn )   &
-            &                   * tr(ji,jj,jk,jpdch,Kbb) /( tr(ji,jj,jk,jpdia,Kbb) * 12. + rtrn)
+            zpislopeadd(ji,jj,jk) = pisloped * tr(ji,jj,jk,jpdch,Kbb)   &
+            &                   /( tr(ji,jj,jk,jpdia,Kbb) * 12. + rtrn)
+
          ENDIF
       END_3D
 
@@ -435,7 +431,7 @@ CONTAINS
       INTEGER ::   ios   ! Local integer
       !
       ! Namelist block
-      NAMELIST/namp4zprod/ pislopen, pisloped, xadap, bresp, excretn, excretd,  &
+      NAMELIST/namp4zprod/ pislopen, pisloped, bresp, excretn, excretd,  &
          &                 chlcnm, chlcdm, chlcmin, fecnm, fecdm, grosip
       !!----------------------------------------------------------------------
       !
@@ -456,7 +452,6 @@ CONTAINS
          WRITE(numout,*) '   Namelist : namp4zprod'
          WRITE(numout,*) '      mean Si/C ratio                           grosip       =', grosip
          WRITE(numout,*) '      P-I slope                                 pislopen     =', pislopen
-         WRITE(numout,*) '      Acclimation factor to low light           xadap        =', xadap
          WRITE(numout,*) '      excretion ratio of nanophytoplankton      excretn      =', excretn
          WRITE(numout,*) '      excretion ratio of diatoms                excretd      =', excretd
          WRITE(numout,*) '      basal respiration in phytoplankton        bresp        =', bresp

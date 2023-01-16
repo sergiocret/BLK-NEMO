@@ -118,7 +118,7 @@ CONTAINS
                 !
               zflx = (  tr(ji,jj,ikt,jpgoc,Kbb) * zwsbio4(ji,jj)   &
                 &     + tr(ji,jj,ikt,jppoc,Kbb) * zwsbio3(ji,jj) ) * 1E6
-              zbureff(ji,jj) = 0.013 + 0.53 * zflx**2 / ( 7.0 + zflx )**2
+              zbureff = 0.013 + 0.53 * zflx**2 / ( 7.0 + zflx )**2 * MIN(gdepw(ji,jj,ikt+1,Kmm) / 1000.00, 1.0)
            ENDIF
          END_2D
          !
@@ -251,7 +251,7 @@ CONTAINS
             zfact = zlim * rfact2
             ztrfer = biron(ji,jj,jk) / ( concfediaz + biron(ji,jj,jk) )
             ztrpo4(ji,jj,jk) = tr(ji,jj,jk,jppo4,Kbb) / ( 1E-6 + tr(ji,jj,jk,jppo4,Kbb) )
-            ztrdop(ji,jj,jk) = tr(ji,jj,jk,jpdop,Kbb) / ( 1E-6 + tr(ji,jj,jk,jpdop,Kbb) ) * (1. - ztrpo4(ji,jj,jk))
+            ztrdop(ji,jj,jk) = tr(ji,jj,jk,jpdop,Kbb) / ( 10E-6 + tr(ji,jj,jk,jpdop,Kbb) ) * (1. - ztrpo4(ji,jj,jk))
             ztrdp = ztrpo4(ji,jj,jk) + ztrdop(ji,jj,jk)
             nitrpot(ji,jj,jk) =  zmudia * r1_rday * zfact * MIN( ztrfer, ztrdp ) * zlight(ji,jj,jk)
          END_3D
@@ -288,7 +288,7 @@ CONTAINS
             tr(ji,jj,jk,jpdon,Krhs) = tr(ji,jj,jk,jpdon,Krhs) + zfact * 1.0 / 3.0
             tr(ji,jj,jk,jpdoc,Krhs) = tr(ji,jj,jk,jpdoc,Krhs) + zfact * 1.0 / 3.0
             tr(ji,jj,jk,jpdop,Krhs) = tr(ji,jj,jk,jpdop,Krhs) + 16.0 / 46.0 * zfact / 3.0  &
-            &                     - 16.0 / 46.0 * zfact * ztrdop(ji,jj,jk)   &
+            &                     - 16.0 / 46.0 * zfact  * 2.0 / 3.0  * ztrdop(ji,jj,jk)   &
             &                     / (ztrpo4(ji,jj,jk) + ztrdop(ji,jj,jk) + rtrn)
             tr(ji,jj,jk,jppoc,Krhs) = tr(ji,jj,jk,jppoc,Krhs) + zfact * 1.0 / 3.0 * 2.0 / 3.0
             tr(ji,jj,jk,jppon,Krhs) = tr(ji,jj,jk,jppon,Krhs) + zfact * 1.0 / 3.0 * 2.0 /3.0

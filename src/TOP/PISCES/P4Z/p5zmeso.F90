@@ -106,10 +106,10 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrazing, zfezoo2
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrarem, zgraref, zgrapoc, zgrapof
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgrarep, zgraren, zgrapon, zgrapop
-      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgradoc, zgradon, zgradop
+      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zgradoc, zgradon, zgradop, zgrabsi
       REAL(wp), ALLOCATABLE, DIMENSION(:,:)   ::   zgramigrem, zgramigref, zgramigpoc, zgramigpof
       REAL(wp), ALLOCATABLE, DIMENSION(:,:)   ::   zgramigrep, zgramigren, zgramigpop, zgramigpon
-      REAL(wp), ALLOCATABLE, DIMENSION(:,:)   ::   zgramigdoc, zgramigdop, zgramigdon
+      REAL(wp), ALLOCATABLE, DIMENSION(:,:)   ::   zgramigdoc, zgramigdop, zgramigdon, zgramigbsi
       
 
       !!---------------------------------------------------------------------
@@ -187,7 +187,7 @@ CONTAINS
          ! have low abundance, .i.e. zooplankton become less specific 
          ! to avoid starvation.
          ! ----------------------------------------------------------
-         zsigma = 1.0 - zdenom**3/(0.1**3+zdenom**3)
+         zsigma = 1.0 - zdenom**3/(0.05**3+zdenom**3)
          zsigma = xsigma2 + xsigma2del * zsigma
          ! Nanophytoplankton and diatoms are the only preys considered
          ! to be close enough to have potential interference
@@ -366,7 +366,7 @@ CONTAINS
          !   sinks
          !   --------------------------------------------------------------
          tr(ji,jj,jk,jpmes,Krhs) = tr(ji,jj,jk,jpmes,Krhs) + zepsherv * zgraztotc - zrespirc   &
-         &                     - ztortz - zgrazm
+         &                       - ztortz - zgrazm
          tr(ji,jj,jk,jpdia,Krhs) = tr(ji,jj,jk,jpdia,Krhs) - zgrazdc
          tr(ji,jj,jk,jpndi,Krhs) = tr(ji,jj,jk,jpndi,Krhs) - zgrazdn
          tr(ji,jj,jk,jppdi,Krhs) = tr(ji,jj,jk,jppdi,Krhs) - zgrazdp
@@ -379,7 +379,7 @@ CONTAINS
          tr(ji,jj,jk,jpnch,Krhs) = tr(ji,jj,jk,jpnch,Krhs) - zgraznc * tr(ji,jj,jk,jpnch,Kbb) / ( tr(ji,jj,jk,jpphy,Kbb) + rtrn )
          tr(ji,jj,jk,jpdch,Krhs) = tr(ji,jj,jk,jpdch,Krhs) - zgrazdc * tr(ji,jj,jk,jpdch,Kbb) / ( tr(ji,jj,jk,jpdia,Kbb) + rtrn )
          tr(ji,jj,jk,jpdsi,Krhs) = tr(ji,jj,jk,jpdsi,Krhs) - zgrazdc * tr(ji,jj,jk,jpdsi,Kbb) / ( tr(ji,jj,jk,jpdia,Kbb) + rtrn )
-         tr(ji,jj,jk,jpgsi,Krhs) = tr(ji,jj,jk,jpgsi,Krhs) + zgrazdc * tr(ji,jj,jk,jpdsi,Kbb) / ( tr(ji,jj,jk,jpdia,Kbb) + rtrn )
+         zgrabsi(ji,jj,jk)       = zgrazdc * tr(ji,jj,jk,jpdsi,Kbb) / ( tr(ji,jj,jk,jpdia,Kbb) + rtrn )
 
          tr(ji,jj,jk,jppoc,Krhs) = tr(ji,jj,jk,jppoc,Krhs) - zgrazpoc - zgrazffep + zfracc
          prodpoc(ji,jj,jk) = prodpoc(ji,jj,jk) + zfracc
@@ -415,13 +415,13 @@ CONTAINS
       IF( ln_dvm_meso ) THEN
           ALLOCATE( zgramigrem(jpi,jpj), zgramigref(jpi,jpj), zgramigpoc(jpi,jpj), zgramigpof(jpi,jpj) )
           ALLOCATE( zgramigrep(jpi,jpj), zgramigren(jpi,jpj), zgramigpop(jpi,jpj), zgramigpon(jpi,jpj) )
-          ALLOCATE( zgramigdoc(jpi,jpj), zgramigdon(jpi,jpj), zgramigdop(jpi,jpj) )
+          ALLOCATE( zgramigdoc(jpi,jpj), zgramigdon(jpi,jpj), zgramigdop(jpi,jpj), zgramigbsi(jpi,jpj) )
           zgramigrem(:,:)  = 0.0   ;   zgramigref(:,:) = 0.0
           zgramigrep(:,:)  = 0.0   ;   zgramigren(:,:) = 0.0
           zgramigpoc(:,:)  = 0.0   ;   zgramigpof(:,:) = 0.0
           zgramigpop(:,:)  = 0.0   ;   zgramigpon(:,:) = 0.0
           zgramigdoc(:,:)  = 0.0   ;   zgramigdon(:,:) = 0.0
-          zgramigdop(:,:)  = 0.0   
+          zgramigdop(:,:)  = 0.0   ;   zgramigbsi(:,:) = 0.0 
                  
           ! Compute the amount of materials that will go into vertical migration
           ! This fraction is sumed over the euphotic zone and is removed from 
@@ -442,6 +442,8 @@ CONTAINS
                 zgramigdoc(ji,jj) = zgramigdoc(ji,jj) + xfracmig * zgradoc(ji,jj,jk) * zmigthick
                 zgramigdop(ji,jj) = zgramigdop(ji,jj) + xfracmig * zgradop(ji,jj,jk) * zmigthick
                 zgramigdon(ji,jj) = zgramigdon(ji,jj) + xfracmig * zgradon(ji,jj,jk) * zmigthick
+                zgramigbsi(ji,jj) = zgramigbsi(ji,jj) + xfracmig * zgrabsi(ji,jj,jk) * zmigthick
+
 
                 zgrarem(ji,jj,jk)  = zgrarem(ji,jj,jk) * ( (1.0 - xfracmig) + xfracmig * zmigreltime )
                 zgrarep(ji,jj,jk)  = zgrarep(ji,jj,jk) * ( (1.0 - xfracmig) + xfracmig * zmigreltime )
@@ -454,6 +456,7 @@ CONTAINS
                 zgradoc(ji,jj,jk)  = zgradoc(ji,jj,jk) * ( (1.0 - xfracmig) + xfracmig * zmigreltime )
                 zgradop(ji,jj,jk)  = zgradop(ji,jj,jk) * ( (1.0 - xfracmig) + xfracmig * zmigreltime )
                 zgradon(ji,jj,jk)  = zgradon(ji,jj,jk) * ( (1.0 - xfracmig) + xfracmig * zmigreltime )
+                zgrabsi(ji,jj,jk)  = zgrabsi(ji,jj,jk) * ( (1.0 - xfracmig) + xfracmig * zmigreltime )
              ENDIF
           END_3D
 
@@ -475,6 +478,7 @@ CONTAINS
                  zgradoc(ji,jj,jkt) = zgradoc(ji,jj,jkt) + zgramigdoc(ji,jj) * zdep
                  zgradop(ji,jj,jkt) = zgradop(ji,jj,jkt) + zgramigdop(ji,jj) * zdep 
                  zgradon(ji,jj,jkt) = zgradon(ji,jj,jkt) + zgramigdon(ji,jj) * zdep 
+                 zgrabsi(ji,jj,jkt) = zgrabsi(ji,jj,jkt) + zgramigbsi(ji,jj) * zdep
               ENDIF
           END_2D
                    !
@@ -482,7 +486,7 @@ CONTAINS
           ! ------------------------------
           DEALLOCATE( zgramigrem, zgramigref, zgramigpoc, zgramigpof )
           DEALLOCATE( zgramigrep, zgramigren, zgramigpop, zgramigpon )
-          DEALLOCATE( zgramigdoc, zgramigdon, zgramigdop )
+          DEALLOCATE( zgramigdoc, zgramigdon, zgramigdop, zgramigbsi )
          ! End of the ln_dvm_meso part
       ENDIF
 
@@ -510,6 +514,7 @@ CONTAINS
          tr(ji,jj,jk,jpgon,Krhs) = tr(ji,jj,jk,jpgon,Krhs) + zgrapon(ji,jj,jk)
          tr(ji,jj,jk,jpgop,Krhs) = tr(ji,jj,jk,jpgop,Krhs) + zgrapop(ji,jj,jk)
          tr(ji,jj,jk,jpbfe,Krhs) = tr(ji,jj,jk,jpbfe,Krhs) + zgrapof(ji,jj,jk)
+         tr(ji,jj,jk,jpgsi,Krhs) = tr(ji,jj,jk,jpgsi,Krhs) + zgrabsi(ji,jj,jk)
       END_3D
       !
       IF( lk_iomput .AND. knt == nrdttrc ) THEN

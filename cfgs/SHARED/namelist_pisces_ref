@@ -152,7 +152,6 @@
 !-----------------------------------------------------------------------
    pislopen   =  2.       ! P-I slope
    pisloped   =  2.       ! P-I slope  for diatoms
-   xadap      =  0.       ! Adaptation factor to low light
    excretn    =  0.05     ! excretion ratio of phytoplankton
    excretd    =  0.05     ! excretion ratio of diatoms
    bresp      =  0.033    ! Basal respiration rate
@@ -172,7 +171,6 @@
    excretn    =  0.05     ! excretion ratio of phytoplankton
    excretp    =  0.05     ! excretion ratio of picophytoplankton
    excretd    =  0.05     ! excretion ratio of diatoms
-   xadap      =  0.       ! Adaptation factor to low light
    bresp      =  0.02     ! Basal respiration rate
    thetannm   =  0.3      ! Maximum Chl/N in nanophytoplankton
    thetanpm   =  0.3      ! Maximum Chl/N in picophytoplankton

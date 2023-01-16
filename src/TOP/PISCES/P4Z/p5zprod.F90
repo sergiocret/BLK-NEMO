@@ -77,11 +77,11 @@ CONTAINS
       REAL(wp) ::   zsilfac, znanotot, zpicotot, zdiattot, zconctemp, zconctemp2
       REAL(wp) ::   zration, zratiop, zratiof, zmax, ztn, zadap
       REAL(wp) ::   zpronmax, zpropmax, zprofmax, zratio
-      REAL(wp) ::   zlim, zsilfac2, zsiborn, zprod, zprontot, zproptot, zprodtot
+      REAL(wp) ::   zlim, zsiborn, zprod, zprontot, zproptot, zprodtot
       REAL(wp) ::   zproddoc, zproddon, zproddop, zprodsil, zprodfer, zprodlig, zresptot     
       REAL(wp) ::   zprnutmax, zprochln, zprochld, zprochlp
       REAL(wp) ::   zpislopen, zpislopep, zpisloped
-      REAL(wp) ::   zval, zpptot, zpnewtot, zpregtot
+      REAL(wp) ::   zval, zpptot, zpnewtot, zpregtot, zpo4tot
       REAL(wp) ::   zqfpmax, zqfnmax, zqfdmax
       REAL(wp) ::   zfact, zrfact2, zmaxsi, zratiosi, zsizetmp, zlimfac, zsilim
       CHARACTER (len=25) :: charout
@@ -96,7 +96,6 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zproregn, zproregp, zproregd
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zpropo4n, zpropo4p, zpropo4d
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zprodopn, zprodopp, zprodopd
-      REAL(wp), DIMENSION(jpi,jpj,jpk) :: zrespn, zrespp, zrespd
       REAL(wp), DIMENSION(jpi,jpj,jpk) :: zmxl_fac, zmxl_chl
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) :: zpligprod
       !!---------------------------------------------------------------------
@@ -112,7 +111,6 @@ CONTAINS
       zprdia  (:,:,:) = 0._wp ; zprpic  (:,:,:) = 0._wp ; zprbio  (:,:,:) = 0._wp
       zprodopn(:,:,:) = 0._wp ; zprodopp(:,:,:) = 0._wp ; zprodopd(:,:,:) = 0._wp
       zysopt  (:,:,:) = 0._wp 
-      zrespn  (:,:,:) = 0._wp ; zrespp  (:,:,:) = 0._wp ; zrespd  (:,:,:) = 0._wp 
       zmxl_fac(:,:,:) = 0._wp ; zmxl_chl(:,:,:) = 0._wp
 
       ! Computation of the optimal production rates and nutrient uptake
@@ -134,8 +132,9 @@ CONTAINS
 
          DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
             IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN
+               zval = 24.
                IF( gdepw(ji,jj,jk+1,Kmm) <= hmld(ji,jj) ) THEN
-                  zval = MIN(1., heup_01(ji,jj) / ( hmld(ji,jj) + rtrn ))
+                  zval = zval * MIN(1., heup_01(ji,jj) / ( hmld(ji,jj) + rtrn ))
                ENDIF
                zmxl_chl(ji,jj,jk) = zval / 24.
                zmxl_fac(ji,jj,jk) = 1.0 - exp( -0.26 * zval )
@@ -168,17 +167,14 @@ CONTAINS
       ! The formulation proposed by Geider et al. (1997) has been used.
       DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
          IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN
-            ! Computation of the P-I slope for nanos and diatoms
-            ztn         = MAX( 0., ts(ji,jj,jk,jp_tem,Kmm) - 15. )
-            zadap       = xadap * ztn / ( 2.+ ztn )
             !
             ! Nanophytoplankton
             zpislopeadn(ji,jj,jk) = pislopen * tr(ji,jj,jk,jpnch,Kbb)    &
             &                       /( tr(ji,jj,jk,jpphy,Kbb) * 12. + rtrn)
 
             ! Picophytoplankton
-            zpislopeadp(ji,jj,jk) = pislopep * ( 1. + zadap * EXP( -0.25 * epico(ji,jj,jk) ) )   &
-            &                       * tr(ji,jj,jk,jppch,Kbb) /( tr(ji,jj,jk,jppic,Kbb) * 12. + rtrn)
+            zpislopeadp(ji,jj,jk) = pislopep * tr(ji,jj,jk,jppch,Kbb)    &
+            &                       /( tr(ji,jj,jk,jppic,Kbb) * 12. + rtrn)
 
             ! Diatoms
             zpislopeadd(ji,jj,jk) = pisloped * tr(ji,jj,jk,jpdch,Kbb)    &
@@ -191,9 +187,9 @@ CONTAINS
             ! Computation of production function for Carbon
             ! Actual light levels are used here 
             !  ---------------------------------------------
-            zprbio(ji,jj,jk) = zprbio(ji,jj,jk) * ( 1.- EXP( -zpislopen * enano(ji,jj,jk) / zmxl_fac(ji,jj,jk) )  )
-            zprpic(ji,jj,jk) = zprpic(ji,jj,jk) * ( 1.- EXP( -zpislopep * epico(ji,jj,jk) / zmxl_fac(ji,jj,jk) )  )
-            zprdia(ji,jj,jk) = zprdia(ji,jj,jk) * ( 1.- EXP( -zpisloped * ediat(ji,jj,jk) / zmxl_fac(ji,jj,jk) )  )
+            zprbio(ji,jj,jk) = zprbio(ji,jj,jk) * ( 1.- EXP( -zpislopen * enano(ji,jj,jk) ) )
+            zprpic(ji,jj,jk) = zprpic(ji,jj,jk) * ( 1.- EXP( -zpislopep * epico(ji,jj,jk) ) )
+            zprdia(ji,jj,jk) = zprdia(ji,jj,jk) * ( 1.- EXP( -zpisloped * ediat(ji,jj,jk) ) )
 
             !  Computation of production function for Chlorophyll
             !  Mean light level in the mixed layer (when appropriate)
@@ -203,6 +199,7 @@ CONTAINS
             zpislopen = zpislopen * zmxl_fac(ji,jj,jk) / ( zmxl_chl(ji,jj,jk) + rtrn )
             zpisloped = zpisloped * zmxl_fac(ji,jj,jk) / ( zmxl_chl(ji,jj,jk) + rtrn )
             zpislopep = zpislopep * zmxl_fac(ji,jj,jk) / ( zmxl_chl(ji,jj,jk) + rtrn )
+
             zprchln(ji,jj,jk) = zprmaxn(ji,jj,jk) * ( 1.- EXP( -zpislopen * enanom(ji,jj,jk) )  )
             zprchlp(ji,jj,jk) = zprmaxp(ji,jj,jk) * ( 1.- EXP( -zpislopep * epicom(ji,jj,jk) )  )
             zprchld(ji,jj,jk) = zprmaxd(ji,jj,jk) * ( 1.- EXP( -zpisloped * ediatm(ji,jj,jk) )  )
@@ -215,7 +212,7 @@ CONTAINS
             ! ------------------------
             ! Si/C increases with iron stress and silicate availability (zsilfac)
             ! Si/C is arbitrariliy increased for very high Si concentrations
-            ! to mimic the very high ratios observed in the Southern Ocean (zsilfac2)
+            ! to mimic the very high ratios observed in the Southern Ocean (zsilfac)
             ! A parameterization derived from Flynn (2003) is used for the control
             ! when Si is not limiting which is similar to the parameterisation
             ! proposed by Gurney and Davidson (1999).
@@ -224,29 +221,31 @@ CONTAINS
             zsilim = xlimdia(ji,jj,jk) * zprdia(ji,jj,jk) / ( zprmaxd(ji,jj,jk) + rtrn )
             zsiborn = tr(ji,jj,jk,jpsil,Kbb) * tr(ji,jj,jk,jpsil,Kbb) * tr(ji,jj,jk,jpsil,Kbb)
             IF (gphit(ji,jj) < -30 ) THEN
-              zsilfac2 = 1. + 1. * zsiborn / ( zsiborn + xksi2**3 )
+              zsilfac = 1. + 1. * zsiborn / ( zsiborn + xksi2**3 )
             ELSE
-              zsilfac2 = 1.
+              zsilfac = 1.
             ENDIF
-            zratiosi = 1.0 - tr(ji,jj,jk,jpdsi,Kbb) / ( tr(ji,jj,jk,jpdia,Kbb) + rtrn ) / ( zsilfac2 * grosip * 3.0 + rtrn )
+            zratiosi = 1.0 - tr(ji,jj,jk,jpdsi,Kbb) / ( tr(ji,jj,jk,jpdia,Kbb) + rtrn ) / ( zsilfac * grosip * 3.0 + rtrn )
             zratiosi = MAX(0., MIN(1.0, zratiosi) )
             zmaxsi  = (1.0 + 0.1**4) * zratiosi**4 / ( zratiosi**4 + 0.1**4 )
             IF ( xlimsi(ji,jj,jk) /= xlimdia(ji,jj,jk) ) THEN
-               zysopt(ji,jj,jk) = zlim * zsilfac2 * grosip * 1.0 * zmaxsi
+               zysopt(ji,jj,jk) = zlim * zsilfac * grosip * 1.0 * zmaxsi
             ELSE
-               zysopt(ji,jj,jk) = zlim * zsilfac2 * grosip * 1.0 * zsilim**0.7 * zmaxsi
+               zysopt(ji,jj,jk) = zlim * zsilfac * grosip * 1.0 * zsilim**0.7 * zmaxsi
             ENDIF
          ENDIF
       END_3D
 
-      !  Sea-ice effect on production
+      ! Sea-ice effect on production
       ! No production is assumed below sea ice
-      ! -------------------------------------- 
+      ! --------------------------------------
       DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
-         zprbio(ji,jj,jk)  = zprbio(ji,jj,jk) * ( 1. - fr_i(ji,jj) )
-         zprpic(ji,jj,jk)  = zprpic(ji,jj,jk) * ( 1. - fr_i(ji,jj) ) 
-         zprdia(ji,jj,jk)  = zprdia(ji,jj,jk) * ( 1. - fr_i(ji,jj) ) 
-         zprnut(ji,jj,jk)  = zprnut(ji,jj,jk) * ( 1. - fr_i(ji,jj) )
+         IF( etot_ndcy(ji,jj,jk) > 1.E-3 ) THEN
+            zprbio(ji,jj,jk) = zprbio(ji,jj,jk) * (1.0 - fr_i(ji,jj) )
+            zprdia(ji,jj,jk) = zprdia(ji,jj,jk) * (1.0 - fr_i(ji,jj) )
+            zprpic(ji,jj,jk) = zprpic(ji,jj,jk) * (1.0 - fr_i(ji,jj) )
+            zprnut(ji,jj,jk) = zprnut(ji,jj,jk) * (1.0 - fr_i(ji,jj) )
+         ENDIF
       END_3D
 
       ! Computation of the various production and uptake terms of nanophytoplankton 
@@ -429,9 +428,11 @@ CONTAINS
 
       !   Update the arrays TRA which contain the biological sources and sinks
       DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
-        zpptot   = zpropo4n(ji,jj,jk) + zpropo4d(ji,jj,jk) + zpropo4p(ji,jj,jk)
+        zpo4tot  = zpropo4n(ji,jj,jk) + zpropo4d(ji,jj,jk) + zpropo4p(ji,jj,jk)
         zpnewtot = zpronewn(ji,jj,jk) + zpronewd(ji,jj,jk) + zpronewp(ji,jj,jk)
         zpregtot = zproregn(ji,jj,jk) + zproregd(ji,jj,jk) + zproregp(ji,jj,jk)
+
+        zpptot   = zprorcap(ji,jj,jk) + zprorcan(ji,jj,jk) + zprorcad(ji,jj,jk)
 
         zprontot = zpronewn(ji,jj,jk) + zproregn(ji,jj,jk)
         zproptot = zpronewp(ji,jj,jk) + zproregp(ji,jj,jk)
@@ -448,17 +449,15 @@ CONTAINS
         zproddon =  excretd * zprodtot + excretn * zprontot + excretp * zproptot
 
         zprodfer = texcretn * zprofen(ji,jj,jk) + texcretd * zprofed(ji,jj,jk) + texcretp * zprofep(ji,jj,jk)
-        zresptot = zrespn(ji,jj,jk) + zrespp(ji,jj,jk) + zrespd(ji,jj,jk) 
         !
-        tr(ji,jj,jk,jppo4,Krhs) = tr(ji,jj,jk,jppo4,Krhs) - zpptot
+        tr(ji,jj,jk,jppo4,Krhs) = tr(ji,jj,jk,jppo4,Krhs) - zpo4tot
         tr(ji,jj,jk,jpno3,Krhs) = tr(ji,jj,jk,jpno3,Krhs) - zpnewtot
         tr(ji,jj,jk,jpnh4,Krhs) = tr(ji,jj,jk,jpnh4,Krhs) - zpregtot  
         !
         tr(ji,jj,jk,jpphy,Krhs) = tr(ji,jj,jk,jpphy,Krhs)         &
            &                     + zprorcan(ji,jj,jk) * texcretn  &
            &                     - xpsino3 * zpronewn(ji,jj,jk)   &
-           &                     - xpsinh4 * zproregn(ji,jj,jk)   &
-           &                     - zrespn(ji,jj,jk) 
+           &                     - xpsinh4 * zproregn(ji,jj,jk)   
 
         tr(ji,jj,jk,jpnph,Krhs) = tr(ji,jj,jk,jpnph,Krhs) + zprontot * texcretn
         tr(ji,jj,jk,jppph,Krhs) = tr(ji,jj,jk,jppph,Krhs) + ( zpropo4n(ji,jj,jk) + zprodopn(ji,jj,jk) ) * texcretn
@@ -468,8 +467,7 @@ CONTAINS
         tr(ji,jj,jk,jppic,Krhs) = tr(ji,jj,jk,jppic,Krhs)         &
            &                     + zprorcap(ji,jj,jk) * texcretp  &
            &                     - xpsino3 * zpronewp(ji,jj,jk)   &
-           &                     - xpsinh4 * zproregp(ji,jj,jk)   &
-           &                     - zrespp(ji,jj,jk) 
+           &                     - xpsinh4 * zproregp(ji,jj,jk)   
 
         tr(ji,jj,jk,jpnpi,Krhs) = tr(ji,jj,jk,jpnpi,Krhs) + zproptot * texcretp
         tr(ji,jj,jk,jpppi,Krhs) = tr(ji,jj,jk,jpppi,Krhs) + ( zpropo4p(ji,jj,jk) + zprodopp(ji,jj,jk) ) * texcretp
@@ -479,8 +477,7 @@ CONTAINS
         tr(ji,jj,jk,jpdia,Krhs) = tr(ji,jj,jk,jpdia,Krhs)         &
            &                    + zprorcad(ji,jj,jk) * texcretd   &
            &                    - xpsino3 * zpronewd(ji,jj,jk)    &
-           &                    - xpsinh4 * zproregd(ji,jj,jk)    &
-           &                    - zrespd(ji,jj,jk) 
+           &                    - xpsinh4 * zproregd(ji,jj,jk)    
 
         tr(ji,jj,jk,jpndi,Krhs) = tr(ji,jj,jk,jpndi,Krhs) + zprodtot * texcretd
         tr(ji,jj,jk,jppdi,Krhs) = tr(ji,jj,jk,jppdi,Krhs) + ( zpropo4d(ji,jj,jk) + zprodopd(ji,jj,jk) ) * texcretd
@@ -491,7 +488,7 @@ CONTAINS
         tr(ji,jj,jk,jpdop,Krhs) = tr(ji,jj,jk,jpdop,Krhs) + zproddop
   
         tr(ji,jj,jk,jpoxy,Krhs) = tr(ji,jj,jk,jpoxy,Krhs) &
-           &                     + o2ut * zpregtot + ( o2ut + o2nit ) * zpnewtot - o2ut * zresptot 
+           &                     + o2ut * zpregtot + ( o2ut + o2nit ) * zpnewtot
 
         tr(ji,jj,jk,jpfer,Krhs) = tr(ji,jj,jk,jpfer,Krhs) - zprodfer
         consfe3(ji,jj,jk)       = zprodfer * 75.0 / ( rtrn + ( plig(ji,jj,jk) + 75.0 * (1.0 - plig(ji,jj,jk) ) )   &
@@ -524,14 +521,19 @@ CONTAINS
 
     ! Total primary production per year
     IF( iom_use( "tintpp" ) .OR. ( ln_check_mass .AND. kt == nitend .AND. knt == nrdttrc )  )  &
-      & tpp = glob_sum( 'p5zprod', ( zprorcan(:,:,:) + zprorcad(:,:,:) + zprorcap(:,:,:) ) * cvol(:,:,:) )
+      & tpp = glob_sum( 'p5zprod', ( ( zprorcan(:,:,:) - xpsino3 * zpronewn(:,:,:) - xpsinh4 * zproregn(:,:,:)  &
+              &                      + zprorcad(:,:,:) - xpsino3 * zpronewd(:,:,:) - xpsinh4 * zproregd(:,:,:)  &
+              &                      + zprorcap(:,:,:) - xpsino3 * zpronewp(:,:,:) - xpsinh4 * zproregp(:,:,:) ) * cvol(:,:,:) ) )
 
     IF( lk_iomput .AND.  knt == nrdttrc ) THEN
        zfact = 1.e+3 * rfact2r  !  conversion from mol/l/kt to  mol/m3/s
        !
-       CALL iom_put( "PPPHYP"  , zprorcap(:,:,:) * zfact * tmask(:,:,:)   ) ! primary production by picophyto
-       CALL iom_put( "PPPHYN"  , zprorcan(:,:,:) * zfact * tmask(:,:,:) )  ! primary production by nanophyto
-       CALL iom_put( "PPPHYD"  , zprorcad(:,:,:) * zfact * tmask(:,:,:)   ) ! primary production by diatomes
+       CALL iom_put( "GPPHYP"  , zprorcap(:,:,:) * zfact * tmask(:,:,:) ) ! primary production by picophyto
+       CALL iom_put( "GPPHYN"  , zprorcan(:,:,:) * zfact * tmask(:,:,:) )  ! primary production by nanophyto
+       CALL iom_put( "GPPHYD"  , zprorcad(:,:,:) * zfact * tmask(:,:,:) ) ! primary production by diatomes
+       CALL iom_put( "PPPHYP"  , ( zprorcap(:,:,:) - xpsino3 * zpronewp(:,:,:) - xpsinh4 * zproregp(:,:,:) ) * zfact * tmask(:,:,:) ) ! primary production by picophyto
+       CALL iom_put( "PPPHYN"  , ( zprorcan(:,:,:) - xpsino3 * zpronewn(:,:,:) - xpsinh4 * zproregn(:,:,:) ) * zfact * tmask(:,:,:) )  ! primary production by nanophyto
+       CALL iom_put( "PPPHYD"  , ( zprorcad(:,:,:) - xpsino3 * zpronewd(:,:,:) - xpsinh4 * zproregd(:,:,:) ) * zfact * tmask(:,:,:) ) ! primary production by diatomes
        CALL iom_put( "PPNEWN"  , zpronewp(:,:,:) * zfact * tmask(:,:,:)    ) ! new primary production by picophyto
        CALL iom_put( "PPNEWN"  , zpronewn(:,:,:) * zfact * tmask(:,:,:)    ) ! new primary production by nanophyto
        CALL iom_put( "PPNEWD"  , zpronewd(:,:,:) * zfact * tmask(:,:,:)   ) ! new primary production by diatomes
@@ -590,7 +592,7 @@ CONTAINS
       INTEGER :: ios    ! Local integer output status for namelist read
       !!
       NAMELIST/namp5zprod/ pislopen, pislopep, pisloped, excretn, excretp, excretd,     &
-         &                 thetannm, thetanpm, thetandm, chlcmin, grosip, bresp, xadap
+         &                 thetannm, thetanpm, thetandm, chlcmin, grosip, bresp
       !!----------------------------------------------------------------------
 
       READ  ( numnatp_ref, namp5zprod, IOSTAT = ios, ERR = 901)
@@ -608,7 +610,6 @@ CONTAINS
          WRITE(numout,*) '    P-I slope                                 pislopen     =', pislopen
          WRITE(numout,*) '    P-I slope  for diatoms                    pisloped     =', pisloped
          WRITE(numout,*) '    P-I slope  for picophytoplankton          pislopep     =', pislopep
-         WRITE(numout,*) '    Acclimation factor to low light           xadap        =', xadap
          WRITE(numout,*) '    excretion ratio of nanophytoplankton      excretn      =', excretn
          WRITE(numout,*) '    excretion ratio of picophytoplankton      excretp      =', excretp
          WRITE(numout,*) '    excretion ratio of diatoms                excretd      =', excretd
