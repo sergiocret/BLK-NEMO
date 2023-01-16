@@ -319,7 +319,7 @@ CONTAINS
       REAL(wp), DIMENSION(A2D(nn_hls))  :: z2d
       !!----------------------------------------------------------------------
 
-      z2d(:,:) = puflx(:,:,1)
+      z2d(:,:) = 0._wp
       DO_3D( 0, 0, 0, 0, 1, jpkm1 )
          z2d(ji,jj) = z2d(ji,jj) + puflx(ji,jj,jk)
       END_3D
