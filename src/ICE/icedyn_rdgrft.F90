@@ -301,8 +301,9 @@ CONTAINS
       !! ** Method  :   Compute the thickness distribution of the ice and open water
       !!                participating in ridging and of the resulting ridges.
       !!-------------------------------------------------------------------
-      REAL(wp), DIMENSION(:)  , INTENT(in) ::   pato_i, pclosing_net
-      REAL(wp), DIMENSION(:,:), INTENT(in) ::   pa_i, pv_i
+      REAL(wp), DIMENSION(:,:), INTENT(in)           ::   pa_i, pv_i
+      REAL(wp), DIMENSION(:)  , INTENT(in)           ::   pato_i
+      REAL(wp), DIMENSION(:)  , INTENT(in), OPTIONAL ::   pclosing_net
       !!
       INTEGER  ::   ji, jl                     ! dummy loop indices
       REAL(wp) ::   z1_gstar, z1_astar, zhmean, zfac   ! local scalar
@@ -464,39 +465,43 @@ CONTAINS
          END DO
       END DO
       !
-      ! 3) closing_gross
-      !-----------------
-      ! Based on the ITD of ridging and ridged ice, convert the net closing rate to a gross closing rate.
-      ! NOTE: 0 < aksum <= 1
-      WHERE( zaksum(1:npti) > epsi10 )   ;   closing_gross(1:npti) = pclosing_net(1:npti) / zaksum(1:npti)
-      ELSEWHERE                          ;   closing_gross(1:npti) = 0._wp
-      END WHERE
-
-      ! correction to closing rate if excessive ice removal
-      !----------------------------------------------------
-      ! Reduce the closing rate if more than 100% of any ice category would be removed
-      ! Reduce the opening rate in proportion
-      DO jl = 1, jpl
+      IF( PRESENT( pclosing_net ) ) THEN
+         !
+         ! 3) closing_gross
+         !-----------------
+         ! Based on the ITD of ridging and ridged ice, convert the net closing rate to a gross closing rate.
+         ! NOTE: 0 < aksum <= 1
+         WHERE( zaksum(1:npti) > epsi10 )   ;   closing_gross(1:npti) = pclosing_net(1:npti) / zaksum(1:npti)
+         ELSEWHERE                          ;   closing_gross(1:npti) = 0._wp
+         END WHERE
+         
+         ! correction to closing rate if excessive ice removal
+         !----------------------------------------------------
+         ! Reduce the closing rate if more than 100% of any ice category would be removed
+         ! Reduce the opening rate in proportion
+         DO jl = 1, jpl
+            DO ji = 1, npti
+               zfac = apartf(ji,jl) * closing_gross(ji) * rDt_ice
+               IF( zfac > pa_i(ji,jl) .AND. apartf(ji,jl) /= 0._wp ) THEN
+                  closing_gross(ji) = pa_i(ji,jl) / apartf(ji,jl) * r1_Dt_ice
+               ENDIF
+            END DO
+         END DO
+         
+         ! 4) correction to opening if excessive open water removal
+         !---------------------------------------------------------
+         ! Reduce the closing rate if more than 100% of the open water would be removed
+         ! Reduce the opening rate in proportion
          DO ji = 1, npti
-            zfac = apartf(ji,jl) * closing_gross(ji) * rDt_ice
-            IF( zfac > pa_i(ji,jl) .AND. apartf(ji,jl) /= 0._wp ) THEN
-               closing_gross(ji) = pa_i(ji,jl) / apartf(ji,jl) * r1_Dt_ice
+            zfac = pato_i(ji) + ( opning(ji) - apartf(ji,0) * closing_gross(ji) ) * rDt_ice
+            IF( zfac < 0._wp ) THEN           ! would lead to negative ato_i
+               opning(ji) = apartf(ji,0) * closing_gross(ji) - pato_i(ji) * r1_Dt_ice
+            ELSEIF( zfac > zasum(ji) ) THEN   ! would lead to ato_i > asum
+               opning(ji) = apartf(ji,0) * closing_gross(ji) + ( zasum(ji) - pato_i(ji) ) * r1_Dt_ice
             ENDIF
          END DO
-      END DO
-
-      ! 4) correction to opening if excessive open water removal
-      !---------------------------------------------------------
-      ! Reduce the closing rate if more than 100% of the open water would be removed
-      ! Reduce the opening rate in proportion
-      DO ji = 1, npti
-         zfac = pato_i(ji) + ( opning(ji) - apartf(ji,0) * closing_gross(ji) ) * rDt_ice
-         IF( zfac < 0._wp ) THEN           ! would lead to negative ato_i
-            opning(ji) = apartf(ji,0) * closing_gross(ji) - pato_i(ji) * r1_Dt_ice
-         ELSEIF( zfac > zasum(ji) ) THEN   ! would lead to ato_i > asum
-            opning(ji) = apartf(ji,0) * closing_gross(ji) + ( zasum(ji) - pato_i(ji) ) * r1_Dt_ice
-         ENDIF
-      END DO
+         !
+      ENDIF
       !
    END SUBROUTINE rdgrft_prep
 
@@ -824,7 +829,7 @@ CONTAINS
             CALL tab_2d_1d( npti, nptidx(1:npti), ato_i_1d(1:npti)      , ato_i )
             CALL tab_2d_1d( npti, nptidx(1:npti), zstrength(1:npti)     , strength )
 
-            CALL rdgrft_prep( a_i_2d, v_i_2d, ato_i_1d, closing_net )
+            CALL rdgrft_prep( a_i_2d, v_i_2d, ato_i_1d )
             !
             zaksum(1:npti) = apartf(1:npti,0) !clem: aksum should be defined in the header => local to module
             DO jl = 1, jpl
