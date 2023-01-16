@@ -82,13 +82,16 @@ CONTAINS
       ! Parameterization from Pham and Ito (2018)
       ! -------------------------------------------------
       xfecolagg(:,:,:) = ligand * 1E9 + MAX(0., chemo2(:,:,:) - tr(:,:,:,jpoxy,Kbb) ) / 400.E-6
-      IF( ln_ligvar ) THEN
-         ztotlig(:,:,:) =  0.09 * 0.667 * tr(:,:,:,jpdoc,Kbb) * 1E6 + xfecolagg(:,:,:)
-         ztotlig(:,:,:) =  MIN( ztotlig(:,:,:), 10. )
-      ELSE
-        IF( ln_ligand ) THEN  ;   ztotlig(:,:,:) = tr(:,:,:,jplgw,Kbb) * 1E9
-        ELSE                  ;   ztotlig(:,:,:) = ligand * 1E9 
-        ENDIF
+      !
+      IF( ln_ligand ) THEN  
+         ztotlig(:,:,:) = tr(:,:,:,jplgw,Kbb) * 1E9
+      ELSE 
+         IF( ln_ligvar ) THEN
+            ztotlig(:,:,:) =  0.09 * 0.667 * tr(:,:,:,jpdoc,Kbb) * 1E6 + xfecolagg(:,:,:)
+            ztotlig(:,:,:) =  MIN( ztotlig(:,:,:), 10. )
+         ELSE
+            ztotlig(:,:,:) = ligand * 1E9 
+         ENDIF
       ENDIF
 
       ! ------------------------------------------------------------
@@ -124,13 +127,22 @@ CONTAINS
       ! prognostic or non variable, all the colloidal fraction is supposed
       ! to coagulate
       ! ----------------------------------------------------------------------
-      IF (ln_ligand) THEN
-         zfecoll(:,:,:) = 0.5 * zFeL1(:,:,:) * MAX(0., tr(:,:,:,jplgw,Kbb) - xfecolagg(:,:,:) * 1.0E-9 ) / ( tr(:,:,:,jplgw,Kbb) + rtrn ) 
+      IF( ln_ligand ) THEN
+         DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
+            zfecoll(ji,jj,jk) = 0.5 * zFeL1(ji,jj,jk) * MAX(0., ztotlig(ji,jj,jk) - xfecolagg(ji,jj,jk) ) &
+                  &              / ( ztotlig(ji,jj,jk) + rtrn )
+         END_3D
       ELSE
-         IF (ln_ligvar) THEN
-            zfecoll(:,:,:) = 0.5 * zFeL1(:,:,:) * MAX(0., tr(:,:,:,jplgw,Kbb) - xfecolagg(:,:,:) * 1.0E-9 ) / ( tr(:,:,:,jplgw,Kbb) + rtrn )   
+         IF( ln_ligvar ) THEN
+            DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
+               zfecoll(ji,jj,jk) = 0.5 * zFeL1(ji,jj,jk) * MAX(0., ztotlig(ji,jj,jk) - xfecolagg(ji,jj,jk) ) &
+                  &              / ( ztotlig(ji,jj,jk) + rtrn )
+            END_3D
          ELSE
-            zfecoll(:,:,:) = 0.5 * zFeL1(:,:,:)
+            DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
+               zfecoll(ji,jj,jk) = 0.5 * zFeL1(ji,jj,jk) * MAX(0., 0.09 * 0.667 * tr(ji,jj,jk,jpdoc,Kbb) * 1E6 ) &
+                  &             / ( ztotlig(ji,jj,jk) + rtrn )
+            END_3D
          ENDIF
       ENDIF
 

@@ -242,24 +242,12 @@ CONTAINS
 
          xfracal(ji,jj,jk) = caco3r * MIN( zlim1, zlim2, zlim3 )                  &
             &                       * ztem1 / ( 0.1 + ztem1 )                     &
-            &                       * MAX( 1., tr(ji,jj,jk,jpphy,Kbb) * 1.e6 / 2. )  &
+            &                       * MAX( 1., tr(ji,jj,jk,jpphy,Kbb) * xsizephy )  &
             &                       * zetot1 * zetot2               &
             &                       * ( 1. + EXP(-ztem2 * ztem2 / 25. ) )         &
             &                       * MIN( 1., 50. / ( hmld(ji,jj) + rtrn ) )
          xfracal(ji,jj,jk) = MIN( 0.8 , xfracal(ji,jj,jk) )
          xfracal(ji,jj,jk) = MAX( 0.02, xfracal(ji,jj,jk) )
-      END_3D
-      !
-      DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
-         ! denitrification factor computed from O2 levels
-         nitrfac(ji,jj,jk) = MAX(  0.e0, 0.4 * ( 6.e-6  - tr(ji,jj,jk,jpoxy,Kbb) )    &
-            &                                / ( oxymin + tr(ji,jj,jk,jpoxy,Kbb) )  )
-         nitrfac(ji,jj,jk) = MIN( 1., nitrfac(ji,jj,jk) )
-         !
-         ! denitrification factor computed from NO3 levels
-         nitrfac2(ji,jj,jk) = MAX( 0.e0,       ( 1.E-6 - tr(ji,jj,jk,jpno3,Kbb) )  &
-            &                                / ( 1.E-6 + tr(ji,jj,jk,jpno3,Kbb) ) )
-         nitrfac2(ji,jj,jk) = MIN( 1., nitrfac2(ji,jj,jk) )
       END_3D
       !
       IF( lk_iomput .AND. knt == nrdttrc ) THEN        ! save output diagnostics

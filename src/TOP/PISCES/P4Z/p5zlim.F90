@@ -482,13 +482,6 @@ CONTAINS
          xfracal(ji,jj,jk) = MAX( 0.02, MIN( 0.8 , xfracal(ji,jj,jk) ) )
       END_3D
       !
-      DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
-         ! denitrification factor computed from O2 levels
-         nitrfac(ji,jj,jk) = MAX(  0.e0, 0.4 * ( 6.e-6  - tr(ji,jj,jk,jpoxy,Kbb) )    &
-            &                                / ( oxymin + tr(ji,jj,jk,jpoxy,Kbb) )  )
-         nitrfac(ji,jj,jk) = MIN( 1., nitrfac(ji,jj,jk) )
-      END_3D
-      !
       IF( lk_iomput .AND. knt == nrdttrc ) THEN        ! save output diagnostics
         CALL iom_put( "xfracal", xfracal(:,:,:) * tmask(:,:,:) )  ! euphotic layer deptht
         CALL iom_put( "LNnut"  , xlimphy(:,:,:) * tmask(:,:,:) )  ! Nutrient limitation term
@@ -610,17 +603,18 @@ CONTAINS
       xpsinh4  = 1.8 * rno3
       xpsiuptk = 1.0 / 6.625
       !
-      nitrfac(:,:,jpk) = 0._wp
-      xfracal(:,:,jpk) = 0._wp
-      xlimphy(:,:,jpk) = 0._wp
-      xlimpic(:,:,jpk) = 0._wp
-      xlimdia(:,:,jpk) = 0._wp
-      xlimnfe(:,:,jpk) = 0._wp
-      xlimpfe(:,:,jpk) = 0._wp
-      xlimdfe(:,:,jpk) = 0._wp
-      sizen  (:,:,jpk) = 0._wp
-      sizep  (:,:,jpk) = 0._wp
-      sized  (:,:,jpk) = 0._wp
+      nitrfac (:,:,jpk) = 0._wp
+      nitrfac2(:,:,jpk) = 0._wp
+      xfracal (:,:,jpk) = 0._wp
+      xlimphy (:,:,jpk) = 0._wp
+      xlimpic (:,:,jpk) = 0._wp
+      xlimdia (:,:,jpk) = 0._wp
+      xlimnfe (:,:,jpk) = 0._wp
+      xlimpfe (:,:,jpk) = 0._wp
+      xlimdfe (:,:,jpk) = 0._wp
+      sizen   (:,:,jpk) = 0._wp
+      sizep   (:,:,jpk) = 0._wp
+      sized   (:,:,jpk) = 0._wp
       !
    END SUBROUTINE p5z_lim_init
 

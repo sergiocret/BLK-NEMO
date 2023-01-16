@@ -118,7 +118,7 @@ CONTAINS
      ! a standard parameterisation with a constant lability
      ! -----------------------------------------------------------------------
      ztremint(:,:,:) = zremigoc(:,:,:)
-     DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 1, jpkm1)
+     DO_3D( nn_hls, nn_hls, nn_hls, nn_hls, 2, jpkm1)
         IF (tmask(ji,jj,jk) == 1.) THEN
           zdep = hmld(ji,jj)
           !
