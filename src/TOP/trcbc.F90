@@ -211,8 +211,8 @@ CONTAINS
                   slf_i(jl)    = sn_trcobc(ib)
                   slf_i(jl)%clvar = TRIM(cn_tronam(jn))
                   rf_trofac(jl) = rn_trofac(jn)
-                                                   ALLOCATE( sf_trcobc(jl,ib)%fnow(nblen,1,jpk)   , STAT=ierr2 )
-                  IF( sn_trcobc(jn,ib)%ln_tint )   ALLOCATE( sf_trcobc(jl,ib)%fdta(nblen,1,jpk,2) , STAT=ierr3 )
+                                                ALLOCATE( sf_trcobc(jl,ib)%fnow(nblen,1,jpk)   , STAT=ierr2 )
+                  IF( sn_trcobc(ib)%ln_tint )   ALLOCATE( sf_trcobc(jl,ib)%fdta(nblen,1,jpk,2) , STAT=ierr3 )
                   IF( ierr2 + ierr3 > 0 ) THEN
                     CALL ctl_stop( 'trc_bc_ini : unable to allocate passive tracer OBC data arrays' )   ;   RETURN
                   ENDIF

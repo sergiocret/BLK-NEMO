@@ -267,7 +267,7 @@ CONTAINS
       tr(:,:,:,:,Kaa) = 0._wp
       !
       IF( ln_bdy ) CALL trc_bdy_ini( jptra )
-      IF( ln_trcbc .AND. lltrcbc )  THEN
+      IF( ln_trcbc .AND. lltrcbc ) THEN
         CALL trc_bc_ini ( jptra, Kmm  )            ! set tracers Boundary Conditions
         CALL trc_bc     ( nit000, Kmm, tr, Kaa )   ! tracers: surface and lateral Boundary Conditions
       ENDIF

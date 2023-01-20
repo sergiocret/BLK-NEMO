@@ -26,7 +26,7 @@ MODULE trcbdy
    IMPLICIT NONE
    PRIVATE
 
-   PUBLIC trc_bdy_ini   ! routine called in trcini.F90
+   PUBLIC trc_bdy_ini  ! routine called in trcini.F90
    PUBLIC trc_bdy      ! routine called in trcnxt.F90 
    PUBLIC trc_bdy_dmp  ! routine called in trcstp.F90 
 
