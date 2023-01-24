@@ -291,7 +291,7 @@ CONTAINS
          ENDIF
       END IF
 
-      ll_bc    = ( ln_trcbc .AND. lltrcbc )  .OR. ln_hydrofe .OR. ln_ironsed .OR. ln_ironice 
+      ll_bc    = ( ln_trcbc .AND. lltrcbc )  .OR. ln_hydrofe .OR. ln_ironsed .OR. ln_ironice .OR. ln_sediment 
       ll_dust  =  ln_trc_sbc(jpfer) .OR. ln_trc_sbc(jppo4) .OR. ln_trc_sbc(jpsil) .OR. ln_sediment
       ll_ndepo =  ln_trc_sbc(jpno3) .OR. ln_trc_sbc(jpnh4)   
       ll_river =  ln_trc_cbc(jpno3)  
