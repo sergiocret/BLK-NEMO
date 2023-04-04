@@ -390,6 +390,7 @@ CONTAINS
 
 #if defined key_agrif
       uu(:,:,:,:) = 0.0_wp   ;   vv(:,:,:,:) = 0.0_wp   ;   ts(:,:,:,:,:) = 0.0_wp   ! needed for interp done at initialization phase
+      uu_b(:,:,:) = 0.0_wp   ;   vv_b(:,:,:) = 0.0_wp
 #endif 
       !                                      ! external forcing 
                            CALL sbc_init( Nbb, Nnn, Naa )  ! Forcings : surface module 
