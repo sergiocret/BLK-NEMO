@@ -113,10 +113,11 @@ CONTAINS
             &              k_top   , k_bot            )                  ! 1st & last ocean level
          !
          ! make sure that periodicities are properly applied 
-         CALL lbc_lnk( 'dom_zgr', gdept_0, 'T', 1._wp, gdepw_0, 'W', 1._wp,                                         &
-            &                       e3t_0, 'T', 1._wp,   e3u_0, 'U', 1._wp,  e3v_0, 'V', 1._wp, e3f_0, 'F', 1._wp,   &
+         CALL lbc_lnk( 'dom_zgr', gdept_0, 'T', 1._wp, gdepw_0, 'W', 1._wp,                     &
+            &                       e3u_0, 'U', 1._wp,  e3v_0, 'V', 1._wp, e3f_0, 'F', 1._wp,   &
             &                       e3w_0, 'W', 1._wp,  e3uw_0, 'U', 1._wp, e3vw_0, 'V', 1._wp,   &   
             &                     kfillmode = jpfillcopy )   ! do not put 0 over closed boundaries
+         CALL lbc_lnk( 'dom_zgr', e3t_0, 'T', 1._dp, kfillmode = jpfillcopy )
          ztopbot(:,:,1) = REAL(k_top, wp)
          ztopbot(:,:,2) = REAL(k_bot, wp)
          CALL lbc_lnk( 'dom_zgr', ztopbot, 'T', 1._wp, kfillmode = jpfillcopy )   ! do not put 0 over closed boundaries
@@ -235,7 +236,8 @@ CONTAINS
       REAL(wp), DIMENSION(:)    , INTENT(out) ::   pdept_1d, pdepw_1d          ! 1D grid-point depth       [m]
       REAL(wp), DIMENSION(:)    , INTENT(out) ::   pe3t_1d , pe3w_1d           ! 1D vertical scale factors [m]
       REAL(wp), DIMENSION(:,:,:), INTENT(out) ::   pdept, pdepw                ! grid-point depth          [m]
-      REAL(wp), DIMENSION(:,:,:), INTENT(out) ::   pe3t , pe3u , pe3v , pe3f   ! vertical scale factors    [m]
+      REAL(wp), DIMENSION(:,:,:), INTENT(out)  :: pe3u, pe3v, pe3f! vertical scale factors    [m]
+      REAL(dp), DIMENSION(:,:,:), INTENT(out)  :: pe3t! vertical scale factors    [m]
       REAL(wp), DIMENSION(:,:,:), INTENT(out) ::   pe3w , pe3uw, pe3vw         !    -       -      -
       INTEGER , DIMENSION(:,:)  , INTENT(out) ::   k_top , k_bot               ! first & last ocean level
       INTEGER                   , INTENT(out) ::   k_mbkuvf                    ! ==1 if mbku, mbkv, mbkf are in file
@@ -286,7 +288,7 @@ CONTAINS
       CALL iom_get( inum, jpdom_unknown, 'e3t_1d'  , pe3t_1d  )                     ! 1D reference coordinate
       CALL iom_get( inum, jpdom_unknown, 'e3w_1d'  , pe3w_1d  )
       !
-      CALL iom_get( inum, jpdom_global, 'e3t_0'  , pe3t , cd_type = 'T', psgn = 1._wp, kfill = jpfillcopy )    ! 3D coordinate
+      CALL iom_get( inum, jpdom_global, 'e3t_0'  , pe3t , cd_type = 'T', psgn = 1._dp, kfill = jpfillcopy )    ! 3D coordinate
       CALL iom_get( inum, jpdom_global, 'e3u_0'  , pe3u , cd_type = 'U', psgn = 1._wp, kfill = jpfillcopy )
       CALL iom_get( inum, jpdom_global, 'e3v_0'  , pe3v , cd_type = 'V', psgn = 1._wp, kfill = jpfillcopy )
       CALL iom_get( inum, jpdom_global, 'e3f_0'  , pe3f , cd_type = 'F', psgn = 1._wp, kfill = jpfillcopy )

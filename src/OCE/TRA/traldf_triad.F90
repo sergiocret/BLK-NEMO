@@ -59,9 +59,9 @@ CONTAINS
       REAL(wp), DIMENSION(:,:,:)  , INTENT(in   ) ::   pahu, pahv ! eddy diffusivity at u- and v-points  [m2/s]
       REAL(wp), DIMENSION(:,:,:)  , INTENT(in   ) ::   pgu , pgv  ! tracer gradient at pstep levels
       REAL(wp), DIMENSION(:,:,:)  , INTENT(in   ) ::   pgui, pgvi ! tracer gradient at top   levels
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pt         ! tracer (kpass=1) or laplacian of tracer (kpass=2)
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pt2        ! tracer (only used in kpass=2)
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(inout) ::   pt_rhs     ! tracer trend
+      REAL(dp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pt         ! tracer (kpass=1) or laplacian of tracer (kpass=2)
+      REAL(dp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pt2        ! tracer (only used in kpass=2)
+      REAL(dp), DIMENSION(:,:,:,:), INTENT(inout) ::   pt_rhs     ! tracer trend
       !!
       CALL tra_ldf_triad_t( kt, Kmm, kit000, cdtype, pahu, pahv, is_tile(pahu),                            &
       &                                              pgu , pgv , is_tile(pgu) , pgui, pgvi, is_tile(pgui), &
@@ -101,9 +101,9 @@ CONTAINS
       REAL(wp), DIMENSION(A2D_T(ktah),   JPK)     , INTENT(in   ) ::   pahu, pahv ! eddy diffusivity at u- and v-points  [m2/s]
       REAL(wp), DIMENSION(A2D_T(ktg),        KJPT), INTENT(in   ) ::   pgu , pgv  ! tracer gradient at pstep levels
       REAL(wp), DIMENSION(A2D_T(ktgi),       KJPT), INTENT(in   ) ::   pgui, pgvi ! tracer gradient at top   levels
-      REAL(wp), DIMENSION(A2D_T(ktt),    JPK,KJPT), INTENT(in   ) ::   pt         ! tracer (kpass=1) or laplacian of tracer (kpass=2)
-      REAL(wp), DIMENSION(A2D_T(ktt2),   JPK,KJPT), INTENT(in   ) ::   pt2        ! tracer (only used in kpass=2)
-      REAL(wp), DIMENSION(A2D_T(ktt_rhs),JPK,KJPT), INTENT(inout) ::   pt_rhs     ! tracer trend
+      REAL(dp), DIMENSION(A2D_T(ktt),    JPK,KJPT), INTENT(in   ) ::   pt         ! tracer (kpass=1) or laplacian of tracer (kpass=2)
+      REAL(dp), DIMENSION(A2D_T(ktt2),   JPK,KJPT), INTENT(in   ) ::   pt2        ! tracer (only used in kpass=2)
+      REAL(dp), DIMENSION(A2D_T(ktt_rhs),JPK,KJPT), INTENT(inout) ::   pt_rhs     ! tracer trend
       !
       INTEGER  ::  ji, jj, jk, jn, kp, iij   ! dummy loop indices
       REAL(wp) ::  zcoef0, ze3w_2, zsign          !   -      -

@@ -2568,7 +2568,7 @@ CONTAINS
       INTEGER            ::   jn, iln
       INTEGER            ::   itrlen
       INTEGER            ::   iyear, imonth, iday, isec
-      REAL(wp)           ::   zsec
+      REAL(dp)           ::   zsec
       LOGICAL            ::   llexist
       TYPE(xios_duration)   ::   output_freq
       !!----------------------------------------------------------------------
@@ -2668,14 +2668,14 @@ CONTAINS
       !!
       !! ** Purpose :   send back the date corresponding to the given julian day
       !!----------------------------------------------------------------------
-      REAL(wp), INTENT(in   )           ::   pjday    ! julian day
+      REAL(dp), INTENT(in   )           ::   pjday    ! julian day
       LOGICAL , INTENT(in   ), OPTIONAL ::   ld24     ! true to force 24:00 instead of 00:00
       LOGICAL , INTENT(in   ), OPTIONAL ::   ldfull   ! true to get the compleate date: yyyymmdd_hh:mm:ss
       !
       CHARACTER(LEN=20) ::   iom_sdate
       CHARACTER(LEN=50) ::   clfmt                         !  format used to write the date
       INTEGER           ::   iyear, imonth, iday, ihour, iminute, isec
-      REAL(wp)          ::   zsec
+      REAL(dp)          ::   zsec
       LOGICAL           ::   ll24, llfull
       !!----------------------------------------------------------------------
       !

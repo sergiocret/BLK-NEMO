@@ -30,6 +30,7 @@ MODULE isfparmlt
 
 
    !! * Substitutions
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"   
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -110,9 +111,9 @@ CONTAINS
       ! compute ptfrz
       ! 1. ------------Mean freezing point
       DO jk = 1,jpk
-         CALL eos_fzp(ts(:,:,jk,jp_sal,Kmm), ztfrz3d(:,:,jk), gdept(:,:,jk,Kmm))
+         CALL eos_fzp(CASTSP(ts(:,:,jk,jp_sal,Kmm)), ztfrz3d(:,:,jk), gdept(:,:,jk,Kmm))
       END DO
-      CALL isf_tbl(Kmm, ztfrz3d, ztfrz, 'T', misfkt_par, rhisf_tbl_par, misfkb_par, rfrac_tbl_par )
+      CALL isf_tbl(Kmm, CASTDP(ztfrz3d), ztfrz, 'T', misfkt_par, rhisf_tbl_par, misfkb_par, rfrac_tbl_par )
       !
       pqfwf(:,:) =   sf_isfpar_fwf(1)%fnow(:,:,1)      ! fresh water flux from the isf (fwfisf <0 mean melting)       ( > 0 from isf to oce)
       pqoce(:,:) = - pqfwf(:,:) * rLfusisf             ! ocean/ice shelf flux assume to be equal to latent heat flux  ( > 0 from isf to oce)
@@ -151,9 +152,9 @@ CONTAINS
       !
       ! 0. ------------Mean freezing point
       DO jk = 1,jpk
-         CALL eos_fzp(ts(:,:,jk,jp_sal,Kmm), ztfrz3d(:,:,jk), gdept(:,:,jk,Kmm))
+         CALL eos_fzp(CASTSP(ts(:,:,jk,jp_sal,Kmm)), ztfrz3d(:,:,jk), gdept(:,:,jk,Kmm))
       END DO
-      CALL isf_tbl(Kmm, ztfrz3d, ztfrz, 'T', misfkt_par, rhisf_tbl_par, misfkb_par, rfrac_tbl_par )
+      CALL isf_tbl(Kmm, CASTDP(ztfrz3d), ztfrz, 'T', misfkt_par, rhisf_tbl_par, misfkb_par, rfrac_tbl_par )
       !
       ! 1. ------------Mean temperature
       CALL isf_tbl(Kmm, ts(:,:,:,jp_tem,Kmm), ztavg, 'T', misfkt_par, rhisf_tbl_par, misfkb_par, rfrac_tbl_par )
@@ -204,9 +205,9 @@ CONTAINS
       !
       ! 1. ------------Mean freezing point (needed for heat content flux)
       DO jk = 1,jpk
-         CALL eos_fzp(ts(:,:,jk,jp_sal,Kmm), ztfrz3d(:,:,jk), gdept(:,:,jk,Kmm))
+         CALL eos_fzp(CASTSP(ts(:,:,jk,jp_sal,Kmm)), ztfrz3d(:,:,jk), gdept(:,:,jk,Kmm))
       END DO
-      CALL isf_tbl(Kmm, ztfrz3d, ztfrz, 'T', misfkt_par, rhisf_tbl_par, misfkb_par, rfrac_tbl_par )
+      CALL isf_tbl(Kmm, CASTDP(ztfrz3d), ztfrz, 'T', misfkt_par, rhisf_tbl_par, misfkb_par, rfrac_tbl_par )
       !
       ! 2. ------------Scale isf melt pattern with total amount from oasis
       ! ice shelf 2d map of fwf from isf to oce

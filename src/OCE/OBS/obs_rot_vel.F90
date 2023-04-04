@@ -57,7 +57,7 @@ CONTAINS
       !! * Arguments
       TYPE(obs_prof), INTENT(INOUT) :: profdata    ! Profile data to be read
       INTEGER, INTENT(IN) :: k2dint     ! Horizontal interpolation methed
-      REAL(wp), DIMENSION(*) :: &
+      REAL(wp), DIMENSION(:) :: &
          & pu, &
          & pv
       !! * Local declarations

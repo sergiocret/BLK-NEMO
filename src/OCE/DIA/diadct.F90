@@ -90,6 +90,7 @@ MODULE diadct
 
 
    !! * Substitutions
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -678,13 +679,13 @@ CONTAINS
                   ztn   = interp(Kmm,k%I,k%J,jk,'V',ts(:,:,:,jp_tem,Kmm) ) 
                   zsn   = interp(Kmm,k%I,k%J,jk,'V',ts(:,:,:,jp_sal,Kmm) ) 
                   zrhop = interp(Kmm,k%I,k%J,jk,'V',rhop) 
-                  zrhoi = interp(Kmm,k%I,k%J,jk,'V',rhd*rho0+rho0) 
+                  zrhoi =interp(Kmm,k%I,k%J,jk,'V',CASTDP(rhd*rho0+rho0))
                   zsshn =  0.5*( ssh(k%I,k%J,Kmm) + ssh(k%I,k%J+1,Kmm)    ) * vmask(k%I,k%J,1) 
                CASE(2,3) 
                   ztn   = interp(Kmm,k%I,k%J,jk,'U',ts(:,:,:,jp_tem,Kmm) ) 
                   zsn   = interp(Kmm,k%I,k%J,jk,'U',ts(:,:,:,jp_sal,Kmm) ) 
                   zrhop = interp(Kmm,k%I,k%J,jk,'U',rhop) 
-                  zrhoi = interp(Kmm,k%I,k%J,jk,'U',rhd*rho0+rho0) 
+                  zrhoi =interp(Kmm,k%I,k%J,jk,'U',CASTDP(rhd*rho0+rho0))
                   zsshn =  0.5*( ssh(k%I,k%J,Kmm) + ssh(k%I+1,k%J,Kmm)    ) * umask(k%I,k%J,1)  
                END SELECT 
                !
@@ -851,13 +852,13 @@ CONTAINS
                  ztn   = interp(Kmm,k%I,k%J,jk,'V',ts(:,:,:,jp_tem,Kmm) ) 
                  zsn   = interp(Kmm,k%I,k%J,jk,'V',ts(:,:,:,jp_sal,Kmm) ) 
                  zrhop = interp(Kmm,k%I,k%J,jk,'V',rhop) 
-                 zrhoi = interp(Kmm,k%I,k%J,jk,'V',rhd*rho0+rho0) 
+                 zrhoi =interp(Kmm,k%I,k%J,jk,'V',CASTDP(rhd*rho0+rho0))
 
               CASE(2,3) 
                  ztn   = interp(Kmm,k%I,k%J,jk,'U',ts(:,:,:,jp_tem,Kmm) ) 
                  zsn   = interp(Kmm,k%I,k%J,jk,'U',ts(:,:,:,jp_sal,Kmm) ) 
                  zrhop = interp(Kmm,k%I,k%J,jk,'U',rhop) 
-                 zrhoi = interp(Kmm,k%I,k%J,jk,'U',rhd*rho0+rho0) 
+                 zrhoi =interp(Kmm,k%I,k%J,jk,'U',CASTDP(rhd*rho0+rho0))
                  zsshn =  0.5*( ssh(k%I,k%J,Kmm)    + ssh(k%I+1,k%J,Kmm)    ) * umask(k%I,k%J,1)  
               END SELECT 
  
@@ -1168,7 +1169,7 @@ CONTAINS
   INTEGER, INTENT(IN)                          :: Kmm          ! time level index
   INTEGER, INTENT(IN)                          :: ki, kj, kk   ! coordinate of point
   CHARACTER(len=1), INTENT(IN)                 :: cd_point     ! type of point (U, V)
-  REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(IN) :: ptab         ! variable to compute at (ki, kj, kk )
+  REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(IN) :: ptab         ! variable to compute at (ki, kj, kk )
   REAL(wp)                                     :: interp       ! interpolated variable 
 
   !*local declations

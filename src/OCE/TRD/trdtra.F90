@@ -36,7 +36,7 @@ MODULE trdtra
 
    PUBLIC   trd_tra   ! called by all tra_... modules
 
-   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   trdtx, trdty, trdt   ! use to store the temperature trends
+   REAL(dp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   trdtx, trdty, trdt   ! use to store the temperature trends
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   avt_evd  ! store avt_evd to calculate EVD trend
 
    !! * Substitutions
@@ -80,12 +80,13 @@ CONTAINS
       INTEGER                         , INTENT(in)           ::   Kmm, Krhs ! time level indices
       REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in)           ::   ptrd    ! tracer trend  or flux
       REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in), OPTIONAL ::   pu      ! now velocity 
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in), OPTIONAL ::   ptra    ! now tracer variable
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(in), OPTIONAL ::   ptra    ! now tracer variable
       !
       INTEGER ::   jk    ! loop indices
       INTEGER ::   i01   ! 0 or 1
-      REAL(wp),        DIMENSION(jpi,jpj,jpk) ::   ztrds             ! 3D workspace
-      REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) ::   zwt, zws, ztrdt   ! 3D workspace
+      REAL(dp),        DIMENSION(jpi,jpj,jpk) ::   ztrds             ! 3D workspace
+      REAL(wp), ALLOCATABLE, DIMENSION(:,:,:)  :: zwt, zws! 3D workspace
+      REAL(dp), ALLOCATABLE, DIMENSION(:,:,:)  :: ztrdt! 3D workspace
       !!----------------------------------------------------------------------
       !      
       IF( .NOT. ALLOCATED( trdtx ) ) THEN      ! allocate trdtra arrays
@@ -201,9 +202,9 @@ CONTAINS
       !!----------------------------------------------------------------------
       REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) ::   pf      ! advective flux in one direction
       REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) ::   pu      ! now velocity   in one direction
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) ::   pt      ! now or before tracer 
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) ::   pt      ! now or before tracer
       CHARACTER(len=1)                , INTENT(in   ) ::   cdir    ! X/Y/Z direction
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(  out) ::   ptrd    ! advective trend in one direction
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(  out) ::   ptrd    ! advective trend in one direction
       INTEGER,  INTENT(in)                            ::   Kmm     ! time level index
       !
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
@@ -238,8 +239,8 @@ CONTAINS
       !!                integral constraints, potential energy, and/or 
       !!                mixed layer budget.
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdx   ! Temperature or U trend 
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdy   ! Salinity    or V trend
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdx   ! Temperature or U trend
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdy   ! Salinity    or V trend
       INTEGER                   , INTENT(in   ) ::   ktrd    ! tracer trend index
       INTEGER                   , INTENT(in   ) ::   kt      ! time step
       INTEGER                   , INTENT(in   ) ::   Kmm     ! time level index
@@ -299,8 +300,8 @@ CONTAINS
       !! 
       !! ** Purpose :   output 3D tracer trends using IOM
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdx   ! Temperature or U trend 
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdy   ! Salinity    or V trend
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdx   ! Temperature or U trend
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdy   ! Salinity    or V trend
       INTEGER                   , INTENT(in   ) ::   ktrd    ! tracer trend index
       INTEGER                   , INTENT(in   ) ::   kt      ! time step
       INTEGER                   , INTENT(in   ) ::   Kmm     ! time level index

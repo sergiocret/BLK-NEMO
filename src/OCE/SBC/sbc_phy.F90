@@ -864,7 +864,7 @@ CONTAINS
          zCh = zz0*ptst(ji,jj)/zdt
          zCe = zz0*pqst(ji,jj)/zdq
 
-         CALL BULK_FORMULA( pzu, pTs(ji,jj), pqs(ji,jj), pTa(ji,jj), pqa(ji,jj), zCd, zCh, zCe, &
+         CALL bulk_formula( pzu, pTs(ji,jj), pqs(ji,jj), pTa(ji,jj), pqa(ji,jj), zCd, zCh, zCe, &
             &              pwnd(ji,jj), pUb(ji,jj), ppa(ji,jj), prhoa(ji,jj), &
             &              pTau(ji,jj), zQsen, zQlat )
 
@@ -879,7 +879,7 @@ CONTAINS
    END SUBROUTINE UPDATE_QNSOL_TAU
 
 
-   SUBROUTINE BULK_FORMULA_SCLR( pzu, pTs, pqs, pTa, pqa, &
+   SUBROUTINE bulk_formula_sclr( pzu, pTs, pqs, pTa, pqa, &
       &                          pCd, pCh, pCe,           &
       &                          pwnd, pUb, ppa, prhoa,   &
       &                          pTau, pQsen, pQlat,      &
@@ -921,9 +921,9 @@ CONTAINS
 
       IF( PRESENT(pEvap) ) pEvap = - zfact_evap * zevap
 
-   END SUBROUTINE BULK_FORMULA_SCLR
+   END SUBROUTINE bulk_formula_sclr
 
-   SUBROUTINE BULK_FORMULA_VCTR( pzu, pTs, pqs, pTa, pqa, &
+   SUBROUTINE bulk_formula_vctr( pzu, pTs, pqs, pTa, pqa, &
       &                          pCd, pCh, pCe,           &
       &                          pwnd, pUb, ppa, prhoa,   &
       &                          pTau, pQsen, pQlat,      &
@@ -957,7 +957,7 @@ CONTAINS
 
       DO_2D( nn_hls, nn_hls, nn_hls, nn_hls )
 
-         CALL BULK_FORMULA_SCLR( pzu, pTs(ji,jj), pqs(ji,jj), pTa(ji,jj), pqa(ji,jj), &
+         CALL bulk_formula_sclr( pzu, pTs(ji,jj), pqs(ji,jj), pTa(ji,jj), pqa(ji,jj), &
             &                    pCd(ji,jj), pCh(ji,jj), pCe(ji,jj),                  &
             &                    pwnd(ji,jj), pUb(ji,jj), ppa(ji,jj), prhoa(ji,jj),   &
             &                    pTau(ji,jj), pQsen(ji,jj), pQlat(ji,jj),             &
@@ -966,7 +966,7 @@ CONTAINS
          IF( PRESENT(pEvap) ) pEvap(ji,jj) = zevap
       END_2D
 
-   END SUBROUTINE BULK_FORMULA_VCTR
+   END SUBROUTINE bulk_formula_vctr
 
 
    FUNCTION alpha_sw_vctr( psst )

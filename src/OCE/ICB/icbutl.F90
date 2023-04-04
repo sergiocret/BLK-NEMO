@@ -57,6 +57,7 @@ MODULE icbutl
    PUBLIC   icb_utl_heat          ! routine called in icbdia module
 
    !! * Substitutions
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -181,8 +182,8 @@ CONTAINS
       CALL icb_utl_pos( pi, pj, 'F', iiF, ijF, zwF, zmskF )
       !
       ! metrics and coordinates
-      IF ( PRESENT(pe1 ) ) pe1 = icb_utl_bilin_e( e1t, e1u, e1v, e1f, pi, pj )      ! scale factors
-      IF ( PRESENT(pe2 ) ) pe2 = icb_utl_bilin_e( e2t, e2u, e2v, e2f, pi, pj )
+      IF ( PRESENT(pe1 ) ) pe1 = icb_utl_bilin_e( e1t, CASTSP(e1u), e1v, e1f, pi, pj )      ! scale factors
+      IF ( PRESENT(pe2 ) ) pe2 = icb_utl_bilin_e( e2t, e2u, CASTSP(e2v), e2f, pi, pj )
       IF ( PRESENT(plon) ) plon= icb_utl_bilin_h( rlon_e, iiT, ijT, zwT, .true.  )
       IF ( PRESENT(plat) ) plat= icb_utl_bilin_h( rlat_e, iiT, ijT, zwT, .false. )
       !
@@ -214,17 +215,17 @@ CONTAINS
       !
       ! Estimate SSH gradient in i- and j-direction (centred evaluation)
       IF ( PRESENT(pssh_i) .AND. PRESENT(pssh_j) ) THEN
-         CALL icb_utl_pos( pi+0.1, pj    , 'T', iiTp, ijTp, zwTp, zmskTp )
-         CALL icb_utl_pos( pi-0.1, pj    , 'T', iiTm, ijTm, zwTm, zmskTm )
+         CALL icb_utl_pos( pi+0.1_wp, pj    , 'T', iiTp, ijTp, zwTp, zmskTp )
+         CALL icb_utl_pos( pi-0.1_wp, pj    , 'T', iiTm, ijTm, zwTm, zmskTm )
          !
-         IF ( .NOT. PRESENT(pe1) ) pe1 = icb_utl_bilin_e( e1t, e1u, e1v, e1f, pi, pj )
+         IF ( .NOT. PRESENT(pe1) ) pe1 = icb_utl_bilin_e( e1t, CASTSP(e1u), e1v, e1f, pi, pj )
          pssh_i = ( icb_utl_bilin_h( ssh_e, iiTp, ijTp, zwTp*zmskTp, .false. ) -   &
             &       icb_utl_bilin_h( ssh_e, iiTm, ijTm, zwTm*zmskTm, .false. )  ) / ( 0.2_wp * pe1 )
          !
-         CALL icb_utl_pos( pi    , pj+0.1, 'T', iiTp, ijTp, zwTp, zmskTp )
-         CALL icb_utl_pos( pi    , pj-0.1, 'T', iiTm, ijTm, zwTm, zmskTm )
+         CALL icb_utl_pos( pi    , pj+0.1_wp, 'T', iiTp, ijTp, zwTp, zmskTp )
+         CALL icb_utl_pos( pi    , pj-0.1_wp, 'T', iiTm, ijTm, zwTm, zmskTm )
          !
-         IF ( .NOT. PRESENT(pe2) ) pe2 = icb_utl_bilin_e( e2t, e2u, e2v, e2f, pi, pj )
+         IF ( .NOT. PRESENT(pe2) ) pe2 = icb_utl_bilin_e( e2t, e2u, CASTSP(e2v), e2f, pi, pj )
          pssh_j = ( icb_utl_bilin_h( ssh_e, iiTp, ijTp, zwTp*zmskTp, .false. ) -   &
             &       icb_utl_bilin_h( ssh_e, iiTm, ijTm, zwTm*zmskTm, .false. )  ) / ( 0.2_wp * pe2 )
       END IF
@@ -437,7 +438,8 @@ CONTAINS
       !! ** Method  :   interpolation done using the 4 nearest grid points among
       !!                t-, u-, v-, and f-points.
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:), INTENT(in) ::   pet, peu, pev, pef   ! horizontal scale factor to be interpolated at t-,u-,v- & f-pts
+      REAL(wp), DIMENSION(:,:), INTENT(in)  :: peu, pev! horizontal scale factor to be interpolated at t-,u-,v- & f-pts
+      REAL(dp), DIMENSION(:,:), INTENT(in)  :: pet, pef! horizontal scale factor to be interpolated at t-,u-,v- & f-pts
       REAL(wp)                , INTENT(IN) ::   pi , pj              ! iceberg position
       !
       ! weights corresponding to corner points of a T cell quadrant
@@ -521,7 +523,7 @@ CONTAINS
          kb = kb + 1
       END DO
       kb = MIN(kb - 1,jpk)
-   END SUBROUTINE
+   END SUBROUTINE icb_utl_getkb
 
    SUBROUTINE icb_utl_zavg(pzavg, pdat, pe3, pD, kb )
       !!----------------------------------------------------------------------
@@ -546,7 +548,7 @@ CONTAINS
       ! if kb is limited by mbkt  => bottom value is used between bathy and icb tail
       ! if kb not limited by mbkt => ocean value over mask is used (ie 0.0 for u, v)
       pzavg = ( pzavg + (pD - zdep)*pdat(kb)) / pD
-   END SUBROUTINE
+   END SUBROUTINE icb_utl_zavg
 
    SUBROUTINE icb_utl_add( bergvals, ptvals )
       !!----------------------------------------------------------------------
@@ -750,7 +752,7 @@ CONTAINS
       !!
       !!----------------------------------------------------------------------
       CHARACTER(len=*)       :: cd_label
-      INTEGER                :: kt             ! timestep number
+      INTEGER, INTENT(IN)                :: kt             ! timestep number
       ! 
       INTEGER                :: ibergs, inbergs
       TYPE(iceberg), POINTER :: this
@@ -916,7 +918,8 @@ CONTAINS
       !! ** Comments : not called, if needed a CALL test_icb_utl_getkb need to be added in icb_step
       !!----------------------------------------------------------------------
       INTEGER :: ikb
-      REAL(wp) :: zD, zout
+      REAL(wp) :: zout
+      REAL(wp) :: zD
       REAL(wp), DIMENSION(jpk) :: ze3, zin
       WRITE(numout,*) 'Test icb_utl_getkb : '
       zD = 0.0 ; ze3= 20.0

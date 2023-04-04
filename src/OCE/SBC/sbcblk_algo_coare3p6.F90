@@ -159,9 +159,9 @@ CONTAINS
       REAL(wp), INTENT(  out), DIMENSION(jpi,jpj) ::   Ubzu    ! bulk wind speed at zu                     [m/s]
       !
       INTEGER , INTENT(in   ), OPTIONAL                     :: nb_iter  ! number of iterations
-      REAL(wp), INTENT(  out), OPTIONAL, DIMENSION(jpi,jpj) ::   CdN
-      REAL(wp), INTENT(  out), OPTIONAL, DIMENSION(jpi,jpj) ::   ChN
-      REAL(wp), INTENT(  out), OPTIONAL, DIMENSION(jpi,jpj) ::   CeN
+      REAL(wp), INTENT(  out), OPTIONAL, DIMENSION(jpi,jpj) ::   Cdn
+      REAL(wp), INTENT(  out), OPTIONAL, DIMENSION(jpi,jpj) ::   Chn
+      REAL(wp), INTENT(  out), OPTIONAL, DIMENSION(jpi,jpj) ::   Cen
       REAL(wp), INTENT(in   ), OPTIONAL, DIMENSION(jpi,jpj) ::   Qsw      !             [W/m^2]
       REAL(wp), INTENT(in   ), OPTIONAL, DIMENSION(jpi,jpj) ::   rad_lw   !             [W/m^2]
       REAL(wp), INTENT(in   ), OPTIONAL, DIMENSION(jpi,jpj) ::   slp      !             [Pa]

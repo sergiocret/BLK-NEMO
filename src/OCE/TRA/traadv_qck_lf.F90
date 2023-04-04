@@ -40,6 +40,7 @@ MODULE traadv_qck_lf
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -188,7 +189,7 @@ CONTAINS
             pt(ji,jj,jk,jn,Krhs) = pt(ji,jj,jk,jn,Krhs) + ztra
          END_3D
          !                                 ! trend diagnostics
-         IF( l_trd )   CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_xad, zwx, pU, pt(:,:,:,jn,Kmm) )
+         IF( l_trd )   CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_xad, zwx, pU, CASTDP(pt(:,:,:,jn,Kmm)) )
          !
       END DO
       !
@@ -266,7 +267,7 @@ CONTAINS
             pt(ji,jj,jk,jn,Krhs) = pt(ji,jj,jk,jn,Krhs) + ztra
          END_3D
          !                                 ! trend diagnostics
-         IF( l_trd )   CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_yad, zwy, pV, pt(:,:,:,jn,Kmm) )
+         IF( l_trd )   CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_yad, zwy, pV, CASTDP(pt(:,:,:,jn,Kmm)) )
          !                                 ! "Poleward" heat and salt transports (contribution of upstream fluxes)
          IF( l_ptr )   CALL dia_ptr_hst( jn, 'adv', zwy(:,:,:) )
          !
@@ -318,7 +319,7 @@ CONTAINS
                &                                * r1_e1e2t(ji,jj) / e3t(ji,jj,jk,Kmm)
          END_3D
          !                                 ! Send trends for diagnostic
-         IF( l_trd )  CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_zad, zwz, pW, pt(:,:,:,jn,Kmm) )
+         IF( l_trd )  CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_zad, zwz, pW, CASTDP(pt(:,:,:,jn,Kmm)) )
          !
       END DO
       !

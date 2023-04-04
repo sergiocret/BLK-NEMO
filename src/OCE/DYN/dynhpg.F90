@@ -100,9 +100,9 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt          ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kmm, Krhs   ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
       !
-      REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) ::   ztrdu, ztrdv
+      REAL(dp), ALLOCATABLE, DIMENSION(:,:,:) ::   ztrdu, ztrdv
       !!----------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('dyn_hpg')
@@ -256,7 +256,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt          ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kmm, Krhs   ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
       !
       INTEGER  ::   ji, jj, jk       ! dummy loop indices
       REAL(wp) ::   zcoef0, zcoef1   ! temporary scalars
@@ -309,7 +309,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt          ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kmm, Krhs   ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
       !!
       INTEGER  ::   ji, jj, jk                       ! dummy loop indices
       INTEGER  ::   iku, ikv                         ! temporary integers
@@ -403,7 +403,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt          ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kmm, Krhs   ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
       !!
       INTEGER  ::   ji, jj, jk, jii, jjj           ! dummy loop indices
       REAL(wp) ::   zcoef0, zuap, zvap, ztmp       ! local scalars
@@ -541,7 +541,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt          ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kmm, Krhs   ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
       !!
       INTEGER  ::   ji, jj, jk             ! dummy loop indices
       INTEGER  ::   ikt ,  ikti1,  iktj1   ! local integer
@@ -629,7 +629,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt          ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kmm, Krhs   ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
       !!
       INTEGER  ::   ji, jj, jk          ! dummy loop indices
       INTEGER  ::   iktb, iktt          ! jk indices at tracer points for top and bottom points 
@@ -953,7 +953,7 @@ CONTAINS
       INTEGER, PARAMETER  :: polynomial_type = 1    ! 1: cubic spline, 2: linear
       INTEGER                             , INTENT( in )  ::  kt          ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kmm, Krhs   ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv    ! ocean velocities and RHS of momentum equation
       !!
       INTEGER  ::   ji, jj, jk, jkk                 ! dummy loop indices
       REAL(wp) ::   zcoef0, znad                    ! local scalars
@@ -1270,7 +1270,7 @@ CONTAINS
       INTEGER  ::   ji, jj, jk                 ! dummy loop indices
       REAL(wp) ::   zdf1, zdf2, zddf1, zddf2, ztmp1, ztmp2, zdxtmp
       REAL(wp) ::   zdxtmp1, zdxtmp2, zalpha
-      REAL(wp) ::   zdf(jpk)
+      REAL(wp), DIMENSION(jpk) ::   zdf
       !!----------------------------------------------------------------------
       !
       IF (polynomial_type == 1) THEN     ! Constrained Cubic Spline
@@ -1355,7 +1355,8 @@ CONTAINS
       !! ** Method  :   interpolation is straight forward
       !!                extrapolation is also permitted (no value limit)
       !!----------------------------------------------------------------------
-      REAL(wp), INTENT(in) ::  x, xl, xr, fl, fr
+      REAL(wp), INTENT(in)  :: fl, fr
+      REAL(dp), INTENT(in)  :: x, xl, xr
       REAL(wp)             ::  f ! result of the interpolation (extrapolation)
       REAL(wp)             ::  zdeltx
       !!----------------------------------------------------------------------

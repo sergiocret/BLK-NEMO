@@ -18,8 +18,7 @@ MODULE obs_conv
    !!              (approximate version)
    !!---------------------------------------------------------------------
    !! * Modules used
-   USE par_kind, ONLY : & ! Precision variables
-      & wp   
+   USE par_kind
    IMPLICIT NONE
  
    !! * Function accessibility

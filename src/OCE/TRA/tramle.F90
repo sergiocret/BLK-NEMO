@@ -88,7 +88,7 @@ CONTAINS
       CHARACTER(len=3)            , INTENT(in   ) ::   cdtype     ! =TRA or TRC (tracer indicator)
       ! TEMP: [tiling] Can be A2D(nn_hls) after all lbc_lnks removed in the nn_hls = 2 case in tra_adv_fct
       REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu         ! in : 3 ocean transport components
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pv         ! out: same 3  transport components
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pv         ! out: same 3  transport components
       REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pw         !   increased by the MLE induced transport
       !
       INTEGER  ::   ji, jj, jk          ! dummy loop indices

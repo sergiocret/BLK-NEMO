@@ -146,8 +146,9 @@ CONTAINS
       !!                   Flux   Form : simple           averaging
       !!              - compute the ratio ssh/h_0 at t-,u-,v-pts, (f-pt optional)
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:)          , INTENT(in   )  ::   pssh               ! sea surface height   [m]
-      REAL(wp), DIMENSION(:,:)          , INTENT(  out)  ::   pr3t, pr3u, pr3v   ! ssh/h0 ratio at t-, u-, v-,points  [-]
+      REAL(dp), DIMENSION(:,:)          , INTENT(in   )  ::   pssh               ! sea surface height   [m]
+      REAL(wp), DIMENSION(:,:)          , INTENT(  out)   :: pr3u, pr3v! ssh/h0 ratio at t-, u-, v-,points  [-]
+      REAL(dp), DIMENSION(:,:)          , INTENT(  out)   :: pr3t! ssh/h0 ratio at t-, u-, v-,points  [-]
       REAL(wp), DIMENSION(:,:), OPTIONAL, INTENT(  out)  ::   pr3f               ! ssh/h0 ratio at f-point   [-]
       !
       INTEGER ::   ji, jj   ! dummy loop indices

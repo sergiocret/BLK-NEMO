@@ -16,6 +16,7 @@ MODULE exampl
    !!   exa_mpl_init  : name of the module for a routine)
    !!   exa_mpl_stp   : Please try to use 3 letter block for routine names
    !!----------------------------------------------------------------------
+   USE par_kind
    USE module_name1   ! brief description of the used module
    USE module_name2   ! ....
 

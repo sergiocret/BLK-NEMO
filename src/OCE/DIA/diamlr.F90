@@ -5,7 +5,7 @@ MODULE diamlr
    !!======================================================================
    !! History :  4.0  !  2019  (S. Mueller)   Original code
    !!----------------------------------------------------------------------
-
+   USE par_kind
    USE par_oce        , ONLY :   wp, jpi, jpj
    USE phycst         , ONLY :   rpi
    USE dom_oce        , ONLY :   adatrj

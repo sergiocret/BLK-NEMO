@@ -148,11 +148,11 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT(in   ) ::   kt             ! ocean time-step index
       INTEGER                             , INTENT(in   ) ::   Kbb, Kmm, Krhs ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv       ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv       ! ocean velocities and RHS of momentum equation
       !!
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
       REAL(wp) ::   zua, zva     ! local scalars
-      REAL(wp), DIMENSION(jpi,jpj,jpk,2) ::   zuv_dta   ! Read in data 
+      REAL(dp), DIMENSION(jpi,jpj,jpk,2) ::   zuv_dta   ! Read in data
       !!----------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start( 'dyn_dmp' )

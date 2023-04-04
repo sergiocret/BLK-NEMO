@@ -45,12 +45,13 @@ MODULE trdglo
 
    !                     !!! domain averaged trends
    REAL(wp), DIMENSION(jptot_tra) ::   tmo, smo   ! temperature and salinity trends 
-   REAL(wp), DIMENSION(jptot_tra) ::   t2 , s2    ! T^2 and S^2 trends 
-   REAL(wp), DIMENSION(jptot_dyn) ::   umo, vmo   ! momentum trends 
+   REAL(wp), DIMENSION(jptot_tra) ::   t2 , s2    ! T^2 and S^2 trends
+   REAL(wp), DIMENSION(jptot_dyn) ::   umo, vmo   ! momentum trends
    REAL(wp), DIMENSION(jptot_dyn) ::   hke        ! kinetic energy trends (u^2+v^2) 
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -67,8 +68,8 @@ CONTAINS
       !!              T, T^2, momentum, KE, and KE<->PE
       !!
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdx   ! Temperature or U trend 
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdy   ! Salinity    or V trend
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdx   ! Temperature or U trend
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout) ::   ptrdy   ! Salinity    or V trend
       INTEGER                   , INTENT(in   ) ::   ktrd    ! tracer trend index
       CHARACTER(len=3)          , INTENT(in   ) ::   ctype   ! momentum or tracers trends type (='DYN'/'TRA')
       INTEGER                   , INTENT(in   ) ::   kt      ! time step
@@ -201,7 +202,7 @@ CONTAINS
          zkz  (:,:,:) = 0._wp
          zkepe(:,:,:) = 0._wp
    
-         CALL eos( ts(:,:,:,:,Kmm), rhd, rhop )       ! now potential density
+         CALL eos( ts(:,:,:,:,Kmm), rhd, CASTSP(rhop) )       ! now potential density
 
          zcof = 0.5_wp / rho0             ! Density flux at w-point
          zkz(:,:,1) = 0._wp

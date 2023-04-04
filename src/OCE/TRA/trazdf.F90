@@ -54,7 +54,7 @@ CONTAINS
       !!---------------------------------------------------------------------
       INTEGER                                  , INTENT(in)    :: kt                  ! ocean time-step index
       INTEGER                                  , INTENT(in)    :: Kbb, Kmm, Krhs, Kaa ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts                 ! active tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts                 ! active tracers and RHS of tracer equation
       !
       INTEGER  ::   ji, jj, jk   ! Dummy loop indices
       REAL(wp), DIMENSION(:,:,:), ALLOCATABLE ::   ztrdt, ztrds   ! 3D workspace
@@ -142,11 +142,13 @@ CONTAINS
       CHARACTER(len=3)                         , INTENT(in   ) ::   cdtype   ! =TRA or TRC (tracer indicator)
       INTEGER                                  , INTENT(in   ) ::   kjpt     ! number of tracers
       REAL(wp)                                 , INTENT(in   ) ::   p2dt     ! tracer time-step
-      REAL(wp), DIMENSION(jpi,jpj,jpk,kjpt,jpt), INTENT(inout) ::   pt       ! tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,kjpt,jpt), INTENT(inout) ::   pt       ! tracers and RHS of tracer equation
       !
       INTEGER  ::  ji, jj, jk, jn   ! dummy loop indices
-      REAL(wp) ::  zrhs, zzwi, zzws ! local scalars
-      REAL(wp), DIMENSION(A2D(nn_hls),jpk) ::  zwi, zwt, zwd, zws
+      REAL(wp)  :: zzwi, zzws! local scalars
+      REAL(dp)  :: zrhs! local scalars
+      REAL(wp), DIMENSION(A2D(nn_hls),jpk)  :: zws
+      REAL(dp), DIMENSION(A2D(nn_hls),jpk)  :: zwi, zwt, zwd
       !!---------------------------------------------------------------------
       !
       !                                               ! ============= !

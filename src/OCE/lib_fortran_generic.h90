@@ -2,7 +2,7 @@
 !                          ! FUNCTION FUNCTION_GLOBSUM !
 #   if defined DIM_1d
 #      define XD                1d
-#      define ARRAY_TYPE(i,j,k)    REAL(wp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
+#      define ARRAY_TYPE(i,j,k)    REAL(dp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
 #      define ARRAY_IN(i,j,k)   ptab(i)
 #      define ARRAY2_IN(i,j,k)  ptab2(i)
 #      define J_SIZE(ptab)      1
@@ -11,7 +11,7 @@
 #   endif
 #   if defined DIM_2d
 #      define XD                2d
-#      define ARRAY_TYPE(i,j,k)    REAL(wp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
+#      define ARRAY_TYPE(i,j,k)    REAL(dp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
 #      define ARRAY_IN(i,j,k)   ptab(i,j)
 #      define ARRAY2_IN(i,j,k)  ptab2(i,j)
 #      define J_SIZE(ptab)      SIZE(ptab,2)
@@ -20,7 +20,7 @@
 #   endif
 #   if defined DIM_3d
 #      define XD                3d
-#      define ARRAY_TYPE(i,j,k)    REAL(wp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
+#      define ARRAY_TYPE(i,j,k)    REAL(dp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
 #      define ARRAY_IN(i,j,k)   ptab(i,j,k)
 #      define ARRAY2_IN(i,j,k)  ptab2(i,j,k)
 #      define J_SIZE(ptab)      SIZE(ptab,2)
@@ -83,14 +83,14 @@
 !                          ! FUNCTION FUNCTION_GLOBMINMAX !
 #   if defined DIM_2d
 #      define XD                2d
-#      define ARRAY_TYPE(i,j,k)    REAL(wp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
+#      define ARRAY_TYPE(i,j,k)    REAL(dp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
 #      define ARRAY_IN(i,j,k)   ptab(i,j)
 #      define ARRAY2_IN(i,j,k)  ptab2(i,j)
 #      define K_SIZE(ptab)      1
 #   endif
 #   if defined DIM_3d
 #      define XD                3d
-#      define ARRAY_TYPE(i,j,k)    REAL(wp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
+#      define ARRAY_TYPE(i,j,k)    REAL(dp)                 , INTENT(in   ) ::   ARRAY_IN(i,j,k)
 #      define ARRAY_IN(i,j,k)   ptab(i,j,k)
 #      define ARRAY2_IN(i,j,k)  ptab2(i,j,k)
 #      define K_SIZE(ptab)      SIZE(ptab,3)

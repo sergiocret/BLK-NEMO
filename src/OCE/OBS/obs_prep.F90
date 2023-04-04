@@ -734,7 +734,7 @@ CONTAINS
          imonth_len(:) = nleapy   ! all months with nleapy days per year
       ENDIF
 
-   END SUBROUTINE
+   END SUBROUTINE calc_month_len
 
    SUBROUTINE obs_coo_tim_prof( kcycle,                                   &
       &                    kyea0,   kmon0,   kday0,   khou0,   kmin0,     &

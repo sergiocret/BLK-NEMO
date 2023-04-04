@@ -1,4 +1,4 @@
-   SUBROUTINE greg2jul( ksec, kmin, khour, kday, kmonth, kyear, pjulian, &
+SUBROUTINE greg2jul( ksec, kmin, khour, kday, kmonth, kyear, pjulian, &
       &                 krefdate )
       !!-----------------------------------------------------------------------
       !!

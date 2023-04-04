@@ -77,7 +77,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER,                                   INTENT(in   ) :: kt         ! ocean time-step index
       INTEGER,                                   INTENT(in   ) :: Kmm, Krhs  ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts        ! active tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts        ! active tracers and RHS of tracer equation
       !
       INTEGER  ::   ji, jj, jk    ! dummy loop indices
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) ::   ztrdt   ! 3D workspace
@@ -104,7 +104,7 @@ CONTAINS
       CALL iom_put ( "hfgeou" , rho0_rcp * qgh_trd0(:,:) )
 
       IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=pts(:,:,:,jp_tem,Krhs), clinfo1=' bbc  - Ta: ', mask1=tmask, clinfo3='tra-ta' )
-      !
+      
       IF( ln_timing )   CALL timing_stop('tra_bbc')
       !
    END SUBROUTINE tra_bbc

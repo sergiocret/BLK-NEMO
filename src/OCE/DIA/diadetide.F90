@@ -5,6 +5,7 @@ MODULE diadetide
    !!======================================================================
    !! History :       !  2019  (S. Mueller)
    !!----------------------------------------------------------------------
+   USE par_kind
    USE par_oce        , ONLY :   wp, jpi, jpj
    USE in_out_manager , ONLY :   lwp, numout
    USE iom            , ONLY :   iom_put

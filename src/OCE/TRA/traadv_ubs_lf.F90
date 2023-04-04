@@ -38,6 +38,7 @@ MODULE traadv_ubs_lf
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -185,8 +186,8 @@ CONTAINS
          END_3D                                                     ! and/or in trend diagnostic (l_trd=T)
          !
          IF( l_trd ) THEN                  ! trend diagnostics
-             CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_xad, ztu, pU, pt(:,:,:,jn,Kmm) )
-             CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_yad, ztv, pV, pt(:,:,:,jn,Kmm) )
+             CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_xad, ztu, pU, CASTDP(pt(:,:,:,jn,Kmm)) )
+             CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_yad, ztv, pV, CASTDP(pt(:,:,:,jn,Kmm)) )
          END IF
          !
          !                                ! "Poleward" heat and salt transports (contribution of upstream fluxes)
@@ -243,7 +244,7 @@ CONTAINS
             CALL nonosc_z( Kmm, pt(:,:,:,jn,Kbb), ztw, zti, p2dt )      !  monotonicity algorithm
             !
          CASE(  4  )                               ! 4th order COMPACT
-            CALL interp_4th_cpt( pt(:,:,:,jn,Kmm) , ztw )         ! 4th order compact interpolation of T at w-point
+            CALL interp_4th_cpt( CASTDP(pt(:,:,:,jn,Kmm)) , ztw )         ! 4th order compact interpolation of T at w-point
             DO_3D( 0, 0, 0, 0, 2, jpkm1 )
                ztw(ji,jj,jk) = pW(ji,jj,jk) * ztw(ji,jj,jk) * wmask(ji,jj,jk)
             END_3D

@@ -10,12 +10,12 @@ MODULE isfutils
    !!   isfutils       : - read_2dcstdta to read a constant input file with iom_get
    !!                    - debug to print array sum, min, max in ocean.output
    !!----------------------------------------------------------------------
-
+   USE par_kind
    USE iom           , ONLY: iom_open, iom_get, iom_close, jpdom_global      ! read input file
    USE lib_fortran   , ONLY: glob_sum, glob_min, glob_max                    ! compute global value
    USE par_oce       , ONLY: jpi,jpj,jpk, jpnij, Nis0, Nie0, Njs0, Nje0      ! domain size
    USE dom_oce       , ONLY: narea                                           ! local domain
-   USE in_out_manager, ONLY: i8, wp, lwp, numout                             ! miscelenious
+   USE in_out_manager, ONLY: lwp, numout                             ! miscelenious
    USE lib_mpp
 
    IMPLICIT NONE
@@ -28,6 +28,7 @@ MODULE isfutils
 
    PUBLIC read_2dcstdta, debug
 
+#  include "single_precision_substitute.h90"
 CONTAINS
 
    SUBROUTINE read_2dcstdta(cdfile, cdvar, pvar)
@@ -70,9 +71,9 @@ CONTAINS
       !!--------------------------------------------------------------------
       !
       ! global min/max/sum to check data range and NaN
-      zsum = glob_sum( 'debug', pvar(:,:) )
-      zmin = glob_min( 'debug', pvar(:,:) )
-      zmax = glob_max( 'debug', pvar(:,:) )
+      zsum =glob_sum( 'debug', CASTDP(pvar(:,:)) )
+      zmin = glob_min( 'debug', CASTDP(pvar(:,:)) )
+      zmax = glob_max( 'debug', CASTDP(pvar(:,:)) )
       !
       ! basic check sum to check reproducibility
       ! TRANSFER function find out the integer corresponding to pvar(i,j) bit pattern
@@ -112,7 +113,7 @@ CONTAINS
       !!
       !!-------------------------- IN  -------------------------------------
       CHARACTER(LEN=*)                , INTENT(in   ) :: cdtxt
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) :: pvar
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) :: pvar
       !!--------------------------------------------------------------------
       REAL(wp)    :: zmin, zmax, zsum
       INTEGER(i8) :: imodd, ip

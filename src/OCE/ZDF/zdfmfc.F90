@@ -1,4 +1,4 @@
- MODULE zdfmfc
+MODULE zdfmfc
    !!======================================================================
    !!                       ***  MODULE  zdfmfc  ***
    !! Ocean physics: Mass-Flux scheme parameterization of Convection:
@@ -57,6 +57,7 @@
    !
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.2 , NEMO Consortium (2018)
@@ -94,7 +95,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       !!----------------------------------------------------------------------
       INTEGER                                  , INTENT(in)    :: Kmm, Krhs ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts       ! active tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts       ! active tracers and RHS of tracer equation
       REAL(wp), DIMENSION(A2D(nn_hls),jpk,2) ::   ztsp         ! T/S of the plume
       REAL(wp), DIMENSION(A2D(nn_hls),jpk,2) ::   ztse         ! T/S at W point
       REAL(wp), DIMENSION(A2D(nn_hls),jpk) :: zrwp          !
@@ -211,7 +212,7 @@ CONTAINS
 
          ! Compute the buoyancy acceleration on T-points at jk-1
          zrautbm1(:,:) = zrautb(:,:)
-         CALL eos( pts (:,:,jk  ,:,Kmm) ,  zrautb(:,:)   )
+ CALL eos( CASTSP(pts (:,:,jk ,:,Kmm)) , zrautb(:,:) )
          CALL eos( ztsp(:,:,jk-1,:    ) ,  zraupl(:,:)   )
 
          DO_2D( 0, 0, 0, 0 )
@@ -395,7 +396,8 @@ CONTAINS
    
    SUBROUTINE diag_mfc( zdiagi, zdiagd, zdiags, p2dt, Kaa )
 
-      REAL(wp), DIMENSION(A2D(nn_hls),jpk), INTENT(inout) ::  zdiagi, zdiagd, zdiags  ! inout: tridaig. terms
+      REAL(wp), DIMENSION(A2D(nn_hls),jpk), INTENT(inout)  :: zdiags! inout: tridaig. terms
+      REAL(dp), DIMENSION(A2D(nn_hls),jpk), INTENT(inout)  :: zdiagi, zdiagd! inout: tridaig. terms
       REAL(wp)                            , INTENT(in   ) ::   p2dt                   ! tracer time-step
       INTEGER                             , INTENT(in   ) ::   Kaa                    ! ocean time level indices
 
@@ -411,7 +413,7 @@ CONTAINS
 
    SUBROUTINE rhs_mfc( zrhs, jjn )
 
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   zrhs                   ! inout: rhs trend 
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   zrhs                   ! inout: rhs trend
       INTEGER                         , INTENT(in   ) ::   jjn                    ! tracer indices
 
       INTEGER  ::   ji, jj, jk  ! dummy  loop arguments   
@@ -483,6 +485,3 @@ CONTAINS
  
    !!======================================================================
 END MODULE zdfmfc
-
-
-

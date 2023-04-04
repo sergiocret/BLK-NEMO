@@ -76,15 +76,16 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt                  ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kbb, Kmm, Krhs, Kaa ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv            ! ocean velocities and RHS of momentum equation
-      REAL(wp), DIMENSION(jpi,jpj,jpt)    , INTENT(inout) ::  pssh, puu_b, pvv_b  ! SSH and barotropic velocities at main time levels
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv            ! ocean velocities and RHS of momentum equation
+      REAL(wp), DIMENSION(jpi,jpj,jpt)    , INTENT(inout)  :: puu_b, pvv_b! SSH and barotropic velocities at main time levels
+      REAL(dp), DIMENSION(jpi,jpj,jpt)    , INTENT(inout)  :: pssh! SSH and barotropic velocities at main time levels
       INTEGER , OPTIONAL                  , INTENT( in )  ::  k_only_ADV          ! only Advection in the RHS
       !
       INTEGER  ::   ji, jj, jk                   ! dummy loop indices
       REAL(wp) ::   z2dt, zg_2, zintp, zgrho0r, zld   ! local scalars
       REAL(wp)             , DIMENSION(jpi,jpj) ::   zpgu, zpgv   ! 2D workspace
       REAL(wp), ALLOCATABLE, DIMENSION(:,:)     ::   zpice
-      REAL(wp), ALLOCATABLE, DIMENSION(:,:,:)   ::   ztrdu, ztrdv
+      REAL(dp), ALLOCATABLE, DIMENSION(:,:,:)   ::   ztrdu, ztrdv
       !!----------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('dyn_spg')

@@ -75,7 +75,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                         , INTENT(in   ) ::   kt             ! time step
       INTEGER                         , INTENT(in   ) ::   Kbb, Kmm, Kaa  ! time level index
-      REAL(wp), DIMENSION(jpi,jpj,jpt), INTENT(inout) ::   pssh           ! sea-surface height
+      REAL(dp), DIMENSION(jpi,jpj,jpt), INTENT(inout) ::   pssh           ! sea-surface height
       ! 
       INTEGER  ::   ji, jj, jk      ! dummy loop index
       REAL(wp) ::   zcoef   ! local scalar
@@ -113,7 +113,7 @@ CONTAINS
          pssh(ji,jj,Kaa) = (  pssh(ji,jj,Kbb) - rDt * ( zcoef * ( emp_b(ji,jj) + emp(ji,jj) ) + zhdiv(ji,jj) )  ) * ssmask(ji,jj)
       END_2D
       ! pssh must be defined everywhere (true for dyn_spg_ts, not for dyn_spg_exp)
-      IF ( .NOT. ln_dynspg_ts .AND. nn_hls == 2 ) CALL lbc_lnk( 'sshwzv', pssh(:,:,Kaa), 'T', 1.0_wp )
+      IF ( .NOT. ln_dynspg_ts .AND. nn_hls == 2 ) CALL lbc_lnk( 'sshwzv', pssh(:,:,Kaa), 'T', 1.0_dp )
       !
 #if defined key_agrif
       Kbb_a = Kbb   ;   Kmm_a = Kmm   ;   Krhs_a = Kaa
@@ -122,7 +122,7 @@ CONTAINS
       !
       IF ( .NOT.ln_dynspg_ts ) THEN
          IF( ln_bdy ) THEN
-            IF (nn_hls==1) CALL lbc_lnk( 'sshwzv', pssh(:,:,Kaa), 'T', 1.0_wp )    ! Not sure that's necessary
+            IF (nn_hls==1) CALL lbc_lnk( 'sshwzv', pssh(:,:,Kaa), 'T', 1.0_dp )    ! Not sure that's necessary
             CALL bdy_ssh( pssh(:,:,Kaa) )             ! Duplicate sea level across open boundaries
          ENDIF
       ENDIF
@@ -285,7 +285,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                         , INTENT(in   ) ::   kt             ! ocean time-step index
       INTEGER                         , INTENT(in   ) ::   Kbb, Kmm, Kaa  ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpt), INTENT(inout) ::   pssh           ! SSH field
+      REAL(dp), DIMENSION(jpi,jpj,jpt), INTENT(inout) ::   pssh           ! SSH field
       !
       REAL(wp) ::   zcoef   ! local scalar
       !!----------------------------------------------------------------------

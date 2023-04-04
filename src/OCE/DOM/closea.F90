@@ -258,6 +258,6 @@ CONTAINS
       ALLOCATE( kmask(jpi,jpj) , STAT=ierr )
       IF( ierr /= 0 )   CALL ctl_stop( 'STOP', 'alloc_csmask: failed to allocate surf array')
       !
-   END SUBROUTINE
+   END SUBROUTINE alloc_csmask
 
 END MODULE closea

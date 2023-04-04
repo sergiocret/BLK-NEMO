@@ -49,7 +49,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                                  , INTENT(in)    :: kt        ! Main time step counter
       INTEGER                                  , INTENT(in)    :: Kbb, Kaa  ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts       ! tracer fields
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts       ! tracer fields
       !
       INTEGER                        :: ib_bdy, jn, igrd, ir   ! Loop indeces
       TYPE(ztrabdy), DIMENSION(jpts) :: zdta                   ! Temporary data structure
@@ -100,7 +100,7 @@ CONTAINS
             END SELECT
          END DO
          IF( ANY(llsend1) .OR. ANY(llrecv1) ) THEN   ! if need to send/recv in at least one direction
-            CALL lbc_lnk( 'bdytra', pts(:,:,:,jn,Kaa), 'T',  1.0_wp, kfillmode=jpfillnothing ,lsend=llsend1, lrecv=llrecv1 )
+            CALL lbc_lnk( 'bdytra', pts(:,:,:,jn,Kaa), 'T',  1.0_dp, kfillmode=jpfillnothing ,lsend=llsend1, lrecv=llrecv1 )
          ENDIF
          !
       END DO   ! ir
@@ -118,7 +118,7 @@ CONTAINS
       !!
       !!----------------------------------------------------------------------
       TYPE(OBC_INDEX),                     INTENT(in) ::   idx      ! OBC indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pt       ! tracer trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pt       ! tracer trend
       INTEGER,                             INTENT(in) ::   jpa      ! TRA index
       LOGICAL,                             INTENT(in) ::   llrim0   ! indicate if rim 0 is treated
       !
@@ -149,7 +149,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                                  , INTENT(in)    :: kt        ! time step
       INTEGER                                  , INTENT(in)    :: Kbb, Krhs ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts       ! active tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts       ! active tracers and RHS of tracer equation
       !
       REAL(wp) ::   zwgt           ! boundary weight
       REAL(wp) ::   zta, zsa, ztime

@@ -159,7 +159,7 @@ MODULE sbcclo
          !
       END DO  ! jcs
 
-   END SUBROUTINE
+   END SUBROUTINE get_cssrcsurf
 
    SUBROUTINE get_cstrgsurf(kncs, kmaskcs, kmaskcsgrp, psurftrg, kcsgrp )
       !!-----------------------------------------------------------------------
@@ -211,7 +211,7 @@ MODULE sbcclo
          !
       END DO ! jcs
 
-   END SUBROUTINE
+   END SUBROUTINE get_cstrgsurf
 
    SUBROUTINE prt_csctl(kncs, psurfsrc, psurftrg, kcsgrp, cdcstype)
       !!-----------------------------------------------------------------------
@@ -245,7 +245,7 @@ MODULE sbcclo
          WRITE(numout,*)''
       END IF
 
-   END SUBROUTINE
+   END SUBROUTINE prt_csctl
 
    SUBROUTINE sbc_csupdate(kncs, kcsgrp, kmsk_src, kmsk_grp, psurfsrc, psurftrg, cdcstype, kmsk_opnsea, psurf_opnsea, pwcs, pqcs)
       !!-----------------------------------------------------------------------
@@ -319,7 +319,7 @@ MODULE sbcclo
          !
       END DO ! jcs
 
-   END SUBROUTINE
+   END SUBROUTINE sbc_csupdate
 
    SUBROUTINE alloc_csarr( klen, pvarsrc, pvartrg, kvargrp )
       !!-----------------------------------------------------------------------
@@ -347,6 +347,6 @@ MODULE sbcclo
       pvarsrc(:) = 0.e0_wp
       pvartrg(:) = 0.e0_wp
       kvargrp(:) = 0
-   END SUBROUTINE
+   END SUBROUTINE alloc_csarr
 
 END MODULE

@@ -20,4 +20,3 @@ MODULE obs_const
    REAL(kind=sp), PARAMETER :: obfillflt=99999.
 
 END MODULE obs_const
-

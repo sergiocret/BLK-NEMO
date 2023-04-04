@@ -69,6 +69,7 @@ MODULE traadv
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -87,11 +88,12 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                                  , INTENT(in)    :: kt             ! ocean time-step index
       INTEGER                                  , INTENT(in)    :: Kbb, Kmm, Krhs ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts            ! active tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts            ! active tracers and RHS of tracer equation
       !
       INTEGER ::   ji, jj, jk   ! dummy loop index
       ! TEMP: [tiling] This change not necessary and can be A2D(nn_hls) after all lbc_lnks removed in the nn_hls = 2 case in tra_adv_fct
-      REAL(wp), DIMENSION(:,:,:), ALLOCATABLE, SAVE :: zuu, zvv, zww   ! 3D workspace
+      REAL(wp), DIMENSION(:,:,:), ALLOCATABLE, SAVE :: zuu, zww   ! 3D workspace
+      REAL(dp), DIMENSION(:,:,:), ALLOCATABLE, SAVE :: zvv
       REAL(wp), DIMENSION(:,:,:), ALLOCATABLE :: ztrdt, ztrds
       ! TEMP: [tiling] This change not necessary after all lbc_lnks removed in the nn_hls = 2 case in tra_adv_fct
       LOGICAL :: lskip
@@ -143,7 +145,7 @@ CONTAINS
          !
          DO_2D_OVR( nn_hls, nn_hls-1, nn_hls, nn_hls-1 )
             zuu(ji,jj,jpk) = 0._wp                                                      ! no transport trough the bottom
-            zvv(ji,jj,jpk) = 0._wp
+            zvv(ji,jj,jpk) = 0._dp
             zww(ji,jj,jpk) = 0._wp
          END_2D
          !
@@ -161,7 +163,7 @@ CONTAINS
          !
 !!gm ???
          ! TEMP: [tiling] This copy-in not necessary after all lbc_lnks removed in the nn_hls = 2 case in tra_adv_fct
-         CALL dia_ptr( kt, Kmm, zvv(A2D(nn_hls),:) )                                    ! diagnose the effective MSF
+         CALL dia_ptr( kt, Kmm, CASTSP(zvv(A2D(nn_hls),:)) )                                    ! diagnose the effective MSF
 !!gm ???
          !
 
@@ -174,15 +176,15 @@ CONTAINS
          SELECT CASE ( nadv )                      !==  compute advection trend and add it to general trend  ==!
          !
          CASE ( np_CEN )                                 ! Centered scheme : 2nd / 4th order
-            CALL tra_adv_cen    ( kt, nit000, 'TRA',      zuu, zvv, zww, Kmm, pts, jpts, Krhs, nn_cen_h, nn_cen_v      )
+            CALL tra_adv_cen    ( kt, nit000, 'TRA',      zuu, CASTSP(zvv), zww, Kmm, pts, jpts, Krhs, nn_cen_h, nn_cen_v      )
          CASE ( np_FCT )                                 ! FCT scheme      : 2nd / 4th order
-               CALL tra_adv_fct ( kt, nit000, 'TRA', rDt, zuu, zvv, zww, Kbb, Kmm, pts, jpts, Krhs, nn_fct_h, nn_fct_v )
+               CALL tra_adv_fct ( kt, nit000, 'TRA', rDt, zuu, CASTSP(zvv), zww, Kbb, Kmm, pts, jpts, Krhs, nn_fct_h, nn_fct_v )
          CASE ( np_MUS )                                 ! MUSCL
-                CALL tra_adv_mus( kt, nit000, 'TRA', rDt, zuu, zvv, zww, Kbb, Kmm, pts, jpts, Krhs, ln_mus_ups         )
+                CALL tra_adv_mus( kt, nit000, 'TRA', rDt, zuu, CASTSP(zvv), zww, Kbb, Kmm, pts, jpts, Krhs, ln_mus_ups         )
          CASE ( np_UBS )                                 ! UBS
-            CALL tra_adv_ubs    ( kt, nit000, 'TRA', rDt, zuu, zvv, zww, Kbb, Kmm, pts, jpts, Krhs, nn_ubs_v           )
+            CALL tra_adv_ubs    ( kt, nit000, 'TRA', rDt, zuu, CASTSP(zvv), zww, Kbb, Kmm, pts, jpts, Krhs, nn_ubs_v           )
          CASE ( np_QCK )                                 ! QUICKEST
-            CALL tra_adv_qck    ( kt, nit000, 'TRA', rDt, zuu, zvv, zww, Kbb, Kmm, pts, jpts, Krhs                     )
+            CALL tra_adv_qck    ( kt, nit000, 'TRA', rDt, zuu, CASTSP(zvv), zww, Kbb, Kmm, pts, jpts, Krhs                     )
          !
          END SELECT
          !

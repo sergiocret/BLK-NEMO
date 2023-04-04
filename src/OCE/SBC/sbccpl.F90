@@ -223,6 +223,7 @@ MODULE sbccpl
 
    !! Substitution
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -2316,7 +2317,7 @@ CONTAINS
             ztmp1(:,:) = ts(:,:,1,jp_tem,Kmm)   ! send temperature as it is (potential or conservative) -> use of l_useCT on the received part
          ELSE
             ! we must send the surface potential temperature
-            IF( l_useCT )  THEN    ;   ztmp1(:,:) = eos_pt_from_ct( ts(:,:,1,jp_tem,Kmm), ts(:,:,1,jp_sal,Kmm) )
+            IF( l_useCT )  THEN    ;   ztmp1(:,:) =eos_pt_from_ct( CASTSP(ts(:,:,1,jp_tem,Kmm)), CASTSP(ts(:,:,1,jp_sal,Kmm)) )
             ELSE                   ;   ztmp1(:,:) = ts(:,:,1,jp_tem,Kmm)
             ENDIF
             !
@@ -2750,11 +2751,11 @@ CONTAINS
       ENDIF
       !                                                        ! SSS
       IF( ssnd(jps_soce  )%laction )  THEN
-         CALL cpl_snd( jps_soce  , isec, RESHAPE ( ts(:,:,1,jp_sal,Kmm), (/jpi,jpj,1/) ), info )
+         CALL cpl_snd( jps_soce  , isec, CASTSP(RESHAPE ( ts(:,:,1,jp_sal,Kmm), (/jpi,jpj,1/) )), info )
       ENDIF
       !                                                        ! first T level thickness
       IF( ssnd(jps_e3t1st )%laction )  THEN
-         CALL cpl_snd( jps_e3t1st, isec, RESHAPE ( e3t(:,:,1,Kmm)   , (/jpi,jpj,1/) ), info )
+ CALL cpl_snd( jps_e3t1st, isec, CASTSP(RESHAPE ( e3t(:,:,1,Kmm) , (/jpi,jpj,1/) )), info )
       ENDIF
       !                                                        ! Qsr fraction
       IF( ssnd(jps_fraqsr)%laction )  THEN

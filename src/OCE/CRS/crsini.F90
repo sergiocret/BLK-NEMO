@@ -28,6 +28,7 @@ MODULE crsini
    PUBLIC   crs_init   ! called by nemogcm.F90 module
 
    !! * Substitutions
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -153,8 +154,8 @@ CONTAINS
      !      3.c.1 Horizontal scale factors
 
      CALL crs_dom_hgr( e1t, e2t, 'T', e1t_crs, e2t_crs )
-     CALL crs_dom_hgr( e1u, e2u, 'U', e1u_crs, e2u_crs )
-     CALL crs_dom_hgr( e1v, e2v, 'V', e1v_crs, e2v_crs )
+     CALL crs_dom_hgr( e1u, CASTDP(e2u), 'U', e1u_crs, e2u_crs )
+     CALL crs_dom_hgr( CASTDP(e1v), e2v, 'V', e1v_crs, e2v_crs )
      CALL crs_dom_hgr( e1f, e2f, 'F', e1f_crs, e2f_crs )
 
      e1e2t_crs(:,:) = e1t_crs(:,:) * e2t_crs(:,:)
@@ -183,7 +184,7 @@ CONTAINS
      END DO  
 
      !    3.d.2   Surfaces 
-     CALL crs_dom_sfc( tmask, 'W', e1e2w_crs, e1e2w_msk, p_e1=e1t, p_e2=e2t  )
+     CALL crs_dom_sfc( tmask, 'W', e1e2w_crs, e1e2w_msk, p_e1=CASTSP(e1t), p_e2=CASTSP(e2t)  )
      CALL crs_dom_sfc( umask, 'U', e2e3u_crs, e2e3u_msk, p_e2=e2u, p_e3=ze3u )
      CALL crs_dom_sfc( vmask, 'V', e1e3v_crs, e1e3v_msk, p_e1=e1v, p_e3=ze3v )
    
@@ -193,8 +194,8 @@ CONTAINS
      !    3.d.3   Vertical scale factors
      !
      CALL crs_dom_e3( e1t, e2t, ze3t, e1e2w_crs, 'T', tmask, e3t_crs, e3t_max_crs)
-     CALL crs_dom_e3( e1u, e2u, ze3u, e2e3u_crs, 'U', umask, e3u_crs, e3u_max_crs)
-     CALL crs_dom_e3( e1v, e2v, ze3v, e1e3v_crs, 'V', vmask, e3v_crs, e3v_max_crs)
+     CALL crs_dom_e3( e1u, CASTDP(e2u), ze3u, e2e3u_crs, 'U', umask, e3u_crs, e3u_max_crs)
+     CALL crs_dom_e3( CASTDP(e1v), e2v, ze3v, e1e3v_crs, 'V', vmask, e3v_crs, e3v_max_crs)
      CALL crs_dom_e3( e1t, e2t, ze3w, e1e2w_crs, 'W', tmask, e3w_crs, e3w_max_crs)
 
      ! Replace 0 by e3t_0 or e3w_0

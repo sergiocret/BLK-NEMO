@@ -1,4 +1,4 @@
-   SUBROUTINE obs_grd_bruteforce( kpi, kpj, kpiglo, kpjglo,       &
+SUBROUTINE obs_grd_bruteforce( kpi, kpj, kpiglo, kpjglo,       &
       &                            kldi, klei, kldj, klej,         &
       &                            kmyproc, ktotproc,              &
       &                            pglam, pgphi, pmask,            &

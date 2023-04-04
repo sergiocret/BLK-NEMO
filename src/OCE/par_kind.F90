@@ -30,7 +30,7 @@ MODULE par_kind
    INTEGER, PUBLIC, PARAMETER ::   i4 = SELECTED_INT_KIND( 9)        !: single precision (integer 4)
    INTEGER, PUBLIC, PARAMETER ::   i8 = SELECTED_INT_KIND(14)        !: double precision (integer 8)
    
-   !                                                                !!** Integer **
+   !                                                               !!** Integer **
    INTEGER, PUBLIC, PARAMETER ::   lc  = 256                          !: Lenght of Character strings
    INTEGER, PUBLIC, PARAMETER ::   lca = 400                          !: Lenght of Character arrays
 

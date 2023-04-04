@@ -12,7 +12,7 @@ MODULE isf_oce
    !!----------------------------------------------------------------------
    !!   isf          : define and allocate ice shelf variables
    !!----------------------------------------------------------------------
-
+   USE par_kind
    USE par_oce       , ONLY: jpi, jpj, jpk
    USE in_out_manager, ONLY: wp, jpts ! I/O manager
    USE lib_mpp       , ONLY: ctl_stop, mpp_sum      ! MPP library

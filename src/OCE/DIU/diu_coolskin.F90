@@ -79,7 +79,7 @@ MODULE diu_coolskin
       ! Dummy variables
       REAL(wp), INTENT(IN), DIMENSION(jpi,jpj) :: psqflux     ! Heat (non-solar)(Watts)
       REAL(wp), INTENT(IN), DIMENSION(jpi,jpj) :: pstauflux   ! Wind stress (kg/ m s^2)
-      REAL(wp), INTENT(IN), DIMENSION(jpi,jpj) :: psrho       ! Water density (kg/m^3)
+      REAL(dp), INTENT(IN), DIMENSION(jpi,jpj) :: psrho       ! Water density (kg/m^3)
       REAL(wp), INTENT(IN) :: pDt                             ! Time-step
 
       ! Local variables

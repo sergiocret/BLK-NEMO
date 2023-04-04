@@ -245,8 +245,8 @@ CONTAINS
       !!----------------------------------------------------------------
       !! 
       !!  Arguments
-      REAL(wp), DIMENSION(jpi,jpj)        , INTENT(in)  :: p_e1     ! Parent grid U,V scale factors (e1)
-      REAL(wp), DIMENSION(jpi,jpj)        , INTENT(in)  :: p_e2     ! Parent grid U,V scale factors (e2)
+      REAL(dp), DIMENSION(jpi,jpj)        , INTENT(in)  :: p_e1     ! Parent grid U,V scale factors (e1)
+      REAL(dp), DIMENSION(jpi,jpj)        , INTENT(in)  :: p_e2     ! Parent grid U,V scale factors (e2)
       CHARACTER(len=1)                    , INTENT(in)  :: cd_type  ! grid type U,V 
 
       REAL(wp), DIMENSION(jpi_crs,jpj_crs), INTENT(out) :: p_e1_crs ! Coarse grid box 2D quantity
@@ -342,8 +342,8 @@ CONTAINS
       !!----------------------------------------------------------------
       CHARACTER(len=1),                         INTENT(in   ) ::   cd_type    ! grid type U,V 
       REAL(wp), DIMENSION(jpi,jpj,jpk)        , INTENT(in   ) ::   p_mask     ! Parent grid U,V mask
-      REAL(wp), DIMENSION(jpi,jpj)            , INTENT(in   ) ::   p_e1       ! Parent grid U,V scale factors (e1)
-      REAL(wp), DIMENSION(jpi,jpj)            , INTENT(in   ) ::   p_e2       ! Parent grid U,V scale factors (e2)
+      REAL(dp), DIMENSION(jpi,jpj)            , INTENT(in   ) ::   p_e1       ! Parent grid U,V scale factors (e1)
+      REAL(dp), DIMENSION(jpi,jpj)            , INTENT(in   ) ::   p_e2       ! Parent grid U,V scale factors (e2)
       REAL(wp), DIMENSION(jpi,jpj,jpk)        , INTENT(in   ) ::   p_e3       ! Parent grid vertical level thickness (e3u, e3v)
       REAL(wp), DIMENSION(jpi_crs,jpj_crs,jpk), INTENT(  out) ::   p_fld1_crs ! Coarse grid box 3D quantity 
       REAL(wp), DIMENSION(jpi_crs,jpj_crs,jpk), INTENT(  out) ::   p_fld2_crs ! Coarse grid box 3D quantity 
@@ -473,7 +473,7 @@ CONTAINS
       CHARACTER(len=3),                         INTENT(in)           :: cd_op      ! Operation SUM, MAX or MIN
       CHARACTER(len=1),                         INTENT(in)           :: cd_type    ! grid type U,V 
       REAL(wp), DIMENSION(jpi,jpj,jpk),         INTENT(in)           :: p_mask     ! Parent grid T,U,V mask
-      REAL(wp), DIMENSION(jpi,jpj),             INTENT(in), OPTIONAL :: p_e12      ! Parent grid T,U,V scale factors (e1 or e2)
+      REAL(dp), DIMENSION(jpi,jpj),             INTENT(in), OPTIONAL :: p_e12      ! Parent grid T,U,V scale factors (e1 or e2)
       REAL(wp), DIMENSION(jpi,jpj,jpk),         INTENT(in), OPTIONAL :: p_e3       ! Parent grid vertical level thickness (e3u, e3v)
       REAL(wp), DIMENSION(jpi_crs,jpj_crs,jpk), INTENT(in), OPTIONAL :: p_surf_crs ! Coarse grid area-weighting denominator    
       REAL(wp), DIMENSION(jpi_crs,jpj_crs,jpk), INTENT(in), OPTIONAL :: p_mask_crs ! Coarse grid T,U,V maska
@@ -1135,7 +1135,7 @@ CONTAINS
       CHARACTER(len=3),                         INTENT(in)           :: cd_op    ! Operation SUM, MAX or MIN
       CHARACTER(len=1),                         INTENT(in)           :: cd_type    ! grid type U,V 
       REAL(wp), DIMENSION(jpi,jpj,jpk),         INTENT(in)           :: p_mask    ! Parent grid T,U,V mask
-      REAL(wp), DIMENSION(jpi,jpj),             INTENT(in), OPTIONAL :: p_e12    ! Parent grid T,U,V scale factors (e1 or e2)
+      REAL(dp), DIMENSION(jpi,jpj),             INTENT(in), OPTIONAL :: p_e12    ! Parent grid T,U,V scale factors (e1 or e2)
       REAL(wp), DIMENSION(jpi,jpj,jpk),         INTENT(in), OPTIONAL :: p_e3     ! Parent grid vertical level thickness (e3u, e3v)
       REAL(wp), DIMENSION(jpi_crs,jpj_crs)    , INTENT(in), OPTIONAL :: p_surf_crs ! Coarse grid area-weighting denominator    
       REAL(wp), DIMENSION(jpi_crs,jpj_crs,jpk), INTENT(in), OPTIONAL :: p_mask_crs    ! Coarse grid T,U,V mask
@@ -1630,7 +1630,7 @@ CONTAINS
       !!  Arguments
       CHARACTER(len=1),                         INTENT(in) :: cd_type      ! grid type T, W ( U, V, F)
       REAL(wp), DIMENSION(jpi,jpj,jpk),         INTENT(in) :: p_mask       ! Parent grid T mask
-      REAL(wp), DIMENSION(jpi,jpj)    ,         INTENT(in) :: p_e1, p_e2   ! 2D tracer T or W on parent grid
+      REAL(dp), DIMENSION(jpi,jpj)    ,         INTENT(in) :: p_e1, p_e2   ! 2D tracer T or W on parent grid
       REAL(wp), DIMENSION(jpi,jpj,jpk),         INTENT(in) :: p_e3         ! 3D tracer T or W on parent grid
       REAL(wp), DIMENSION(jpi_crs,jpj_crs,jpk), INTENT(in) :: p_sfc_crs ! Coarse grid box east or north face quantity
       REAL(wp), DIMENSION(jpi_crs,jpj_crs,jpk), INTENT(inout) :: p_e3_crs ! Coarse grid box east or north face quantity 

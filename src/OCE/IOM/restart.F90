@@ -294,8 +294,8 @@ CONTAINS
 #else
       !                             !*  Read Kmm fields   (MLF only)
       IF(lwp) WRITE(numout,*)    '           Kmm u, v and T-S fields read in the restart file'
-      CALL iom_get( numror, jpdom_auto, 'un', uu(:,:,:       ,Kmm), cd_type = 'U', psgn = -1._wp )
-      CALL iom_get( numror, jpdom_auto, 'vn', vv(:,:,:       ,Kmm), cd_type = 'V', psgn = -1._wp )
+      CALL iom_get( numror, jpdom_auto, 'un', uu(:,:,:       ,Kmm), cd_type = 'U', psgn = -1._dp )
+      CALL iom_get( numror, jpdom_auto, 'vn', vv(:,:,:       ,Kmm), cd_type = 'V', psgn = -1._dp )
       CALL iom_get( numror, jpdom_auto, 'tn', ts(:,:,:,jp_tem,Kmm) )
       CALL iom_get( numror, jpdom_auto, 'sn', ts(:,:,:,jp_sal,Kmm) )
       !
@@ -307,8 +307,8 @@ CONTAINS
          !
       ELSE                          !* Leap frog restart   (MLF only)
          IF(lwp) WRITE(numout,*) '           Kbb u, v and T-S fields read in the restart file'
-         CALL iom_get( numror, jpdom_auto, 'ub', uu(:,:,:       ,Kbb), cd_type = 'U', psgn = -1._wp )
-         CALL iom_get( numror, jpdom_auto, 'vb', vv(:,:,:       ,Kbb), cd_type = 'V', psgn = -1._wp )
+         CALL iom_get( numror, jpdom_auto, 'ub', uu(:,:,:       ,Kbb), cd_type = 'U', psgn = -1._dp )
+         CALL iom_get( numror, jpdom_auto, 'vb', vv(:,:,:       ,Kbb), cd_type = 'V', psgn = -1._dp )
          CALL iom_get( numror, jpdom_auto, 'tb', ts(:,:,:,jp_tem,Kbb) )
          CALL iom_get( numror, jpdom_auto, 'sb', ts(:,:,:,jp_sal,Kbb) )
       ENDIF

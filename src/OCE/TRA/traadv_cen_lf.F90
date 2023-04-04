@@ -36,6 +36,7 @@ MODULE traadv_cen_lf
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -142,7 +143,7 @@ CONTAINS
             END_3D
             !
          CASE(  4  )                         !* 4th order compact
-            CALL interp_4th_cpt( pt(:,:,:,jn,Kmm) , ztw )      ! ztw = interpolated value of T at w-point
+            CALL interp_4th_cpt( CASTDP(pt(:,:,:,jn,Kmm)) , ztw )      ! ztw = interpolated value of T at w-point
             DO_3D( 0, 0, 0, 0, 2, jpkm1 )
                zwz(ji,jj,jk) = pW(ji,jj,jk) * ztw(ji,jj,jk) * wmask(ji,jj,jk)
             END_3D
@@ -170,9 +171,9 @@ CONTAINS
          END_3D
          !                               ! trend diagnostics
          IF( l_trd ) THEN
-            CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_xad, zwx, pU, pt(:,:,:,jn,Kmm) )
-            CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_yad, zwy, pV, pt(:,:,:,jn,Kmm) )
-            CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_zad, zwz, pW, pt(:,:,:,jn,Kmm) )
+            CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_xad, zwx, pU, CASTDP(pt(:,:,:,jn,Kmm)) )
+            CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_yad, zwy, pV, CASTDP(pt(:,:,:,jn,Kmm)) )
+            CALL trd_tra( kt, Kmm, Krhs, cdtype, jn, jptra_zad, zwz, pW, CASTDP(pt(:,:,:,jn,Kmm)) )
          ENDIF
          !                                 ! "Poleward" heat and salt transports
          IF( l_ptr )   CALL dia_ptr_hst( jn, 'adv', zwy(:,:,:) )

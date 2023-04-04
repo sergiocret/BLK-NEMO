@@ -41,7 +41,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                                  , INTENT(in   ) :: kt        ! ocean time step
       INTEGER                                  , INTENT(in   ) :: Kmm, Krhs ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts       ! active tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts       ! active tracers and RHS of tracer equation
       !!----------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('tra_isf')
@@ -97,7 +97,7 @@ CONTAINS
       !! *** Action :: Update pts(:,:,:,:,Krhs) with the surface boundary condition trend
       !!
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(inout) :: pts
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(inout) :: pts
       !!----------------------------------------------------------------------
       INTEGER , DIMENSION(jpi,jpj)     , INTENT(in   ) :: ktop , kbot
       REAL(wp), DIMENSION(jpi,jpj)     , INTENT(in   ) :: phtbl, pfrac
@@ -138,7 +138,7 @@ CONTAINS
       !! *** Action :: Update pts(:,:,:,:,Krhs) with the ice shelf coupling trend
       !!
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(inout) :: ptsa
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(inout) :: ptsa
       !!----------------------------------------------------------------------
       INTEGER                              , INTENT(in   ) :: Kmm   ! ocean time level index
       REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(in   ) :: ptsc

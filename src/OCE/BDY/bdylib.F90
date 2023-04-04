@@ -44,7 +44,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       TYPE(OBC_INDEX),                     INTENT(in) ::   idx  ! OBC indices
       REAL(wp), DIMENSION(:,:), POINTER,   INTENT(in) ::   dta  ! OBC external data
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   phia  ! tracer trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   phia  ! tracer trend
       !!
       REAL(wp) ::   zwgt           ! boundary weight
       INTEGER  ::   ib, ik, igrd   ! dummy loop indices
@@ -73,7 +73,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       TYPE(OBC_INDEX),                     INTENT(in) ::   idx  ! OBC indices
       REAL(wp), DIMENSION(:,:), POINTER,   INTENT(in) ::   dta  ! OBC external data
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   phia  ! tracer trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   phia  ! tracer trend
       !!
       INTEGER  ::   ib, ik, igrd   ! dummy loop indices
       INTEGER  ::   ii, ij         ! 2D addresses
@@ -101,8 +101,8 @@ CONTAINS
       !!----------------------------------------------------------------------
       TYPE(OBC_INDEX),                   INTENT(in   ) ::   idx  ! OBC indices
       REAL(wp), DIMENSION(:,:), POINTER, INTENT(in   ) ::   dta  ! OBC external data
-      REAL(wp), DIMENSION(jpi,jpj,jpk),  INTENT(inout) ::   phib  ! before tracer field
-      REAL(wp), DIMENSION(jpi,jpj,jpk),  INTENT(inout) ::   phia  ! tracer trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk),  INTENT(inout) ::   phib  ! before tracer field
+      REAL(dp), DIMENSION(jpi,jpj,jpk),  INTENT(inout) ::   phia  ! tracer trend
       LOGICAL ,                          INTENT(in   ) ::   lrim0   ! indicate if rim 0 is treated
       LOGICAL ,                          INTENT(in   ) ::   ll_npo  ! switch for NPO version
       !!
@@ -145,14 +145,14 @@ CONTAINS
       REAL(wp) ::   zmask_x, zmask_y1, zmask_y2
       REAL(wp) ::   zex1, zex2, zey, zey1, zey2
       REAL(wp) ::   zdt, zdx, zdy, znor2, zrx, zry         ! intermediate calculations
-      REAL(wp) ::   zout, zwgt, zdy_centred
+      REAL(dp) ::   zout, zwgt, zdy_centred
       REAL(wp) ::   zdy_1, zdy_2, zsign_ups
       REAL(wp), PARAMETER :: zepsilon = 1.e-30                 ! local small value
       REAL(wp), POINTER, DIMENSION(:,:)          :: zmask      ! land/sea mask for field
       REAL(wp), POINTER, DIMENSION(:,:)          :: zmask_xdif ! land/sea mask for x-derivatives
       REAL(wp), POINTER, DIMENSION(:,:)          :: zmask_ydif ! land/sea mask for y-derivatives
-      REAL(wp), POINTER, DIMENSION(:,:)          :: pe_xdif    ! scale factors for x-derivatives
-      REAL(wp), POINTER, DIMENSION(:,:)          :: pe_ydif    ! scale factors for y-derivatives
+      REAL(dp), POINTER, DIMENSION(:,:)          :: pe_xdif    ! scale factors for x-derivatives
+      REAL(dp), POINTER, DIMENSION(:,:)          :: pe_ydif    ! scale factors for y-derivatives
       !!----------------------------------------------------------------------
       !
       ! ----------------------------------!
@@ -291,8 +291,8 @@ CONTAINS
       !!----------------------------------------------------------------------
       TYPE(OBC_INDEX),                     INTENT(in   ) ::   idx      ! BDY indices
       INTEGER ,                            INTENT(in   ) ::   igrd     ! grid index
-      REAL(wp), DIMENSION(:,:,:),          INTENT(in   ) ::   phib     ! model before 3D field
-      REAL(wp), DIMENSION(:,:,:),          INTENT(inout) ::   phia     ! model after 3D field (to be updated)
+      REAL(dp), DIMENSION(:,:,:),          INTENT(in   ) ::   phib     ! model before 3D field
+      REAL(dp), DIMENSION(:,:,:),          INTENT(inout) ::   phia     ! model after 3D field (to be updated)
       REAL(wp), DIMENSION(:,:  ), POINTER, INTENT(in   ) ::   phi_ext  ! external forcing data
       LOGICAL ,                            INTENT(in   ) ::   lrim0    ! indicate if rim 0 is treated
       LOGICAL ,                            INTENT(in   ) ::   ll_npo   ! switch for NPO version
@@ -307,14 +307,14 @@ CONTAINS
       REAL(wp) ::   zmask_x, zmask_y1, zmask_y2
       REAL(wp) ::   zex1, zex2, zey, zey1, zey2
       REAL(wp) ::   zdt, zdx, zdy, znor2, zrx, zry         ! intermediate calculations
-      REAL(wp) ::   zout, zwgt, zdy_centred
+      REAL(dp) ::   zout, zwgt, zdy_centred
       REAL(wp) ::   zdy_1, zdy_2,  zsign_ups
       REAL(wp), PARAMETER :: zepsilon = 1.e-30                 ! local small value
       REAL(wp), POINTER, DIMENSION(:,:,:)        :: zmask      ! land/sea mask for field
       REAL(wp), POINTER, DIMENSION(:,:,:)        :: zmask_xdif ! land/sea mask for x-derivatives
       REAL(wp), POINTER, DIMENSION(:,:,:)        :: zmask_ydif ! land/sea mask for y-derivatives
-      REAL(wp), POINTER, DIMENSION(:,:)          :: pe_xdif    ! scale factors for x-derivatives
-      REAL(wp), POINTER, DIMENSION(:,:)          :: pe_ydif    ! scale factors for y-derivatives
+      REAL(dp), POINTER, DIMENSION(:,:)          :: pe_xdif    ! scale factors for x-derivatives
+      REAL(dp), POINTER, DIMENSION(:,:)          :: pe_ydif    ! scale factors for y-derivatives
       !!----------------------------------------------------------------------
       !
       ! ----------------------------------!
@@ -457,7 +457,7 @@ CONTAINS
       !!                                                   !      o      
       !!----------------------------------------------------------------------
       INTEGER,                    INTENT(in   )  ::   igrd     ! grid index
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout)  ::   phia     ! model after 3D field (to be updated), must be masked
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout)  ::   phia     ! model after 3D field (to be updated), must be masked
       TYPE(OBC_INDEX),            INTENT(in   )  ::   idx      ! OBC indices
       LOGICAL ,                   INTENT(in   )  ::   lrim0    ! indicate if rim 0 is treated
       !! 

@@ -91,10 +91,10 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER,                                   INTENT(in   ) :: kt              ! ocean time-step index
       INTEGER,                                   INTENT(in   ) :: Kbb, Kmm, Krhs  ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts             ! active tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts             ! active tracers and RHS of tracer equation
       !
       INTEGER ::   ji, jj, jk, jn   ! dummy loop indices
-      REAL(wp), DIMENSION(A2D(nn_hls),jpk,jpts)     ::  zts_dta
+      REAL(dp), DIMENSION(A2D(nn_hls),jpk,jpts)     ::  zts_dta
       REAL(wp), DIMENSION(:,:,:)  , ALLOCATABLE ::  zwrk
       REAL(wp), DIMENSION(:,:,:,:), ALLOCATABLE ::  ztrdts
       !!----------------------------------------------------------------------

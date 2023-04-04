@@ -40,6 +40,8 @@ MODULE stpctl
    !! $Id: stpctl.F90 15023 2021-06-18 14:35:25Z gsamson $
    !! Software governed by the CeCILL license (see ./LICENSE)
    !!----------------------------------------------------------------------
+#  include "single_precision_substitute.h90"
+#  include "single_precision_substitute.h90"
 CONTAINS
 
    SUBROUTINE stp_ctl( kt, Kmm )
@@ -66,9 +68,9 @@ CONTAINS
       INTEGER                         ::   idtime, istatus
       INTEGER , DIMENSION(jptst)      ::   iareasum, iareamin, iareamax
       INTEGER , DIMENSION(3,jptst)    ::   iloc                                  ! min/max loc indices
-      REAL(wp)                        ::   zzz, zminsal, zmaxsal                 ! local real 
-      REAL(wp), DIMENSION(jpvar+1)    ::   zmax
-      REAL(wp), DIMENSION(jptst)      ::   zmaxlocal
+      REAL(dp)                        ::   zzz, zminsal, zmaxsal                 ! local real
+      REAL(dp), DIMENSION(jpvar+1)    ::   zmax
+      REAL(dp), DIMENSION(jptst)      ::   zmaxlocal
       LOGICAL                         ::   ll_wrtstp, ll_colruns, ll_wrtruns, ll_0oce
       LOGICAL, DIMENSION(jpi,jpj,jpk) ::   llmsk
       CHARACTER(len=20)               ::   clname
@@ -207,10 +209,10 @@ CONTAINS
             llmsk(Nis0:Nie0,Njs0:Nje0,1) = ssmask(Nis0:Nie0,Njs0:Nje0 ) == 1._wp         ! define only the inner domain
             CALL mpp_maxloc( 'stpctl', ABS(ssh(:,:,         Kmm)), llmsk(:,:,1), zzz, iloc(1:2,1) )   ! mpp_maxloc ok if mask = F 
             llmsk(Nis0:Nie0,Njs0:Nje0,:) = umask(Nis0:Nie0,Njs0:Nje0,:) == 1._wp        ! define only the inner domain
-            CALL mpp_maxloc( 'stpctl', ABS( uu(:,:,:,       Kmm)), llmsk(:,:,:), zzz, iloc(1:3,2) )
+ CALL mpp_maxloc( 'stpctl', CASTDP(ABS( uu(:,:,:, Kmm))), llmsk(:,:,:), zzz, iloc(1:3,2) )
             llmsk(Nis0:Nie0,Njs0:Nje0,:) = tmask(Nis0:Nie0,Njs0:Nje0,:) == 1._wp        ! define only the inner domain
             CALL mpp_minloc( 'stpctl',      ts(:,:,:,jp_sal,Kmm) , llmsk(:,:,:), zzz, iloc(1:3,3) )
-            CALL mpp_maxloc( 'stpctl',      ts(:,:,:,jp_sal,Kmm) , llmsk(:,:,:), zzz, iloc(1:3,4) )
+            CALL mpp_maxloc( 'stpctl',      CASTDP(ts(:,:,:,jp_sal,Kmm)) , llmsk(:,:,:), zzz, iloc(1:3,4) )
             ! find which subdomain has the max.
             iareamin(:) = jpnij+1   ;   iareamax(:) = 0   ;   iareasum(:) = 0
             DO ji = 1, jptst
@@ -237,10 +239,10 @@ CONTAINS
          ENDIF
          !
          WRITE(ctmp1,*) ' stp_ctl: |ssh| > 20 m  or  |U| > 10 m/s  or  S <= 0  or  S >= 100  or  NaN encounter in the tests'
-         CALL wrt_line( ctmp2, kt, '|ssh| max', zmax(1), iloc(:,1), iareasum(1), iareamin(1), iareamax(1) )
-         CALL wrt_line( ctmp3, kt, '|U|   max', zmax(2), iloc(:,2), iareasum(2), iareamin(2), iareamax(2) )
-         CALL wrt_line( ctmp4, kt, 'Sal   min', zmax(3), iloc(:,3), iareasum(3), iareamin(3), iareamax(3) )
-         CALL wrt_line( ctmp5, kt, 'Sal   max', zmax(4), iloc(:,4), iareasum(4), iareamin(4), iareamax(4) )
+         CALL wrt_line( ctmp2, kt, '|ssh| max', CASTSP(zmax(1)), iloc(:,1), iareasum(1), iareamin(1), iareamax(1) )
+         CALL wrt_line( ctmp3, kt, '|U|   max', CASTSP(zmax(2)), iloc(:,2), iareasum(2), iareamin(2), iareamax(2) )
+         CALL wrt_line( ctmp4, kt, 'Sal   min', CASTSP(zmax(3)), iloc(:,3), iareasum(3), iareamin(3), iareamax(3) )
+         CALL wrt_line( ctmp5, kt, 'Sal   max', CASTSP(zmax(4)), iloc(:,4), iareasum(4), iareamin(4), iareamax(4) )
          IF( Agrif_Root() ) THEN
             WRITE(ctmp6,*) '      ===> output of last computed fields in output.abort* files'
          ELSE

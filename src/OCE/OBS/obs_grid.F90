@@ -51,7 +51,7 @@ MODULE obs_grid
    !!* Module variables
 
    !! Default values
-   REAL, PUBLIC :: rn_gridsearchres = 0.5   ! Resolution of grid
+   REAL(wp), PUBLIC :: rn_gridsearchres = 0.5   ! Resolution of grid
    INTEGER, PRIVATE :: gsearch_nlons_def    ! Num of longitudes
    INTEGER, PRIVATE :: gsearch_nlats_def    ! Num of latitudes
    REAL(wp), PRIVATE :: gsearch_lonmin_def  ! Min longitude
@@ -680,7 +680,7 @@ CONTAINS
       INTEGER, PARAMETER :: histsize=90
       INTEGER, DIMENSION(histsize) :: &
          & histx1, histx2, histy1, histy2
-      REAL, DIMENSION(histsize) :: &
+      REAL(wp), DIMENSION(histsize) :: &
          & fhistx1, fhistx2, fhisty1, fhisty2
       REAL(wp) :: histtol
       CHARACTER(LEN=26) :: clfmt            ! writing format
@@ -1182,4 +1182,3 @@ CONTAINS
 #include "find_obs_proc.h90"
 
 END MODULE obs_grid
-

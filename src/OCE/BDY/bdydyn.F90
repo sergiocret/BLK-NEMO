@@ -47,7 +47,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT(in)    ::   kt           ! Main time step counter
       INTEGER                             , INTENT(in)    ::   Kbb, Kaa     ! Ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv     ! Ocean velocities (to be updated at open boundaries)
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv     ! Ocean velocities (to be updated at open boundaries)
       LOGICAL, OPTIONAL                   , INTENT(in)    ::   dyn3d_only   ! T => only update baroclinic velocities
       !
       INTEGER ::   jk, ii, ij, ib_bdy, ib, igrd     ! Loop counter

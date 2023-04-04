@@ -48,11 +48,13 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt           ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kmm, Krhs    ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv     ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv     ! ocean velocities and RHS of momentum equation
       !
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
-      REAL(wp), DIMENSION(A2D(nn_hls),jpk) ::  zfu_t, zfu_f, zfu_uw, zfu
-      REAL(wp), DIMENSION(A2D(nn_hls),jpk) ::  zfv_t, zfv_f, zfv_vw, zfv, zfw
+      REAL(wp), DIMENSION(A2D(nn_hls),jpk)  :: zfu_f, zfu
+      REAL(dp), DIMENSION(A2D(nn_hls),jpk)  :: zfu_t, zfu_uw
+      REAL(wp), DIMENSION(A2D(nn_hls),jpk)  :: zfv_f, zfv, zfw
+      REAL(dp), DIMENSION(A2D(nn_hls),jpk)  :: zfv_t, zfv_vw
       !!----------------------------------------------------------------------
       !
       IF( .NOT. l_istiled .OR. ntile == 1 )  THEN                       ! Do only on the first tile

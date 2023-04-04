@@ -115,9 +115,9 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in  ) ::   kt          ! ocean time-step index
       INTEGER                             , INTENT( in  ) ::   Kmm, Krhs   ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv    ! ocean velocity field and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv    ! ocean velocity field and RHS of momentum equation
       !
-      REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) ::  ztrdu, ztrdv
+      REAL(dp), ALLOCATABLE, DIMENSION(:,:,:) ::  ztrdu, ztrdv
       !!----------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('dyn_vor')
@@ -234,8 +234,8 @@ CONTAINS
       INTEGER                         , INTENT(in   ) ::   kt               ! ocean time-step index
       INTEGER                         , INTENT(in   ) ::   Kmm              ! ocean time level index
       INTEGER                         , INTENT(in   ) ::   kvor             ! total, planetary, relative, or metric
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu, pv           ! now velocities
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs   ! total v-trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu, pv           ! now velocities
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs   ! total v-trend
       !
       INTEGER  ::   ji, jj, jk           ! dummy loop indices
       REAL(wp) ::   zx1, zy1, zx2, zy2   ! local scalars
@@ -354,8 +354,8 @@ CONTAINS
       INTEGER                         , INTENT(in   ) ::   kt          ! ocean time-step index
       INTEGER                         , INTENT(in   ) ::   Kmm              ! ocean time level index
       INTEGER                         , INTENT(in   ) ::   kvor        ! total, planetary, relative, or metric
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu, pv    ! now velocities
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs    ! total v-trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu, pv    ! now velocities
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs    ! total v-trend
       !
       INTEGER  ::   ji, jj, jk           ! dummy loop indices
       REAL(wp) ::   zx1, zy1, zx2, zy2, ze3f, zmsk   ! local scalars
@@ -487,8 +487,8 @@ CONTAINS
       INTEGER                         , INTENT(in   ) ::   kt          ! ocean time-step index
       INTEGER                         , INTENT(in   ) ::   Kmm              ! ocean time level index
       INTEGER                         , INTENT(in   ) ::   kvor        ! total, planetary, relative, or metric
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu, pv    ! now velocities
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs    ! total v-trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu, pv    ! now velocities
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs    ! total v-trend
       !
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
       REAL(wp) ::   zuav, zvau, ze3f, zmsk   ! local scalars
@@ -617,8 +617,8 @@ CONTAINS
       INTEGER                         , INTENT(in   ) ::   kt          ! ocean time-step index
       INTEGER                         , INTENT(in   ) ::   Kmm              ! ocean time level index
       INTEGER                         , INTENT(in   ) ::   kvor        ! total, planetary, relative, or metric
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu, pv    ! now velocities
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs    ! total v-trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu, pv    ! now velocities
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs    ! total v-trend
       !
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
       INTEGER  ::   ierr         ! local integer
@@ -816,8 +816,8 @@ CONTAINS
       INTEGER                         , INTENT(in   ) ::   kt               ! ocean time-step index
       INTEGER                         , INTENT(in   ) ::   Kmm              ! ocean time level index
       INTEGER                         , INTENT(in   ) ::   kvor             ! total, planetary, relative, or metric
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu, pv           ! now velocities
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs   ! total v-trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu, pv           ! now velocities
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs   ! total v-trend
       !
       INTEGER  ::   ji, jj, jk     ! dummy loop indices
       INTEGER  ::   ierr           ! local integer

@@ -117,7 +117,7 @@ MODULE sbcblk
    REAL(wp) ::   rn_stau_a      ! Alpha and Beta coefficients of Renault et al. 2020, eq. 10: Stau = Alpha * Wnd + Beta
    REAL(wp) ::   rn_stau_b      !
    !
-   REAL(wp)         ::   rn_pfac   ! multiplication factor for precipitation
+   REAL(dp)         ::   rn_pfac   ! multiplication factor for precipitation
    REAL(wp), PUBLIC ::   rn_efac   ! multiplication factor for evaporation
    REAL(wp)         ::   rn_zqt    ! z(q,t) : height of humidity and temperature measurements
    REAL(wp)         ::   rn_zu     ! z(u)   : height of wind measurements
@@ -169,6 +169,7 @@ MODULE sbcblk
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
    !! $Id: sbcblk.F90 15551 2021-11-28 20:19:36Z gsamson $
@@ -575,7 +576,7 @@ CONTAINS
 
          CALL blk_oce_2(     theta_air_zt(:,:),                                    &   !   <<= in
             &                sf(jp_qlw  )%fnow(:,:,1), sf(jp_prec )%fnow(:,:,1),   &   !   <<= in
-            &                sf(jp_snow )%fnow(:,:,1), tsk_m,                      &   !   <<= in
+            &                CASTDP(sf(jp_snow )%fnow(:,:,1)), tsk_m,                      &   !   <<= in
             &                zsen, zlat, zevp )                                        !   <=> in out
       ENDIF
       !
@@ -808,7 +809,7 @@ CONTAINS
             rhoa(ji,jj) = rho_air( ztabs(ji,jj), q_zu(ji,jj), zpre(ji,jj) )
          END_2D
 
-         CALL BULK_FORMULA( rn_zu, zsspt(:,:), pssq(:,:), theta_zu(:,:), q_zu(:,:), &
+         CALL bulk_formula( rn_zu, zsspt(:,:), pssq(:,:), theta_zu(:,:), q_zu(:,:), &
             &               zcd_oce(:,:), zch_oce(:,:), zce_oce(:,:),          &
             &               wndm(:,:), zU_zu(:,:), pslp(:,:), rhoa(:,:),       &
             &               taum(:,:), psen(:,:), plat(:,:),                   &
@@ -868,11 +869,11 @@ CONTAINS
          CALL iom_put( "vtau_oce", ztau_j(:,:)*tmask(:,:,1) )  ! vtau at T-points!
 
          IF(sn_cfctl%l_prtctl) THEN
-            CALL prt_ctl( tab2d_1=pssq   , clinfo1=' blk_oce_1: pssq   : ', mask1=tmask )
-            CALL prt_ctl( tab2d_1=wndm   , clinfo1=' blk_oce_1: wndm   : ', mask1=tmask )
-            CALL prt_ctl( tab2d_1=utau   , clinfo1=' blk_oce_1: utau   : ', mask1=umask,   &
-               &          tab2d_2=vtau   , clinfo2='            vtau   : ', mask2=vmask )
-            CALL prt_ctl( tab2d_1=zcd_oce, clinfo1=' blk_oce_1: Cd     : ', mask1=tmask )
+            CALL prt_ctl( tab2d_1=CASTDP(pssq), clinfo1=' blk_oce_1: pssq   : ', mask1=tmask )
+            CALL prt_ctl( tab2d_1=CASTDP(wndm), clinfo1=' blk_oce_1: wndm   : ', mask1=tmask )
+            CALL prt_ctl( tab2d_1=CASTDP(utau), clinfo1=' blk_oce_1: utau   : ', mask1=umask,   &
+               &          tab2d_2=CASTDP(vtau), clinfo2='            vtau   : ', mask2=vmask )
+            CALL prt_ctl( tab2d_1=CASTDP(zcd_oce), clinfo1=' blk_oce_1: Cd     : ', mask1=tmask )
          ENDIF
          !
       ENDIF ! ln_blk / ln_abl
@@ -907,7 +908,7 @@ CONTAINS
       REAL(wp), INTENT(in), DIMENSION(:,:) ::   ptair   ! potential temperature of air #LB: confirm!
       REAL(wp), INTENT(in), DIMENSION(:,:) ::   pdqlw   ! downwelling longwave radiation at surface [W/m^2]
       REAL(wp), INTENT(in), DIMENSION(:,:) ::   pprec
-      REAL(wp), INTENT(in), DIMENSION(:,:) ::   psnow
+      REAL(dp), INTENT(in), DIMENSION(:,:) ::   psnow
       REAL(wp), INTENT(in), DIMENSION(:,:) ::   ptsk   ! SKIN surface temperature   [Celsius]
       REAL(wp), INTENT(in), DIMENSION(:,:) ::   psen
       REAL(wp), INTENT(in), DIMENSION(:,:) ::   plat
@@ -969,11 +970,11 @@ CONTAINS
       ENDIF
       !
       IF(sn_cfctl%l_prtctl) THEN
-         CALL prt_ctl(tab2d_1=zqlw , clinfo1=' blk_oce_2: zqlw  : ', mask1=tmask )
-         CALL prt_ctl(tab2d_1=psen , clinfo1=' blk_oce_2: psen  : ', mask1=tmask )
-         CALL prt_ctl(tab2d_1=plat , clinfo1=' blk_oce_2: plat  : ', mask1=tmask )
-         CALL prt_ctl(tab2d_1=qns  , clinfo1=' blk_oce_2: qns   : ', mask1=tmask )
-         CALL prt_ctl(tab2d_1=emp  , clinfo1=' blk_oce_2: emp   : ', mask1=tmask )
+         CALL prt_ctl(tab2d_1=CASTDP(zqlw), clinfo1=' blk_oce_2: zqlw  : ', mask1=tmask )
+         CALL prt_ctl(tab2d_1=CASTDP(psen), clinfo1=' blk_oce_2: psen  : ', mask1=tmask )
+         CALL prt_ctl(tab2d_1=CASTDP(plat), clinfo1=' blk_oce_2: plat  : ', mask1=tmask )
+         CALL prt_ctl(tab2d_1=CASTDP(qns), clinfo1=' blk_oce_2: qns   : ', mask1=tmask )
+         CALL prt_ctl(tab2d_1=CASTDP(emp), clinfo1=' blk_oce_2: emp   : ', mask1=tmask )
       ENDIF
       !
    END SUBROUTINE blk_oce_2
@@ -1096,8 +1097,8 @@ CONTAINS
          END_2D
          CALL lbc_lnk( 'sbcblk', putaui, 'U', -1._wp, pvtaui, 'V', -1._wp )
          !
-         IF(sn_cfctl%l_prtctl)  CALL prt_ctl( tab2d_1=putaui  , clinfo1=' blk_ice: putaui : ', mask1=umask   &
-            &                               , tab2d_2=pvtaui  , clinfo2='          pvtaui : ', mask2=vmask )
+         IF(sn_cfctl%l_prtctl)  CALL prt_ctl( tab2d_1=CASTDP(putaui), clinfo1=' blk_ice: putaui : ', mask1=umask   &
+            &                               , tab2d_2=CASTDP(pvtaui), clinfo2='          pvtaui : ', mask2=vmask )
       ELSE ! ln_abl
 
          DO_2D( nn_hls, nn_hls, nn_hls, nn_hls )
@@ -1109,7 +1110,7 @@ CONTAINS
 
       ENDIF ! ln_blk  / ln_abl
       !
-      IF(sn_cfctl%l_prtctl)  CALL prt_ctl(tab2d_1=wndm_ice  , clinfo1=' blk_ice: wndm_ice : ', mask1=tmask )
+      IF(sn_cfctl%l_prtctl)  CALL prt_ctl(tab2d_1=CASTDP(wndm_ice), clinfo1=' blk_ice: wndm_ice : ', mask1=tmask )
       !
    END SUBROUTINE blk_ice_1
 
@@ -1310,18 +1311,18 @@ CONTAINS
          DO jl = 1, jpl
             zmsk(:,:,jl) = tmask(:,:,1)
          END DO
-         CALL prt_ctl(tab3d_1=qla_ice , clinfo1=' blk_ice: qla_ice  : ', mask1=zmsk,   &
-            &         tab3d_2=z_qsb   , clinfo2=' z_qsb    : '         , mask2=zmsk, kdim=jpl)
-         CALL prt_ctl(tab3d_1=z_qlw   , clinfo1=' blk_ice: z_qlw    : ', mask1=zmsk,   &
-            &         tab3d_2=dqla_ice, clinfo2=' dqla_ice : '         , mask2=zmsk, kdim=jpl)
-         CALL prt_ctl(tab3d_1=z_dqsb  , clinfo1=' blk_ice: z_dqsb   : ', mask1=zmsk,   &
-            &         tab3d_2=z_dqlw  , clinfo2=' z_dqlw   : '         , mask2=zmsk, kdim=jpl)
-         CALL prt_ctl(tab3d_1=dqns_ice, clinfo1=' blk_ice: dqns_ice : ', mask1=zmsk,   &
-            &         tab3d_2=qsr_ice , clinfo2=' qsr_ice  : '         , mask2=zmsk, kdim=jpl)
-         CALL prt_ctl(tab3d_1=ptsu    , clinfo1=' blk_ice: ptsu     : ', mask1=zmsk,   &
-            &         tab3d_2=qns_ice , clinfo2=' qns_ice  : '         , mask2=zmsk, kdim=jpl)
-         CALL prt_ctl(tab2d_1=tprecip , clinfo1=' blk_ice: tprecip  : ', mask1=tmask,   &
-            &         tab2d_2=sprecip , clinfo2=' sprecip  : '         , mask2=tmask         )
+         CALL prt_ctl(tab3d_1=CASTDP(qla_ice) , clinfo1=' blk_ice: qla_ice  : ', mask1=zmsk,   &
+            &         tab3d_2=CASTDP(z_qsb)   , clinfo2=' z_qsb    : '         , mask2=zmsk, kdim=jpl)
+         CALL prt_ctl(tab3d_1=CASTDP(z_qlw)   , clinfo1=' blk_ice: z_qlw    : ', mask1=zmsk,   &
+            &         tab3d_2=CASTDP(dqla_ice), clinfo2=' dqla_ice : '         , mask2=zmsk, kdim=jpl)
+         CALL prt_ctl(tab3d_1=CASTDP(z_dqsb)  , clinfo1=' blk_ice: z_dqsb   : ', mask1=zmsk,   &
+            &         tab3d_2=CASTDP(z_dqlw)  , clinfo2=' z_dqlw   : '         , mask2=zmsk, kdim=jpl)
+         CALL prt_ctl(tab3d_1=CASTDP(dqns_ice), clinfo1=' blk_ice: dqns_ice : ', mask1=zmsk,   &
+            &         tab3d_2=CASTDP(qsr_ice) , clinfo2=' qsr_ice  : '         , mask2=zmsk, kdim=jpl)
+         CALL prt_ctl(tab3d_1=CASTDP(ptsu)    , clinfo1=' blk_ice: ptsu     : ', mask1=zmsk,   &
+            &         tab3d_2=CASTDP(qns_ice) , clinfo2=' qns_ice  : '         , mask2=zmsk, kdim=jpl)
+         CALL prt_ctl(tab2d_1=CASTDP(tprecip) , clinfo1=' blk_ice: tprecip  : ', mask1=tmask,   &
+            &         tab2d_2=CASTDP(sprecip) , clinfo2=' sprecip  : '         , mask2=tmask         )
          DEALLOCATE(zmsk)
       ENDIF
 

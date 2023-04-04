@@ -1,5 +1,4 @@
-
-   SUBROUTINE lbc_nfd_ext_/**/PRECISION( ptab, cd_nat, psgn, kextj )
+SUBROUTINE lbc_nfd_ext_/**/PRECISION( ptab, cd_nat, psgn, kextj )
       !!----------------------------------------------------------------------
       REAL(PRECISION), DIMENSION(:,1-kextj:),INTENT(inout) ::   ptab
       CHARACTER(len=1), INTENT(in   ) ::   cd_nat      ! nature of array grid-points
@@ -117,4 +116,3 @@
       ENDIF   ! c_NFtype == 'F'
       !
    END SUBROUTINE lbc_nfd_ext_/**/PRECISION
-

@@ -71,7 +71,7 @@ CONTAINS
       !!---------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt                  ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kbb, Kmm, Krhs, Kaa ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv            ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv            ! ocean velocities and RHS of momentum equation
       !
       INTEGER  ::   ji, jj, jk         ! dummy loop indices
       INTEGER  ::   iku, ikv           ! local integers
@@ -82,7 +82,7 @@ CONTAINS
       REAL(wp) ::   zWui, zWvi         !   -      -
       REAL(wp) ::   zWus, zWvs         !   -      -
       REAL(wp), DIMENSION(A2D(nn_hls),jpk)        ::  zwi, zwd, zws   ! 3D workspace
-      REAL(wp), DIMENSION(:,:,:), ALLOCATABLE ::   ztrdu, ztrdv   !  -      -
+      REAL(dp), DIMENSION(:,:,:), ALLOCATABLE ::   ztrdu, ztrdv   !  -      -
       !!---------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('dyn_zdf')

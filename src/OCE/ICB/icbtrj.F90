@@ -62,7 +62,7 @@ CONTAINS
       !
       INTEGER                ::   iret, iyear, imonth, iday
       INTEGER                ::   idg  ! number of digits
-      REAL(wp)               ::   zfjulday, zsec
+      REAL(dp)               ::   zfjulday, zsec
       CHARACTER(len=80)      ::   cl_filename
       CHARACTER(LEN=12)      ::   clfmt            ! writing format
       CHARACTER(LEN=8 )      ::   cldate_ini, cldate_end

@@ -87,13 +87,14 @@ CONTAINS
       IF( l_diaptr ) THEN
          ! Calculate zonal integrals
          IF( PRESENT( pvtr ) ) THEN
-            CALL dia_ptr_zint( Kmm, pvtr )
+            CALL dia_ptr_zint( Kmm, pvtr)
          ELSE
             CALL dia_ptr_zint( Kmm )
          ENDIF
 
          ! Calculate diagnostics only when zonal integrals have finished
          IF( .NOT. l_istiled .OR. ntile == nijtile ) CALL dia_ptr_iom(kt, Kmm, pvtr)
+
       ENDIF
 
       IF( ln_timing )   CALL timing_stop('dia_ptr')

@@ -71,6 +71,7 @@ CONTAINS
 #if defined key_agrif
    RECURSIVE SUBROUTINE stp_MLF( )
       INTEGER             ::   kstp   ! ocean time-step index
+
 #else
    SUBROUTINE stp_MLF( kstp )
       INTEGER, INTENT(in) ::   kstp   ! ocean time-step index
@@ -464,7 +465,6 @@ CONTAINS
       !
    END SUBROUTINE stp_MLF
 
-
    SUBROUTINE mlf_baro_corr( Kmm, Kaa, puu, pvv )
       !!----------------------------------------------------------------------
       !!                  ***  ROUTINE mlf_baro_corr  ***
@@ -480,7 +480,7 @@ CONTAINS
       USE dynspg_ts, ONLY : un_adv, vn_adv   ! updated Kmm barotropic transport 
       !!
       INTEGER                             , INTENT(in   ) ::   Kmm, Kaa   ! before and after time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv   ! velocities
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv   ! velocities
       !
       INTEGER  ::   ji,jj, jk   ! dummy loop indices
       REAL(wp), DIMENSION(jpi,jpj) ::   zue, zve
@@ -539,8 +539,8 @@ CONTAINS
       !!
       INTEGER                                  , INTENT(in   ) ::   kt         ! ocean time-step index
       INTEGER                                  , INTENT(in   ) ::   Kbb, Kaa   ! before and after time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt)     , INTENT(inout) ::   puu, pvv   ! velocities to be time filtered
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) ::   pts        ! active tracers
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt)     , INTENT(inout) ::   puu, pvv   ! velocities to be time filtered
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) ::   pts        ! active tracers
       !!----------------------------------------------------------------------
       !
       ! Update after tracer and velocity on domain lateral boundaries
@@ -550,8 +550,8 @@ CONTAINS
             CALL Agrif_dyn( kt )
 # endif
       !                                        ! local domain boundaries  (T-point, unchanged sign)
-      CALL lbc_lnk( 'finalize_lbc', puu(:,:,:,       Kaa), 'U', -1._wp, pvv(:,:,:       ,Kaa), 'V', -1._wp   &
-                       &          , pts(:,:,:,jp_tem,Kaa), 'T',  1._wp, pts(:,:,:,jp_sal,Kaa), 'T',  1._wp )
+      CALL lbc_lnk( 'finalize_lbc', puu(:,:,:,       Kaa), 'U', -1._dp, pvv(:,:,:       ,Kaa), 'V', -1._dp   &
+                       &          , pts(:,:,:,jp_tem,Kaa), 'T',  1._dp, pts(:,:,:,jp_sal,Kaa), 'T',  1._dp )
       !
       ! lbc_lnk needed for zdf_sh2 when using nn_hls = 2, moved here to allow tiling in zdf_phy
       IF( nn_hls == 2 .AND. l_zdfsh2 ) CALL lbc_lnk( 'stp', avm_k, 'W', 1.0_wp )

@@ -113,13 +113,13 @@ CONTAINS
 
    FUNCTION local_sum_2d( ptab )
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:), INTENT(in) ::   ptab ! array on which operation is applied
-      COMPLEX(dp)                          ::   local_sum_2d
+      REAL(dp), DIMENSION(:,:),  INTENT(in   ) ::   ptab ! array on which operation is applied
+      COMPLEX(dp)              ::  local_sum_2d
       !
       !!-----------------------------------------------------------------------
       !
       COMPLEX(dp)::   ctmp
-      REAL(wp)   ::   ztmp
+      REAL(dp)   ::   ztmp
       INTEGER    ::   ji, jj    ! dummy loop indices
       INTEGER    ::   ipi, ipj  ! dimensions
       !!-----------------------------------------------------------------------
@@ -127,12 +127,12 @@ CONTAINS
       ipi = SIZE(ptab,1)   ! 1st dimension
       ipj = SIZE(ptab,2)   ! 2nd dimension
       !
-      ctmp = CMPLX( 0._dp, 0._dp, dp )   ! warning ctmp is cumulated
+      ctmp = CMPLX( 0.e0, 0.e0, dp )   ! warning ctmp is cumulated
 
       DO jj = 1, ipj
          DO ji = 1, ipi
             ztmp =  ptab(ji,jj) * tmask_i(ji,jj)
-            CALL DDPDD( CMPLX( ztmp, 0._dp, dp ), ctmp )
+            CALL DDPDD( CMPLX( ztmp, 0.e0, dp ), ctmp )
          END DO
       END DO
       !
@@ -142,13 +142,13 @@ CONTAINS
 
    FUNCTION local_sum_3d( ptab )
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:,:), INTENT(in) ::   ptab ! array on which operation is applied
-      COMPLEX(dp)                            ::   local_sum_3d
+      REAL(wp), DIMENSION(:,:,:),  INTENT(in   ) ::   ptab ! array on which operation is applied
+      COMPLEX(dp)              ::  local_sum_3d
       !
       !!-----------------------------------------------------------------------
       !
       COMPLEX(dp)::   ctmp
-      REAL(wp)   ::   ztmp
+      REAL(dp)   ::   ztmp
       INTEGER    ::   ji, jj, jk   ! dummy loop indices
       INTEGER    ::   ipi, ipj, ipk    ! dimensions
       !!-----------------------------------------------------------------------
@@ -157,13 +157,13 @@ CONTAINS
       ipj = SIZE(ptab,2)   ! 2nd dimension
       ipk = SIZE(ptab,3)   ! 3rd dimension
       !
-      ctmp = CMPLX( 0._dp, 0._dp, dp )   ! warning ctmp is cumulated
+      ctmp = CMPLX( 0.e0, 0.e0, dp )   ! warning ctmp is cumulated
 
       DO jk = 1, ipk
         DO jj = 1, ipj
           DO ji = 1, ipi
              ztmp =  ptab(ji,jj,jk) * tmask_i(ji,jj)
-             CALL DDPDD( CMPLX( ztmp, 0._dp, dp ), ctmp )
+             CALL DDPDD( CMPLX( ztmp, 0.e0, dp ), ctmp )
           END DO
         END DO
       END DO
@@ -286,12 +286,12 @@ CONTAINS
 
    FUNCTION glob_sum_vec_3d( cdname, ptab ) RESULT( ptmp )
       !!----------------------------------------------------------------------
-      CHARACTER(len=*),           INTENT(in) ::   cdname   ! name of the calling subroutine
-      REAL(wp), DIMENSION(:,:,:), INTENT(in) ::   ptab     ! array on which operation is applied
-      REAL(wp), DIMENSION(SIZE(ptab,3))      ::   ptmp
+      CHARACTER(len=*),  INTENT(in) ::   cdname      ! name of the calling subroutine
+      REAL(dp), DIMENSION(:,:,:),         INTENT(in) ::   ptab ! array on which operation is applied
+      REAL(dp), DIMENSION(SIZE(ptab,3)) ::   ptmp
       !
       COMPLEX(dp), DIMENSION(:), ALLOCATABLE ::   ctmp
-      REAL(wp)    ::   ztmp
+      REAL(dp)    ::   ztmp
       INTEGER     ::   ji , jj , jk     ! dummy loop indices
       INTEGER     ::   ipi, ipj, ipk    ! dimensions
       INTEGER     ::   iis, iie, ijs, ije   ! loop start and end
@@ -312,17 +312,17 @@ CONTAINS
       ALLOCATE( ctmp(ipk) )
       !
       DO jk = 1, ipk
-         ctmp(jk) = CMPLX( 0._dp, 0._dp, dp )   ! warning ctmp is cumulated
+         ctmp(jk) = CMPLX( 0.e0, 0.e0, dp )   ! warning ctmp is cumulated
          DO jj = ijs, ije
             DO ji = iis, iie
                ztmp =  ptab(ji,jj,jk) * tmask_i(ji,jj)
-               CALL DDPDD( CMPLX( ztmp, 0._dp, dp ), ctmp(jk) )
+               CALL DDPDD( CMPLX( ztmp, 0.e0, dp ), ctmp(jk) )
             END DO
          END DO
       END DO
       CALL mpp_sum( cdname, ctmp(:) )   ! sum over the global domain
       !
-      ptmp = REAL( ctmp(:), wp )
+      ptmp = REAL( ctmp(:), dp )
       !
       DEALLOCATE( ctmp )
       !
@@ -330,12 +330,12 @@ CONTAINS
 
    FUNCTION glob_sum_vec_4d( cdname, ptab ) RESULT( ptmp )
       !!----------------------------------------------------------------------
-      CHARACTER(len=*),             INTENT(in) ::   cdname   ! name of the calling subroutine
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(in) ::   ptab     ! array on which operation is applied
-      REAL(wp), DIMENSION(SIZE(ptab,4))        ::   ptmp
+      CHARACTER(len=*),  INTENT(in) ::   cdname        ! name of the calling subroutine
+      REAL(dp),  DIMENSION(:,:,:,:),        INTENT(in) ::   ptab ! array on which operation is applied
+      REAL(dp), DIMENSION(SIZE(ptab,4)) ::   ptmp
       !
       COMPLEX(dp), DIMENSION(:), ALLOCATABLE ::   ctmp
-      REAL(wp)    ::   ztmp
+      REAL(dp)    ::   ztmp
       INTEGER     ::   ji , jj , jk , jl     ! dummy loop indices
       INTEGER     ::   ipi, ipj, ipk, ipl    ! dimensions
       INTEGER     ::   iis, iie, ijs, ije    ! loop start and end
@@ -362,14 +362,14 @@ CONTAINS
             DO jj = ijs, ije
                DO ji = iis, iie
                   ztmp =  ptab(ji,jj,jk,jl) * tmask_i(ji,jj)
-                  CALL DDPDD( CMPLX( ztmp, 0._dp, dp ), ctmp(jl) )
+                  CALL DDPDD( CMPLX( ztmp, 0.e0, dp ), ctmp(jl) )
                END DO
             END DO
          END DO
       END DO
       CALL mpp_sum( cdname, ctmp(:) )   ! sum over the global domain
       !
-      ptmp = REAL( ctmp(:), wp )
+      ptmp = REAL( ctmp(:), dp )
       !
       DEALLOCATE( ctmp )
       !
@@ -377,9 +377,9 @@ CONTAINS
 
    FUNCTION glob_min_vec_3d( cdname, ptab ) RESULT( ptmp )
       !!----------------------------------------------------------------------
-      CHARACTER(len=*),           INTENT(in) ::   cdname   ! name of the calling subroutine
-      REAL(wp), DIMENSION(:,:,:), INTENT(in) ::   ptab     ! array on which operation is applied
-      REAL(wp), DIMENSION(SIZE(ptab,3))      ::   ptmp
+      CHARACTER(len=*),  INTENT(in) ::   cdname        ! name of the calling subroutine
+      REAL(wp), DIMENSION(:,:,:),         INTENT(in) ::   ptab   ! array on which operation is applied
+      REAL(dp), DIMENSION(SIZE(ptab,3)) ::   ptmp
       !
       INTEGER     ::   jk    ! dummy loop indice & dimension
       INTEGER     ::   ipk   ! dimension
@@ -396,9 +396,9 @@ CONTAINS
 
    FUNCTION glob_min_vec_4d( cdname, ptab ) RESULT( ptmp )
       !!----------------------------------------------------------------------
-      CHARACTER(len=*),             INTENT(in) ::   cdname   ! name of the calling subroutine
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(in) ::   ptab     ! array on which operation is applied
-      REAL(wp), DIMENSION(SIZE(ptab,4))        ::   ptmp
+      CHARACTER(len=*),  INTENT(in) ::   cdname          ! name of the calling subroutine
+      REAL(wp), DIMENSION(:,:,:,:),         INTENT(in) ::   ptab   ! array on which operation is applied
+      REAL(dp), DIMENSION(SIZE(ptab,4)) ::   ptmp
       !
       INTEGER     ::   jk , jl    ! dummy loop indice & dimension
       INTEGER     ::   ipk, ipl   ! dimension
@@ -419,9 +419,9 @@ CONTAINS
    
    FUNCTION glob_max_vec_3d( cdname, ptab ) RESULT( ptmp )
       !!----------------------------------------------------------------------
-      CHARACTER(len=*),           INTENT(in) ::   cdname   ! name of the calling subroutine
-      REAL(wp), DIMENSION(:,:,:), INTENT(in) ::   ptab     ! array on which operation is applied
-      REAL(wp), DIMENSION(SIZE(ptab,3))      ::   ptmp
+      CHARACTER(len=*),  INTENT(in) ::   cdname        ! name of the calling subroutine
+      REAL(wp), DIMENSION(:,:,:),         INTENT(in) ::   ptab   ! array on which operation is applied
+      REAL(dp), DIMENSION(SIZE(ptab,3)) ::   ptmp
       !
       INTEGER     ::   jk    ! dummy loop indice & dimension
       INTEGER     ::   ipk   ! dimension
@@ -438,9 +438,9 @@ CONTAINS
 
    FUNCTION glob_max_vec_4d( cdname, ptab ) RESULT( ptmp )
       !!----------------------------------------------------------------------
-      CHARACTER(len=*),             INTENT(in) ::   cdname   ! name of the calling subroutine
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(in) ::   ptab     ! array on which operation is applied
-      REAL(wp), DIMENSION(SIZE(ptab,4))        ::   ptmp
+      CHARACTER(len=*),  INTENT(in) ::   cdname          ! name of the calling subroutine
+      REAL(wp), DIMENSION(:,:,:,:),         INTENT(in) ::   ptab   ! array on which operation is applied
+      REAL(dp), DIMENSION(SIZE(ptab,4)) ::   ptmp
       !
       INTEGER     ::   jk , jl    ! dummy loop indice & dimension
       INTEGER     ::   ipk, ipl   ! dimension
@@ -467,7 +467,7 @@ CONTAINS
       !!
       !!
       !! ** Method  : The code uses the compensated summation with doublet
-      !!              (sum,error) emulated useing complex numbers. ydda is the
+      !!              (sum,error) emulated using complex numbers. ydda is the
       !!               scalar to add to the summ yddb
       !!
       !! ** Action  : This does only work for MPI.

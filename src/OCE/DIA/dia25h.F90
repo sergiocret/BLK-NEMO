@@ -140,7 +140,7 @@ CONTAINS
       INTEGER ::   ji, jj, jk
       INTEGER                          ::   iyear0, nimonth0,iday0            ! start year,imonth,day
       LOGICAL ::   ll_print = .FALSE.    ! =T print and flush numout
-      REAL(wp)                         ::   zsto, zout, zmax, zjulian, zmdi   ! local scalars
+      REAL(dp)                         ::   zsto, zout, zmax, zjulian, zmdi   ! local scalars
       INTEGER                          ::   i_steps                           ! no of timesteps per hour
       REAL(wp), DIMENSION(A2D(0)    )  ::   zw2d, un_dm, vn_dm                ! workspace
       REAL(wp), DIMENSION(A2D(0),jpk)  ::   zw3d                              ! workspace

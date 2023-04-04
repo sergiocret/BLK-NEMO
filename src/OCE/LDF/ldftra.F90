@@ -730,7 +730,7 @@ CONTAINS
       CHARACTER(len=3)            , INTENT(in   ) ::   cdtype    ! =TRA or TRC (tracer indicator)
       ! TEMP: [tiling] Can be A2D(nn_hls) after all lbc_lnks removed in the nn_hls = 2 case in tra_adv_fct
       REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu        ! in : 3 ocean transport components   [m3/s]
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pv        ! out: 3 ocean transport components   [m3/s]
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pv        ! out: 3 ocean transport components   [m3/s]
       REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pw        ! increased by the eiv                [m3/s]
       !!
       INTEGER  ::   ji, jj, jk                 ! dummy loop indices
@@ -867,7 +867,7 @@ CONTAINS
       CALL iom_put( "veiv_heattr"  , zztmp * zw2d )                  !  heat transport in j-direction
       CALL iom_put( "veiv_heattr3d", zztmp * zw3d )                  !  heat transport in j-direction
       !
-      IF( iom_use( 'sophteiv' ) )   CALL dia_ptr_hst( jp_tem, 'eiv', 0.5 * zw3d )
+      IF( iom_use( 'sophteiv' ) )   CALL dia_ptr_hst( jp_tem, 'eiv', 0.5_wp * zw3d )
       !
       zztmp = 0.5_wp * 0.5
       IF( iom_use('ueiv_salttr') .OR. iom_use('ueiv_salttr3d')) THEN
@@ -891,7 +891,7 @@ CONTAINS
       CALL iom_put( "veiv_salttr"  , zztmp * zw2d )                  !  salt transport in j-direction
       CALL iom_put( "veiv_salttr3d", zztmp * zw3d )                  !  salt transport in j-direction
       !
-      IF( iom_use( 'sopsteiv' ) ) CALL dia_ptr_hst( jp_sal, 'eiv', 0.5 * zw3d )
+      IF( iom_use( 'sopsteiv' ) ) CALL dia_ptr_hst( jp_sal, 'eiv', 0.5_wp * zw3d )
       !
       !
    END SUBROUTINE ldf_eiv_dia

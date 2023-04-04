@@ -20,27 +20,29 @@ MODULE oce
 
    !! dynamics and tracer fields
    !! --------------------------                            
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:,:)   ::   uu   ,  vv     !: horizontal velocities        [m/s]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:,:)   ::   uu   ,  vv     !: horizontal velocities        [m/s]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)     ::   ww             !: vertical velocity            [m/s]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)     ::   wi             !: vertical vel. (adaptive-implicit) [m/s]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)     ::   hdiv           !: horizontal divergence        [s-1]
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:,:,:) ::   ts             !: 4D T-S fields                  [Celsius,psu] 
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:,:,:) ::   ts             !: 4D T-S fields                  [Celsius,psu]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:,:)   ::   rab_b,  rab_n  !: thermal/haline expansion coef. [Celsius-1,psu-1]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)     ::   rn2b ,  rn2    !: brunt-vaisala frequency**2     [s-2]
    !
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   rhd    !: in situ density anomalie rhd=(rho-rho0)/rho0  [no units]
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   rhop   !: potential volumic mass                           [kg/m3]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   rhop   !: potential volumic mass                           [kg/m3]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   Cu_adv                   !: vertical Courant number (adaptive-implicit)
 
    !! free surface
    !! ------------
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   ssh, uu_b,  vv_b           !: SSH [m] and barotropic velocities [m/s]
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)   ::   ssh_frc                    !: Forcing term in external mode for SSH [m/s] 
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)  :: uu_b, vv_b!: SSH [m] and barotropic velocities [m/s]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)  :: ssh!: SSH [m] and barotropic velocities [m/s]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)   ::   ssh_frc                    !: Forcing term in external mode for SSH [m/s]
 
    !! Arrays at barotropic time step:                   ! befbefore! before !  now   ! after  !
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   ubb_e  ,  ub_e  ,  un_e  , ua_e   !: u-external velocity
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   vbb_e  ,  vb_e  ,  vn_e  , va_e   !: v-external velocity
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   sshbb_e,  sshb_e,  sshn_e, ssha_e !: external ssh
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)  :: sshbb_e, sshb_e!: external ssh
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)  :: sshn_e, ssha_e!: external ssh
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::                              hu_e   !: external u-depth
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::                              hv_e   !: external v-depth
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::                              hur_e  !: inverse of u-depth

@@ -1,4 +1,4 @@
-   RECURSIVE SUBROUTINE jul2greg( ksec, kminut, khour, kday, kmonth, kyear, &
+RECURSIVE SUBROUTINE jul2greg( ksec, kminut, khour, kday, kmonth, kyear, &
       &                           prelday, krefdate )
       !!-----------------------------------------------------------------------
       !!

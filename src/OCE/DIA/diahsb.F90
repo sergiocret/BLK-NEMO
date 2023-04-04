@@ -40,17 +40,21 @@ MODULE diahsb
    LOGICAL, PUBLIC ::   ln_diahsb   !: check the heat and salt budgets
 
    REAL(wp) ::   surf_tot              ! ocean surface
-   REAL(wp) ::   frc_t, frc_s, frc_v   ! global forcing trends
+   REAL(wp)  :: frc_s! global forcing trends
+   REAL(dp)  :: frc_t, frc_v! global forcing trends
    REAL(wp) ::   frc_wn_t, frc_wn_s    ! global forcing trends
    !
-   REAL(wp), DIMENSION(:,:)  , ALLOCATABLE ::   surf
-   REAL(wp), DIMENSION(:,:)  , ALLOCATABLE ::   surf_ini      , ssh_ini          !
+   REAL(dp), DIMENSION(:,:)  , ALLOCATABLE ::   surf
+   REAL(wp), DIMENSION(:,:)  , ALLOCATABLE  :: ssh_ini!
+   REAL(dp), DIMENSION(:,:)  , ALLOCATABLE  :: surf_ini!
    REAL(wp), DIMENSION(:,:)  , ALLOCATABLE ::   ssh_hc_loc_ini, ssh_sc_loc_ini   !
-   REAL(wp), DIMENSION(:,:,:), ALLOCATABLE ::   hc_loc_ini, sc_loc_ini, e3t_ini  !
+   REAL(wp), DIMENSION(:,:,:), ALLOCATABLE  :: hc_loc_ini!
+   REAL(dp), DIMENSION(:,:,:), ALLOCATABLE  :: sc_loc_ini, e3t_ini!
    REAL(wp), DIMENSION(:,:,:), ALLOCATABLE ::   tmask_ini
 
    !! * Substitutions
 #  include "domzgr_substitute.h90"
+#  include "single_precision_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
    !! $Id: diahsb.F90 15062 2021-06-28 11:19:48Z jchanut $
@@ -75,16 +79,16 @@ CONTAINS
       INTEGER    ::   ji, jj, jk                  ! dummy loop indice
       REAL(wp)   ::   zdiff_hc    , zdiff_sc      ! heat and salt content variations
       REAL(wp)   ::   zdiff_hc1   , zdiff_sc1     !  -         -     -        -
-      REAL(wp)   ::   zdiff_v1    , zdiff_v2      ! volume variation
+      REAL(dp)   ::   zdiff_v1    , zdiff_v2      ! volume variation
       REAL(wp)   ::   zerr_hc1    , zerr_sc1      ! heat and salt content misfit
       REAL(wp)   ::   zvol_tot                    ! volume
       REAL(wp)   ::   z_frc_trd_t , z_frc_trd_s   !    -     -
-      REAL(wp)   ::   z_frc_trd_v                 !    -     -
+      REAL(dp)   ::   z_frc_trd_v                 !    -     -
       REAL(wp)   ::   z_wn_trd_t , z_wn_trd_s     !    -     -
       REAL(wp)   ::   z_ssh_hc , z_ssh_sc         !    -     -
-      REAL(wp), DIMENSION(jpi,jpj,13)      ::   ztmp
-      REAL(wp), DIMENSION(jpi,jpj,jpkm1,4) ::   ztmpk
-      REAL(wp), DIMENSION(17)              ::   zbg          
+      REAL(dp), DIMENSION(jpi,jpj,13)      ::   ztmp
+      REAL(dp), DIMENSION(jpi,jpj,jpkm1,4) ::   ztmpk
+      REAL(dp), DIMENSION(17)              ::   zbg
       !!---------------------------------------------------------------------------
       IF( ln_timing )   CALL timing_start('dia_hsb')
       !

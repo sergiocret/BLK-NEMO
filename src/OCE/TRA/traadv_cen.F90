@@ -75,7 +75,7 @@ CONTAINS
       INTEGER                                  , INTENT(in   ) ::   kn_cen_v        ! =2/4 (2nd or 4th order scheme)
       ! TEMP: [tiling] This can be A2D(nn_hls) after all lbc_lnks removed in the nn_hls = 2 case in tra_adv_fct
       REAL(wp), DIMENSION(jpi,jpj,jpk         ), INTENT(in   ) ::   pU, pV, pW      ! 3 ocean volume flux components
-      REAL(wp), DIMENSION(jpi,jpj,jpk,kjpt,jpt), INTENT(inout) ::   pt              ! tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,kjpt,jpt), INTENT(inout) ::   pt              ! tracers and RHS of tracer equation
       !
       INTEGER  ::   ji, jj, jk, jn   ! dummy loop indices
       INTEGER  ::   ierr             ! local integer

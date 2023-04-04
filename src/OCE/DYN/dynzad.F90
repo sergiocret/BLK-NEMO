@@ -55,13 +55,13 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt               ! ocean time-step inedx
       INTEGER                             , INTENT( in )  ::  Kmm, Krhs        ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv         ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv         ! ocean velocities and RHS of momentum equation
       !
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
       REAL(wp) ::   zua, zva     ! local scalars
       REAL(wp), DIMENSION(A2D(nn_hls))     ::   zww
       REAL(wp), DIMENSION(A2D(nn_hls),jpk) ::   zwuw, zwvw
-      REAL(wp), DIMENSION(:,:,:), ALLOCATABLE ::   ztrdu, ztrdv
+      REAL(dp), DIMENSION(:,:,:), ALLOCATABLE ::   ztrdu, ztrdv
       !!----------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('dyn_zad')

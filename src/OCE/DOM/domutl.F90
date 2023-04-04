@@ -28,6 +28,8 @@ MODULE domutl
    PUBLIC dom_uniq   ! Called by dommsk and domwri
    PUBLIC is_tile
 
+   !! * Substitutions
+#  include "single_precision_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.2 , NEMO Consortium (2020)
    !! $Id: domutl.F90 14834 2021-05-11 09:24:44Z hadcv $
@@ -75,7 +77,7 @@ CONTAINS
       zgphi(:,:) = zgphi(:,:) - plat
       zdist(:,:) = zglam(:,:) * zglam(:,:) + zgphi(:,:) * zgphi(:,:)
       !
-      CALL mpp_minloc( 'domngb', zdist(:,:), llmsk, zmini, iloc, ldhalo = .TRUE. )
+      CALL mpp_minloc( 'domngb', CASTDP(zdist(:,:)), llmsk, zmini, iloc, ldhalo = .TRUE. )
       kii = iloc(1)
       kjj = iloc(2)
       !
@@ -107,7 +109,7 @@ CONTAINS
       ztstref(:,:) = RESHAPE( (/ (zshift + REAL(ji,wp), ji = 1, jpi*jpj) /), (/ jpi, jpj /) )
       !
       puniq(:,:) = ztstref(:,:)                    ! default definition
-      CALL lbc_lnk( 'domwri', puniq, cdgrd, 1. )   ! apply boundary conditions
+      CALL lbc_lnk( 'domwri', puniq, cdgrd, 1._wp )   ! apply boundary conditions
       lluniq(:,:,1) = puniq(:,:) == ztstref(:,:)   ! check which values have not been changed
       !
       puniq(:,:) = REAL( COUNT( lluniq(:,:,:), dim = 3 ), wp )

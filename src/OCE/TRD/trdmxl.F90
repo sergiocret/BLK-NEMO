@@ -69,6 +69,7 @@ MODULE trdmxl
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -249,8 +250,8 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                         , INTENT( in ) ::   ktrd       ! ocean trend index
       CHARACTER(len=2)                , INTENT( in ) ::   ctype      ! 2D surface/bottom or 3D interior physics
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT( in ) ::   pttrdmxl   ! temperature trend 
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT( in ) ::   pstrdmxl   ! salinity trend 
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT( in ) ::   pttrdmxl   ! temperature trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT( in ) ::   pstrdmxl   ! salinity trend
       !
       INTEGER ::   ji, jj, jk, isum
       REAL(wp), DIMENSION(jpi,jpj)  :: zvlmsk 
@@ -374,9 +375,9 @@ CONTAINS
 
          IF( sn_cfctl%l_prtctl ) THEN
             WRITE(numout,*) '             we reach kt == nit000 + 1 = ', nit000+1
-            CALL prt_ctl(tab2d_1=tmlbb   , clinfo1=' tmlbb   -   : ', mask1=tmask)
-            CALL prt_ctl(tab2d_1=tmlbn   , clinfo1=' tmlbn   -   : ', mask1=tmask)
-            CALL prt_ctl(tab2d_1=tmlatfb , clinfo1=' tmlatfb -   : ', mask1=tmask)
+            CALL prt_ctl(tab2d_1=CASTDP(tmlbb)  , clinfo1=' tmlbb   -   : ', mask1=tmask)
+            CALL prt_ctl(tab2d_1=CASTDP(tmlbn)  , clinfo1=' tmlbn   -   : ', mask1=tmask)
+            CALL prt_ctl(tab2d_1=CASTDP(tmlatfb), clinfo1=' tmlatfb -   : ', mask1=tmask)
          END IF
          !
       END IF
@@ -384,16 +385,16 @@ CONTAINS
       IF( ( ln_rstart ) .AND. ( kt == nit000 ) .AND. sn_cfctl%l_prtctl ) THEN
          IF( ln_trdmxl_instant ) THEN
             WRITE(numout,*) '             restart from kt == nit000 = ', nit000
-            CALL prt_ctl(tab2d_1=tmlbb   , clinfo1=' tmlbb   -   : ', mask1=tmask)
-            CALL prt_ctl(tab2d_1=tmlbn   , clinfo1=' tmlbn   -   : ', mask1=tmask)
-            CALL prt_ctl(tab2d_1=tmlatfb , clinfo1=' tmlatfb -   : ', mask1=tmask)
+            CALL prt_ctl(tab2d_1=CASTDP(tmlbb  ) , clinfo1=' tmlbb   -   : ', mask1=tmask)
+            CALL prt_ctl(tab2d_1=CASTDP(tmlbn  ) , clinfo1=' tmlbn   -   : ', mask1=tmask)
+            CALL prt_ctl(tab2d_1=CASTDP(tmlatfb ), clinfo1=' tmlatfb -   : ', mask1=tmask)
          ELSE
             WRITE(numout,*) '             restart from kt == nit000 = ', nit000
-            CALL prt_ctl(tab2d_1=tmlbn          , clinfo1=' tmlbn           -  : ', mask1=tmask)
-            CALL prt_ctl(tab2d_1=hmxlbn         , clinfo1=' hmxlbn          -  : ', mask1=tmask)
-            CALL prt_ctl(tab2d_1=tml_sumb       , clinfo1=' tml_sumb        -  : ', mask1=tmask)
-            CALL prt_ctl(tab2d_1=tmltrd_atf_sumb, clinfo1=' tmltrd_atf_sumb -  : ', mask1=tmask)
-            CALL prt_ctl(tab3d_1=tmltrd_csum_ub , clinfo1=' tmltrd_csum_ub  -  : ', mask1=tmask, kdim=1)
+            CALL prt_ctl(tab2d_1=CASTDP(tmlbn)        , clinfo1=' tmlbn           -  : ', mask1=tmask)
+            CALL prt_ctl(tab2d_1=CASTDP(hmxlbn)       , clinfo1=' hmxlbn          -  : ', mask1=tmask)
+            CALL prt_ctl(tab2d_1=CASTDP(tml_sumb)      , clinfo1=' tml_sumb        -  : ', mask1=tmask)
+            CALL prt_ctl(tab2d_1=CASTDP(tmltrd_atf_sumb), clinfo1=' tmltrd_atf_sumb -  : ', mask1=tmask)
+            CALL prt_ctl(tab3d_1=CASTDP(tmltrd_csum_ub) , clinfo1=' tmltrd_csum_ub  -  : ', mask1=tmask, kdim=1)
          END IF
       END IF
 
@@ -551,15 +552,15 @@ CONTAINS
          
          IF( sn_cfctl%l_prtctl ) THEN
             IF( ln_trdmxl_instant ) THEN
-               CALL prt_ctl(tab2d_1=tmlbb   , clinfo1=' tmlbb   -   : ', mask1=tmask)
-               CALL prt_ctl(tab2d_1=tmlbn   , clinfo1=' tmlbn   -   : ', mask1=tmask)
-               CALL prt_ctl(tab2d_1=tmlatfb , clinfo1=' tmlatfb -   : ', mask1=tmask)
+               CALL prt_ctl(tab2d_1=CASTDP(tmlbb)   , clinfo1=' tmlbb   -   : ', mask1=tmask)
+               CALL prt_ctl(tab2d_1=CASTDP(tmlbn )  , clinfo1=' tmlbn   -   : ', mask1=tmask)
+               CALL prt_ctl(tab2d_1=CASTDP(tmlatfb) , clinfo1=' tmlatfb -   : ', mask1=tmask)
             ELSE
-               CALL prt_ctl(tab2d_1=tmlbn          , clinfo1=' tmlbn           -  : ', mask1=tmask)
-               CALL prt_ctl(tab2d_1=hmxlbn         , clinfo1=' hmxlbn          -  : ', mask1=tmask)
-               CALL prt_ctl(tab2d_1=tml_sumb       , clinfo1=' tml_sumb        -  : ', mask1=tmask)
-               CALL prt_ctl(tab2d_1=tmltrd_atf_sumb, clinfo1=' tmltrd_atf_sumb -  : ', mask1=tmask)
-               CALL prt_ctl(tab3d_1=tmltrd_csum_ub , clinfo1=' tmltrd_csum_ub  -  : ', mask1=tmask, kdim=1)
+               CALL prt_ctl(tab2d_1=CASTDP(tmlbn)        , clinfo1=' tmlbn           -  : ', mask1=tmask)
+               CALL prt_ctl(tab2d_1=CASTDP(hmxlbn)      , clinfo1=' hmxlbn          -  : ', mask1=tmask)
+               CALL prt_ctl(tab2d_1=CASTDP(tml_sumb)     , clinfo1=' tml_sumb        -  : ', mask1=tmask)
+               CALL prt_ctl(tab2d_1=CASTDP(tmltrd_atf_sumb), clinfo1=' tmltrd_atf_sumb -  : ', mask1=tmask)
+               CALL prt_ctl(tab3d_1=CASTDP(tmltrd_csum_ub), clinfo1=' tmltrd_csum_ub  -  : ', mask1=tmask, kdim=1)
             END IF
          END IF
 
@@ -725,7 +726,7 @@ CONTAINS
       INTEGER  ::   jl     ! dummy loop indices
       INTEGER  ::   inum   ! logical unit
       INTEGER  ::   ios    ! local integer
-      REAL(wp) ::   zjulian, zsto, zout
+      REAL(dp) ::   zjulian, zsto, zout
       CHARACTER (LEN=40) ::   clop
       CHARACTER (LEN=12) ::   clmxl, cltu, clsu
       !!

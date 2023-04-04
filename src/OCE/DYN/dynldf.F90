@@ -33,6 +33,8 @@ MODULE dynldf
    PUBLIC   dyn_ldf       ! called by step module 
    PUBLIC   dyn_ldf_init  ! called by opa  module 
 
+   !! * Substitutions
+#  include "single_precision_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
    !! $Id: dynldf.F90 12377 2020-02-12 14:39:06Z acc $
@@ -48,9 +50,9 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt               ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kbb, Kmm, Krhs   ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv         ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv         ! ocean velocities and RHS of momentum equation
       !
-      REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) ::   ztrdu, ztrdv
+      REAL(dp), ALLOCATABLE, DIMENSION(:,:,:) ::   ztrdu, ztrdv
       !!----------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('dyn_ldf')
