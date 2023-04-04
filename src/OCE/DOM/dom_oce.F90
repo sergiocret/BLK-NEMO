@@ -100,12 +100,16 @@ MODULE dom_oce
    !! ---------------------------------------------------------------------
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE        , DIMENSION(:,:) ::   glamt , glamu, glamv , glamf    !: longitude at t, u, v, f-points [degree]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE        , DIMENSION(:,:) ::   gphit , gphiu, gphiv , gphif    !: latitude  at t, u, v, f-points [degree]
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:) ::   e1t   , e2t  , r1_e1t, r1_e2t   !: t-point horizontal scale factors    [m]
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:) ::   e1u   , e2u  , r1_e1u, r1_e2u   !: horizontal scale factors at u-point [m]
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:) ::   e1v   , e2v  , r1_e1v, r1_e2v   !: horizontal scale factors at v-point [m]
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:) ::   e1f   , e2f  , r1_e1f, r1_e2f   !: horizontal scale factors at f-point [m]
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)  :: r1_e1t, r1_e2t!: t-point horizontal scale factors    [m]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)  :: e1t, e2t!: t-point horizontal scale factors    [m]
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)  :: e2u, r1_e1u, r1_e2u!: horizontal scale factors at u-point [m]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)  :: e1u!: horizontal scale factors at u-point [m]
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)  :: e1v, r1_e1v, r1_e2v!: horizontal scale factors at v-point [m]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)  :: e2v!: horizontal scale factors at v-point [m]
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)  :: r1_e1f, r1_e2f!: horizontal scale factors at f-point [m]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)  :: e1f, e2f!: horizontal scale factors at f-point [m]
    !
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE        , DIMENSION(:,:) ::   e1e2t , r1_e1e2t                !: associated metrics at t-point
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE        , DIMENSION(:,:) ::   e1e2t , r1_e1e2t                !: associated metrics at t-point
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE        , DIMENSION(:,:) ::   e1e2u , r1_e1e2u , e2_e1u       !: associated metrics at u-point
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE        , DIMENSION(:,:) ::   e1e2v , r1_e1e2v , e1_e2v       !: associated metrics at v-point
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE        , DIMENSION(:,:) ::   e1e2f , r1_e1e2f                !: associated metrics at f-point
@@ -130,7 +134,7 @@ MODULE dom_oce
    LOGICAL, PUBLIC ::   ln_sco       !: s-coordinate or hybrid z-s coordinate
    LOGICAL, PUBLIC ::   ln_isfcav    !: presence of ISF
    !                                                        !  reference scale factors
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::     e3t_0   !: t- vert. scale factor [m]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::     e3t_0   !: t- vert. scale factor [m]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::     e3u_0   !: u- vert. scale factor [m]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::     e3v_0   !: v- vert. scale factor [m]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::     e3f_0   !: f- vert. scale factor [m]
@@ -145,9 +149,11 @@ MODULE dom_oce
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)   ::   e3f                             !: F-point vert. scale factor [m]
 #endif
    !                                                        !  time-dependent ratio ssh / h_0   (domqco)
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)   ::   r3t, r3u, r3v                   !: time-dependent    ratio at t-, u- and v-point [-]
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)    :: r3u, r3v!: time-dependent    ratio at t-, u- and v-point [-]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)    :: r3t!: time-dependent    ratio at t-, u- and v-point [-]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)     ::   r3f                             !: mid-time-level    ratio at f-point            [-]
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)     ::   r3t_f, r3u_f, r3v_f             !: now time-filtered ratio at t-, u- and v-point [-]
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)      :: r3u_f, r3v_f!: now time-filtered ratio at t-, u- and v-point [-]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)      :: r3t_f!: now time-filtered ratio at t-, u- and v-point [-]
 
    !                                                        !  reference depths of cells
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)   ::   gdept_0  !: t- depth              [m]
@@ -161,7 +167,7 @@ MODULE dom_oce
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)   ::  gde3w
 #endif
    !                                                        !  reference heights of ocean water column and its inverse
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)     ::   ht_0, r1_ht_0   !: t-depth        [m] and [1/m]
+   REAL(dp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)     ::   ht_0, r1_ht_0   !: t-depth        [m] and [1/m]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)     ::   hu_0, r1_hu_0   !: u-depth        [m] and [1/m]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)     ::   hv_0, r1_hv_0   !: v-depth        [m] and [1/m]
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)     ::   hf_0, r1_hf_0   !: f-depth        [m] and [1/m]
@@ -216,8 +222,8 @@ MODULE dom_oce
    INTEGER , PUBLIC ::   nsec_month    !: seconds between 00h 1st day of the current month and half of the current time step
    INTEGER , PUBLIC ::   nsec_monday   !: seconds between 00h         of the last Monday   and half of the current time step
    INTEGER , PUBLIC ::   nsec_day      !: seconds between 00h         of the current   day and half of the current time step
-   REAL(wp), PUBLIC ::   fjulday       !: current julian day
-   REAL(wp), PUBLIC ::   fjulstartyear !: first day of the current year in julian days
+   REAL(dp), PUBLIC ::   fjulday       !: current julian day
+   REAL(dp), PUBLIC ::   fjulstartyear !: first day of the current year in julian days
    REAL(wp), PUBLIC ::   adatrj        !: number of elapsed days since the begining of the whole simulation
    !                                   !: (cumulative duration of previous runs that may have used different time-step size)
    INTEGER , PUBLIC, DIMENSION(  0: 2) ::   nyear_len     !: length in days of the previous/current/next year

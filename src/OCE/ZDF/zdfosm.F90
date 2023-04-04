@@ -1711,7 +1711,7 @@ CONTAINS
       REAL(wp) ::   zari, ztau, zdh_ref, zddhdt, zvel_max
       REAL(wp) ::   ztmp   ! Auxiliary variable
       !!
-      REAL, PARAMETER ::   pp_ddh = 2.5_wp, pp_ddh_2 = 3.5_wp   ! Also in pycnocline_depth
+      REAL(wp), PARAMETER ::   pp_ddh = 2.5_wp, pp_ddh_2 = 3.5_wp   ! Also in pycnocline_depth
       !!----------------------------------------------------------------------
       !
       DO_2D_OVR( nn_hls-1, nn_hls-1, nn_hls-1, nn_hls-1 )
@@ -3335,7 +3335,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                                  , INTENT(in   ) ::   kt          ! Time step index
       INTEGER                                  , INTENT(in   ) ::   Kmm, Krhs   ! Time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) ::   pts         ! Active tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) ::   pts         ! Active tracers and RHS of tracer equation
       !!
       INTEGER                                 ::   ji, jj, jk
       REAL(wp), DIMENSION(:,:,:), ALLOCATABLE ::   ztrdt, ztrds   ! 3D workspace
@@ -3409,7 +3409,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT(in   ) ::   kt          ! Ocean time step index
       INTEGER                             , INTENT(in   ) ::   Kmm, Krhs   ! Ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv    ! Ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv    ! Ocean velocities and RHS of momentum equation
       !!
       INTEGER :: ji, jj, jk   ! dummy loop indices
       !!----------------------------------------------------------------------

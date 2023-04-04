@@ -44,7 +44,7 @@ CONTAINS
       !!-------------------------- IN  -------------------------------------
       INTEGER                               , INTENT(in   ) :: Kmm           ! ocean time level index
       CHARACTER(len=1)                      , INTENT(in   ) :: cd_ptin       ! point of variable in/out
-      REAL(wp), DIMENSION(jpi,jpj,jpk)      , INTENT(in   ) :: pvarin        ! 3d variable to average over the tbl
+      REAL(dp), DIMENSION(jpi,jpj,jpk)      , INTENT(in   ) :: pvarin        ! 3d variable to average over the tbl
       INTEGER,  DIMENSION(jpi,jpj)          , INTENT(in   ) :: ktop          ! top level
       REAL(wp), DIMENSION(jpi,jpj)          , INTENT(in   ) :: phtbl         ! tbl thickness
       !!-------------------------- IN OPTIONAL -----------------------------
@@ -130,7 +130,7 @@ CONTAINS
       INTEGER,  DIMENSION(jpi,jpj)    , INTENT(in   ) :: ktop, kbot   ! top and bottom level of the top boundary layer
       REAL(wp), DIMENSION(jpi,jpj)    , INTENT(in   ) :: phtbl, pfrac ! fraction of bottom level to be affected by the tbl
       REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) :: pe3          ! vertical scale factor
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) :: pvarin       ! tbl property to average between ktop, kbot over phtbl
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) :: pvarin       ! tbl property to average between ktop, kbot over phtbl
       !!--------------------------------------------------------------------
       INTEGER  :: ji,jj,jk                    ! loop indices
       INTEGER  :: ikt, ikb                    ! top and bottom levels

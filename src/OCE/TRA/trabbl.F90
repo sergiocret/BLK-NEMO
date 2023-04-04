@@ -101,7 +101,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER,                                   INTENT(in   ) :: kt              ! ocean time-step
       INTEGER,                                   INTENT(in   ) :: Kbb, Kmm, Krhs  ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts             ! active tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts             ! active tracers and RHS of tracer equation
       !
       INTEGER  ::   ji, jj, jk   ! Dummy loop indices
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) ::   ztrdt, ztrds
@@ -172,8 +172,8 @@ CONTAINS
       !!              Campin, J.-M., and H. Goosse, 1999, Tellus, 412-430.
       !!----------------------------------------------------------------------
       INTEGER                              , INTENT(in   ) ::   kjpt   ! number of tracers
-      REAL(wp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(in   ) ::   pt     ! before and now tracer fields
-      REAL(wp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(inout) ::   pt_rhs ! tracer trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(in   ) ::   pt     ! before and now tracer fields
+      REAL(dp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(inout) ::   pt_rhs ! tracer trend
       INTEGER                              , INTENT(in   ) ::   Kmm    ! time level indices
       !
       INTEGER  ::   ji, jj, jn   ! dummy loop indices
@@ -221,8 +221,8 @@ CONTAINS
       !!              Campin, J.-M., and H. Goosse, 1999, Tellus, 412-430.
       !!----------------------------------------------------------------------
       INTEGER                              , INTENT(in   ) ::   kjpt   ! number of tracers
-      REAL(wp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(in   ) ::   pt     ! before and now tracer fields
-      REAL(wp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(inout) ::   pt_rhs ! tracer trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(in   ) ::   pt     ! before and now tracer fields
+      REAL(dp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(inout) ::   pt_rhs ! tracer trend
       INTEGER                              , INTENT(in   ) ::   Kmm    ! time level indices
       !
       INTEGER  ::   ji, jj, jk, jn           ! dummy loop indices

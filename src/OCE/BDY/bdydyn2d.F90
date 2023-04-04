@@ -46,7 +46,7 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj), INTENT(inout) :: pua2d, pva2d 
       REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ) :: pub2d, pvb2d
       REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ) :: phur, phvr
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ) :: pssh
+      REAL(dp), DIMENSION(jpi,jpj), INTENT(in   ) :: pssh
       !!
       INTEGER               ::   ib_bdy, ir     ! BDY set index, rim index
       INTEGER, DIMENSION(3) ::   idir3
@@ -183,7 +183,8 @@ CONTAINS
       TYPE(OBC_DATA),               INTENT(in) ::   dta  ! OBC external data
       INTEGER,                      INTENT(in) ::   ib_bdy  ! BDY set index
       REAL(wp), DIMENSION(jpi,jpj), INTENT(inout) :: pua2d, pva2d
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(in) ::   pssh, phur, phvr
+      REAL(wp), DIMENSION(jpi,jpj), INTENT(in)  :: phur, phvr
+      REAL(dp), DIMENSION(jpi,jpj), INTENT(in)  :: pssh
       LOGICAL                     , INTENT(in) ::   llrim0   ! indicate if rim 0 is treated
       INTEGER  ::   ibeg, iend                       ! length of rim to be treated (rim 0 or rim 1)
       INTEGER  ::   jb, igrd                         ! dummy loop indices
@@ -312,7 +313,7 @@ CONTAINS
       !! ** Purpose : Duplicate sea level across open boundaries
       !!
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(jpi,jpj,1), INTENT(inout) ::   zssh ! Sea level, need 3 dimensions to be used by bdy_nmn
+      REAL(dp), DIMENSION(jpi,jpj,1), INTENT(inout) ::   zssh ! Sea level, need 3 dimensions to be used by bdy_nmn
       !!
       INTEGER ::   ib_bdy, ir      ! bdy index, rim index
       INTEGER ::   ibeg, iend      ! length of rim to be treated (rim 0 or rim 1)
@@ -332,7 +333,7 @@ CONTAINS
          END DO
          IF( nn_hls > 1 .AND. ir == 1 ) CYCLE   ! at least 2 halos will be corrected -> no need to correct rim 1 before rim 0
          IF( ANY(llsend1) .OR. ANY(llrecv1) ) THEN   ! if need to send/recv in at least one direction
-            CALL lbc_lnk( 'bdydyn2d', zssh(:,:,1), 'T',  1.0_wp, kfillmode=jpfillnothing ,lsend=llsend1, lrecv=llrecv1 )
+            CALL lbc_lnk( 'bdydyn2d', zssh(:,:,1), 'T',  1.0_dp, kfillmode=jpfillnothing ,lsend=llsend1, lrecv=llrecv1 )
          END IF
       END DO
       !
@@ -340,4 +341,3 @@ CONTAINS
 
    !!======================================================================
 END MODULE bdydyn2d
-

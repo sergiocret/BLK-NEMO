@@ -46,8 +46,8 @@ CONTAINS
       INTEGER                   , INTENT(in   ) ::   kt               ! ocean time-step index
       INTEGER                   , INTENT(in   ) ::   Kbb, Kmm         ! ocean time level indices
       INTEGER                   , INTENT(in   ) ::   kpass            ! =1/2 first or second passage
-      REAL(wp), DIMENSION(:,:,:), INTENT(in   ) ::   pu, pv           ! before velocity  [m/s]
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout) ::   pu_rhs, pv_rhs   ! velocity trend   [m/s2]
+      REAL(dp), DIMENSION(:,:,:), INTENT(in   ) ::   pu, pv           ! before velocity  [m/s]
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout) ::   pu_rhs, pv_rhs   ! velocity trend   [m/s2]
       !!
 #if defined key_loop_fusion
       CALL dyn_ldf_lap_lf( kt, Kbb, Kmm, pu, pv, pu_rhs, pv_rhs, kpass )
@@ -76,8 +76,8 @@ CONTAINS
       INTEGER                                 , INTENT(in   ) ::   Kbb, Kmm         ! ocean time level indices
       INTEGER                                 , INTENT(in   ) ::   kpass            ! =1/2 first or second passage
       INTEGER                                 , INTENT(in   ) ::   ktuv, ktuv_rhs
-      REAL(wp), DIMENSION(A2D_T(ktuv)    ,JPK), INTENT(in   ) ::   pu, pv           ! before velocity  [m/s]
-      REAL(wp), DIMENSION(A2D_T(ktuv_rhs),JPK), INTENT(inout) ::   pu_rhs, pv_rhs   ! velocity trend   [m/s2]
+      REAL(dp), DIMENSION(A2D_T(ktuv)    ,JPK), INTENT(in   ) ::   pu, pv           ! before velocity  [m/s]
+      REAL(dp), DIMENSION(A2D_T(ktuv_rhs),JPK), INTENT(inout) ::   pu_rhs, pv_rhs   ! velocity trend   [m/s2]
       !
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
       INTEGER  ::   iij
@@ -197,10 +197,10 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                         , INTENT(in   ) ::   kt         ! ocean time-step index
       INTEGER                         , INTENT(in   ) ::   Kbb, Kmm   ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) ::   pu, pv     ! before velocity fields
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs   ! momentum trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) ::   pu, pv     ! before velocity fields
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pu_rhs, pv_rhs   ! momentum trend
       !
-      REAL(wp), DIMENSION(A2D(nn_hls),jpk) ::   zulap, zvlap   ! laplacian at u- and v-point
+      REAL(dp), DIMENSION(A2D(nn_hls),jpk) ::   zulap, zvlap   ! laplacian at u- and v-point
       !!----------------------------------------------------------------------
       !
 #if defined key_loop_fusion
@@ -219,7 +219,7 @@ CONTAINS
       !
       CALL dyn_ldf_lap( kt, Kbb, Kmm, pu, pv, zulap, zvlap, 1 )   ! rotated laplacian applied to pt (output in zlap,Kbb)
       !
-      IF (nn_hls==1) CALL lbc_lnk( 'dynldf_lap_blp', zulap, 'U', -1.0_wp, zvlap, 'V', -1.0_wp )             ! Lateral boundary conditions
+      IF (nn_hls==1) CALL lbc_lnk( 'dynldf_lap_blp', zulap, 'U', -1.0_dp, zvlap, 'V', -1.0_dp )             ! Lateral boundary conditions
       !
       CALL dyn_ldf_lap( kt, Kbb, Kmm, zulap, zvlap, pu_rhs, pv_rhs, 2 )   ! rotated laplacian applied to zlap (output in pt(:,:,:,:,Krhs))
       !

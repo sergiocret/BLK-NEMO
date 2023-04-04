@@ -38,11 +38,11 @@ CONTAINS
    SUBROUTINE prt_ctl (tab2d_1, tab3d_1, tab4d_1, tab2d_2, tab3d_2, mask1, mask2,   &
       &                 clinfo, clinfo1, clinfo2, clinfo3, kdim )
       !!
-      REAL(wp),         DIMENSION(:,:)    , INTENT(in), OPTIONAL ::   tab2d_1
-      REAL(wp),         DIMENSION(:,:,:)  , INTENT(in), OPTIONAL ::   tab3d_1
-      REAL(wp),         DIMENSION(:,:,:,:), INTENT(in), OPTIONAL ::   tab4d_1
-      REAL(wp),         DIMENSION(:,:)    , INTENT(in), OPTIONAL ::   tab2d_2
-      REAL(wp),         DIMENSION(:,:,:)  , INTENT(in), OPTIONAL ::   tab3d_2
+      REAL(dp),         DIMENSION(:,:)    , INTENT(in), OPTIONAL ::   tab2d_1
+      REAL(dp),         DIMENSION(:,:,:)  , INTENT(in), OPTIONAL ::   tab3d_1
+      REAL(dp),         DIMENSION(:,:,:,:), INTENT(in), OPTIONAL ::   tab4d_1
+      REAL(dp),         DIMENSION(:,:)    , INTENT(in), OPTIONAL ::   tab2d_2
+      REAL(dp),         DIMENSION(:,:,:)  , INTENT(in), OPTIONAL ::   tab3d_2
       REAL(wp),         DIMENSION(:,:,:)  , INTENT(in), OPTIONAL ::   mask1
       REAL(wp),         DIMENSION(:,:,:)  , INTENT(in), OPTIONAL ::   mask2
       CHARACTER(len=*), DIMENSION(:)      , INTENT(in), OPTIONAL ::   clinfo    ! information about the tab3d array
@@ -53,29 +53,29 @@ CONTAINS
       !
       IF(     PRESENT(tab2d_2) ) THEN
          CALL prt_ctl_t(ktab2d_1 = is_tile(tab2d_1), ktab3d_1 = 0, ktab4d_1 = 0, ktab2d_2 = is_tile(tab2d_2), ktab3d_2 = 0,   &
-            &            tab2d_1 =    REAL(tab2d_1, 2*wp),                        tab2d_2 =    REAL(tab2d_2, 2*wp),           &
+            &            tab2d_1 =    REAL(tab2d_1, dp),                        tab2d_2 =    REAL(tab2d_2, dp),           &
             &           mask1 = mask1, mask2 = mask2, &
             &           clinfo = clinfo, clinfo1 = clinfo1, clinfo2 = clinfo2, clinfo3 = clinfo3 )
       ELSEIF( PRESENT(tab3d_2) ) THEN     
          CALL prt_ctl_t(ktab2d_1 = 0, ktab3d_1 = is_tile(tab3d_1), ktab4d_1 = 0, ktab2d_2 = 0, ktab3d_2 = is_tile(tab3d_2),       &
-            &                          tab3d_1 = REAL(tab3d_1, 2*wp),                           tab3d_2 =    REAL(tab3d_2, 2*wp), &
+            &                          tab3d_1 = REAL(tab3d_1, dp),                           tab3d_2 =    REAL(tab3d_2, dp), &
             &           mask1 = mask1, mask2 = mask2, &
             &           clinfo = clinfo, clinfo1 = clinfo1, clinfo2 = clinfo2, clinfo3 = clinfo3, kdim = kdim )
       ELSEIF( PRESENT(tab2d_1) ) THEN     
          CALL prt_ctl_t(ktab2d_1 = is_tile(tab2d_1), ktab3d_1 = 0, ktab4d_1 = 0, ktab2d_2 = 0, ktab3d_2 = 0,   &
-            &           tab2d_1 = REAL(tab2d_1,2*wp),  &
+            &           tab2d_1 = REAL(tab2d_1,dp),  &
             &           mask1 = mask1,  &
             &           clinfo = clinfo, clinfo1 = clinfo1, clinfo3 = clinfo3 )
       ELSEIF( PRESENT(tab3d_1) ) THEN     
          CALL prt_ctl_t(ktab2d_1 = 0, ktab3d_1 = is_tile(tab3d_1), ktab4d_1 = 0, ktab2d_2 = 0, ktab3d_2 = 0,   &
-            &                          tab3d_1 =    REAL(tab3d_1, 2*wp),  &
+            &                          tab3d_1 =    REAL(tab3d_1, dp),  &
             &           mask1 = mask1,  &
             &           clinfo = clinfo, clinfo1 = clinfo1, clinfo3 = clinfo3, kdim = kdim )
       ELSEIF( PRESENT(tab4d_1) ) THEN     
          CALL prt_ctl_t(ktab2d_1 = 0, ktab3d_1 = 0, ktab4d_1 = is_tile(tab4d_1), ktab2d_2 = 0, ktab3d_2 = 0,   &
-            &                                        tab4d_1 =    REAL(tab4d_1, 2*wp),  &
+            &                                        tab4d_1 =    REAL(tab4d_1, dp),  &
             &           mask1 = mask1,  &
-            &           clinfo = clinfo, clinfo1 = clinfo1, clinfo3 = clinfo3, kdim = kdim )
+           &           clinfo = clinfo, clinfo1 = clinfo1, clinfo3 = clinfo3, kdim = kdim )
       ENDIF
 
    END SUBROUTINE prt_ctl
@@ -119,11 +119,11 @@ CONTAINS
       !!                    clinfo3 : additional information
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT(in)           ::   ktab2d_1, ktab3d_1, ktab4d_1, ktab2d_2, ktab3d_2
-      REAL(2*wp),         DIMENSION(A2D_T(ktab2d_1))    , INTENT(in), OPTIONAL ::   tab2d_1
-      REAL(2*wp),         DIMENSION(A2D_T(ktab3d_1),:)  , INTENT(in), OPTIONAL ::   tab3d_1
-      REAL(2*wp),         DIMENSION(A2D_T(ktab4d_1),:,:), INTENT(in), OPTIONAL ::   tab4d_1
-      REAL(2*wp),         DIMENSION(A2D_T(ktab2d_2))    , INTENT(in), OPTIONAL ::   tab2d_2
-      REAL(2*wp),         DIMENSION(A2D_T(ktab3d_2),:)  , INTENT(in), OPTIONAL ::   tab3d_2
+      REAL(dp),         DIMENSION(A2D_T(ktab2d_1))    , INTENT(in), OPTIONAL ::   tab2d_1
+      REAL(dp),         DIMENSION(A2D_T(ktab3d_1),:)  , INTENT(in), OPTIONAL ::   tab3d_1
+      REAL(dp),         DIMENSION(A2D_T(ktab4d_1),:,:), INTENT(in), OPTIONAL ::   tab4d_1
+      REAL(dp),         DIMENSION(A2D_T(ktab2d_2))    , INTENT(in), OPTIONAL ::   tab2d_2
+      REAL(dp),         DIMENSION(A2D_T(ktab3d_2),:)  , INTENT(in), OPTIONAL ::   tab3d_2
       REAL(wp),           DIMENSION(:,:,:)  , INTENT(in), OPTIONAL ::   mask1
       REAL(wp),           DIMENSION(:,:,:)  , INTENT(in), OPTIONAL ::   mask2
       CHARACTER(len=*), DIMENSION(:)      , INTENT(in), OPTIONAL ::   clinfo    ! information about the tab3d array
@@ -137,7 +137,7 @@ CONTAINS
       INTEGER ::  jn, jl, kdir
       INTEGER ::  iis, iie, jjs, jje
       INTEGER ::  itra, inum
-      REAL(2*wp) :: zsum1, zsum2, zvctl1, zvctl2
+      REAL(wp) :: zsum1, zsum2, zvctl1, zvctl2
       !!----------------------------------------------------------------------
       !
       ! Arrays, scalars initialization

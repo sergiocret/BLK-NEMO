@@ -41,7 +41,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in    ) ::   kt        ! Main time step counter
       INTEGER                             , INTENT( in    ) ::   Kbb, Kaa  ! Time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
       !
       INTEGER               ::   ib_bdy, ir     ! BDY set index, rim index
       INTEGER, DIMENSION(6) ::   idir6
@@ -101,10 +101,10 @@ CONTAINS
          END DO
          !
          IF( ANY(llsend2) .OR. ANY(llrecv2) ) THEN   ! if need to send/recv in at least one direction
-            CALL lbc_lnk( 'bdydyn2d', puu(:,:,:,Kaa), 'U', -1.0_wp, kfillmode=jpfillnothing ,lsend=llsend2, lrecv=llrecv2 )
+            CALL lbc_lnk( 'bdydyn2d', puu(:,:,:,Kaa), 'U', -1.0_dp, kfillmode=jpfillnothing ,lsend=llsend2, lrecv=llrecv2 )
          END IF
          IF( ANY(llsend3) .OR. ANY(llrecv3) ) THEN   ! if need to send/recv in at least one direction
-            CALL lbc_lnk( 'bdydyn2d', pvv(:,:,:,Kaa), 'V', -1.0_wp, kfillmode=jpfillnothing ,lsend=llsend3, lrecv=llrecv3 )
+            CALL lbc_lnk( 'bdydyn2d', pvv(:,:,:,Kaa), 'V', -1.0_dp, kfillmode=jpfillnothing ,lsend=llsend3, lrecv=llrecv3 )
          END IF
       END DO   ! ir
       !
@@ -120,7 +120,7 @@ CONTAINS
       !!
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in    ) ::   Kaa       ! Time level index
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
       TYPE(OBC_INDEX)                     , INTENT( in    ) ::   idx       ! OBC indices
       TYPE(OBC_DATA)                      , INTENT( in    ) ::   dta       ! OBC external data
       INTEGER                             , INTENT( in    ) ::   kt        ! Time step
@@ -159,7 +159,7 @@ CONTAINS
       !!
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in    ) ::   Kaa       ! Time level index
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
       TYPE(OBC_INDEX)                     , INTENT( in    ) ::   idx       ! OBC indices
       TYPE(OBC_DATA)                      , INTENT( in    ) ::   dta       ! OBC external data
       INTEGER                             , INTENT( in    ) ::   kt
@@ -224,7 +224,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in    ) ::   kt        ! time step index
       INTEGER                             , INTENT( in    ) ::   Kaa       ! Time level index
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
       TYPE(OBC_INDEX)                     , INTENT( in    ) ::   idx       ! OBC indices
       TYPE(OBC_DATA)                      , INTENT( in    ) ::   dta       ! OBC external data
       INTEGER                             , INTENT( in    ) ::   ib_bdy    ! BDY set index
@@ -267,7 +267,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in    ) ::   kt        ! time step index
       INTEGER                             , INTENT( in    ) ::   Kaa       ! Time level index
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
       TYPE(OBC_INDEX)                     , INTENT( in    ) ::   idx       ! OBC indices
       TYPE(OBC_DATA)                      , INTENT( in    ) ::   dta       ! OBC external data
       INTEGER                             , INTENT( in    ) ::   ib_bdy    ! BDY set index
@@ -311,7 +311,7 @@ CONTAINS
       !! References:  Marchesiello, McWilliams and Shchepetkin, Ocean Modelling vol. 3 (2001)    
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in    ) ::   Kbb, Kaa  ! Time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
       TYPE(OBC_INDEX)                     , INTENT( in    ) ::   idx       ! OBC indices
       TYPE(OBC_DATA)                      , INTENT( in    ) ::   dta       ! OBC external data
       INTEGER                             , INTENT( in    ) ::   ib_bdy    ! BDY set index
@@ -343,7 +343,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in    ) ::   kt        ! time step
       INTEGER                             , INTENT( in    ) ::   Kbb, Krhs ! Time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities and trends (to be updated at open boundaries)
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities and trends (to be updated at open boundaries)
       !
       INTEGER  ::   jb, jk         ! dummy loop indices
       INTEGER  ::   ib_bdy         ! loop index
@@ -395,7 +395,7 @@ CONTAINS
       !!
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in    ) ::   Kaa       ! Time level index
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT( inout ) ::   puu, pvv  ! Ocean velocities (to be updated at open boundaries)
       TYPE(OBC_INDEX)                     , INTENT( in    ) ::   idx       ! OBC indices
       INTEGER                             , INTENT( in    ) ::   ib_bdy    ! BDY set index
       LOGICAL                             , INTENT( in    ) ::   llrim0    ! indicate if rim 0 is treated

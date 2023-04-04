@@ -563,7 +563,7 @@ CONTAINS
       !! * Arguments
       TYPE(obs_prof), INTENT(IN)    :: prof      ! Original profile
       TYPE(obs_prof), INTENT(INOUT) :: newprof   ! New profile with the copy of the data
-      LOGICAL :: lallocate                ! Allocate newprof data
+      LOGICAL, INTENT(IN) :: lallocate                ! Allocate newprof data
       INTEGER,INTENT(IN) :: kumout        ! Fortran unit for messages
       TYPE(obs_prof_valid), OPTIONAL, INTENT(in) :: &
          & lvalid        ! Valid profiles
@@ -804,7 +804,7 @@ CONTAINS
       !! * Arguments
       TYPE(obs_prof),INTENT(INOUT) :: prof      ! Updated profile data
       TYPE(obs_prof),INTENT(INOUT) :: oldprof   ! Original profile data
-      LOGICAL :: ldeallocate         ! Deallocate the updated data of insertion
+      LOGICAL, INTENT(IN) :: ldeallocate         ! Deallocate the updated data of insertion
       INTEGER,INTENT(in) :: kumout   ! Output unit
       
       !!* Local variables
@@ -925,4 +925,3 @@ CONTAINS
    END SUBROUTINE obs_prof_staend
    
 END MODULE obs_profiles_def
-

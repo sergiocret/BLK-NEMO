@@ -351,7 +351,7 @@ INCLUDE 'mpif.h'
       !!----------------------------------------------------------------------
       INTEGER                   , INTENT(in) :: knoin
       INTEGER                   , INTENT(in) :: knoout
-      INTEGER, DIMENSION(jpnij)                 ::   kinv, koutv
+      INTEGER, DIMENSION(jpnij), INTENT(IN)  ::   kinv, koutv
       INTEGER, DIMENSION(knoin) , INTENT(in   ) ::   kvalsin
       INTEGER, DIMENSION(knoout), INTENT(  out) ::   kvalsout
       !!

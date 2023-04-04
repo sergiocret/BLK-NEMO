@@ -26,6 +26,7 @@ MODULE isfload
    !
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -87,7 +88,7 @@ CONTAINS
 #if defined key_qco && key_isf
          CALL eos( zts_top(:,:,:), gdept_0(:,:,jk), zrhd(:,:,jk) )
 #else 
-         CALL eos( zts_top(:,:,:), gdept(:,:,jk,Kmm), zrhd(:,:,jk) )
+         CALL eos( zts_top(:,:,:), CASTSP(gdept(:,:,jk,Kmm)), zrhd(:,:,jk) )
 #endif
       END DO
       !

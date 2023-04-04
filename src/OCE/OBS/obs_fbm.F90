@@ -1544,7 +1544,7 @@ CONTAINS
       CHARACTER(len=*) :: cdlongname       ! Long name for variable
       CHARACTER(len=*), OPTIONAL :: cdunits       ! Units for variable
       CHARACTER(len=*), OPTIONAL :: cfillvalue    ! Fill value for character variables
-      INTEGER, OPTIONAL :: ifillvalue             ! Fill value for integer variables
+      INTEGER, OPTIONAL, INTENT(IN) :: ifillvalue             ! Fill value for integer variables
       REAL(kind=fbsp), OPTIONAL :: rfillvalue     ! Fill value for real variables
       CHARACTER(len=*), OPTIONAL :: conventions   ! Conventions for variable
       !! * Local variables
@@ -1611,7 +1611,7 @@ CONTAINS
       !! * Arguments
       CHARACTER(len=*) :: cdfilename  ! Input filename
       TYPE(obfbdata)   :: fbdata      ! obsfbdata structure
-      LOGICAL, OPTIONAL :: ldgrid     ! Allow forcing of grid info
+      LOGICAL, OPTIONAL, INTENT(IN) :: ldgrid     ! Allow forcing of grid info
       !! * Local variables
       CHARACTER(LEN=14), PARAMETER :: cpname = 'read_obfbdata'
       INTEGER :: idfile

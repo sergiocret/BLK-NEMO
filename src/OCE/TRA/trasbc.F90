@@ -73,7 +73,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER,                                   INTENT(in   ) ::   kt         ! ocean time-step index
       INTEGER,                                   INTENT(in   ) ::   Kmm, Krhs  ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) ::   pts        ! active tracers and RHS of tracer Eq.
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) ::   pts        ! active tracers and RHS of tracer Eq.
       !
       INTEGER  ::   ji, jj, jk, jn               ! dummy loop indices
       INTEGER  ::   ikt, ikb                     ! local integers

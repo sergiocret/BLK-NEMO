@@ -161,8 +161,8 @@ CONTAINS
       LOGICAL, DIMENSION(:), ALLOCATABLE :: llvar   ! Logical for profile variable read
       LOGICAL, DIMENSION(jpmaxnfiles) :: lmask ! Used for finding number of sstbias files
       !
-      REAL(dp) :: rn_dobsini      ! Obs window start date YYYYMMDD.HHMMSS
-      REAL(dp) :: rn_dobsend      ! Obs window end date   YYYYMMDD.HHMMSS
+      REAL(wp) :: rn_dobsini      ! Obs window start date YYYYMMDD.HHMMSS
+      REAL(wp) :: rn_dobsend      ! Obs window end date   YYYYMMDD.HHMMSS
       REAL(wp) :: ztype_avglamscl ! Local version of rn_*_avglamscl
       REAL(wp) :: ztype_avgphiscl ! Local version of rn_*_avgphiscl
       REAL(wp), DIMENSION(:,:,:),   ALLOCATABLE :: zglam   ! Model longitudes for profile variables
@@ -902,8 +902,8 @@ CONTAINS
       IMPLICIT NONE
 
       !! * Arguments
-      REAL(KIND=dp), INTENT(OUT) :: ddobs                        ! Date in YYYYMMDD.HHMMSS
-      INTEGER :: kstp
+      REAL(KIND=wp), INTENT(OUT) :: ddobs                        ! Date in YYYYMMDD.HHMMSS
+      INTEGER, INTENT(IN) :: kstp
 
       !! * Local declarations
       INTEGER :: iyea        ! date - (year, month, day, hour, minute)
@@ -986,7 +986,7 @@ CONTAINS
       IMPLICIT NONE
 
       !! * Arguments
-      REAL(KIND=dp), INTENT(OUT) :: ddobsini                   ! Initial date in YYYYMMDD.HHMMSS
+      REAL(KIND=wp), INTENT(OUT) :: ddobsini                   ! Initial date in YYYYMMDD.HHMMSS
 
       CALL calc_date( nit000 - 1, ddobsini )
 
@@ -1013,7 +1013,7 @@ CONTAINS
       IMPLICIT NONE
 
       !! * Arguments
-      REAL(dp), INTENT(OUT) :: ddobsfin ! Final date in YYYYMMDD.HHMMSS
+      REAL(wp), INTENT(OUT) :: ddobsfin ! Final date in YYYYMMDD.HHMMSS
 
       CALL calc_date( nitend, ddobsfin )
 

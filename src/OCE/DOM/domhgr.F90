@@ -114,9 +114,9 @@ CONTAINS
          ! make sure that periodicities are properly applied 
          CALL lbc_lnk( 'dom_hgr', glamt, 'T', 1._wp, glamu, 'U', 1._wp, glamv, 'V', 1._wp, glamf, 'F', 1._wp,   &
             &                     gphit, 'T', 1._wp, gphiu, 'U', 1._wp, gphiv, 'V', 1._wp, gphif, 'F', 1._wp,   &
-            &                       e1t, 'T', 1._wp,   e1u, 'U', 1._wp,   e1v, 'V', 1._wp,   e1f, 'F', 1._wp,   &   
-            &                       e2t, 'T', 1._wp,   e2u, 'U', 1._wp,   e2v, 'V', 1._wp,   e2f, 'F', 1._wp,   &
-            &                     kfillmode = jpfillcopy )   ! do not put 0 over closed boundaries
+            &                     e2u, 'U', 1._wp, e1v, 'V', 1._wp, kfillmode = jpfillcopy )   ! do not put 0 over closed boundaries
+         CALL lbc_lnk( 'dom_hgr', e1t, 'T', 1._dp, e2t, 'T', 1._dp, e1u, 'U', 1._dp, e2v, 'V', 1._dp, &
+            &                     e1f, 'F', 1._dp, e2f, 'F', 1._dp, kfillmode = jpfillcopy)
          !
       ENDIF
       !
@@ -184,8 +184,10 @@ CONTAINS
       REAL(wp), DIMENSION(:,:), INTENT(out) ::   pphit, pphiu, pphiv, pphif   ! latitude outputs
       INTEGER                 , INTENT(out) ::   kff                          ! =1 Coriolis parameter read here, =0 otherwise
       REAL(wp), DIMENSION(:,:), INTENT(out) ::   pff_f, pff_t                 ! Coriolis factor at f-point (if found in file)
-      REAL(wp), DIMENSION(:,:), INTENT(out) ::   pe1t, pe1u, pe1v, pe1f       ! i-scale factors 
-      REAL(wp), DIMENSION(:,:), INTENT(out) ::   pe2t, pe2u, pe2v, pe2f       ! j-scale factors
+      REAL(wp), DIMENSION(:,:), INTENT(out)  :: pe1v! i-scale factors
+      REAL(dp), DIMENSION(:,:), INTENT(out)  :: pe1t, pe1u, pe1f! i-scale factors
+      REAL(wp), DIMENSION(:,:), INTENT(out)  :: pe2u! j-scale factors
+      REAL(dp), DIMENSION(:,:), INTENT(out)  :: pe2t, pe2v, pe2f! j-scale factors
       INTEGER                 , INTENT(out) ::   ke1e2u_v                     ! =1 u- & v-surfaces read here, =0 otherwise 
       REAL(wp), DIMENSION(:,:), INTENT(out) ::   pe1e2u, pe1e2v              ! u- & v-surfaces (if found in file)
       !
@@ -210,15 +212,15 @@ CONTAINS
       CALL iom_get( inum, jpdom_global, 'gphiv', pphiv, cd_type = 'V', psgn = 1._wp, kfill = jpfillcopy )
       CALL iom_get( inum, jpdom_global, 'gphif', pphif, cd_type = 'F', psgn = 1._wp, kfill = jpfillcopy )
       !
-      CALL iom_get( inum, jpdom_global, 'e1t'  , pe1t , cd_type = 'T', psgn = 1._wp, kfill = jpfillcopy )
-      CALL iom_get( inum, jpdom_global, 'e1u'  , pe1u , cd_type = 'U', psgn = 1._wp, kfill = jpfillcopy )
+      CALL iom_get( inum, jpdom_global, 'e1t'  , pe1t , cd_type = 'T', psgn = 1._dp, kfill = jpfillcopy )
+      CALL iom_get( inum, jpdom_global, 'e1u'  , pe1u , cd_type = 'U', psgn = 1._dp, kfill = jpfillcopy )
       CALL iom_get( inum, jpdom_global, 'e1v'  , pe1v , cd_type = 'V', psgn = 1._wp, kfill = jpfillcopy )
-      CALL iom_get( inum, jpdom_global, 'e1f'  , pe1f , cd_type = 'F', psgn = 1._wp, kfill = jpfillcopy )
+      CALL iom_get( inum, jpdom_global, 'e1f'  , pe1f , cd_type = 'F', psgn = 1._dp, kfill = jpfillcopy )
       !
-      CALL iom_get( inum, jpdom_global, 'e2t'  , pe2t , cd_type = 'T', psgn = 1._wp, kfill = jpfillcopy )
+      CALL iom_get( inum, jpdom_global, 'e2t'  , pe2t , cd_type = 'T', psgn = 1._dp, kfill = jpfillcopy )
       CALL iom_get( inum, jpdom_global, 'e2u'  , pe2u , cd_type = 'U', psgn = 1._wp, kfill = jpfillcopy )
-      CALL iom_get( inum, jpdom_global, 'e2v'  , pe2v , cd_type = 'V', psgn = 1._wp, kfill = jpfillcopy )
-      CALL iom_get( inum, jpdom_global, 'e2f'  , pe2f , cd_type = 'F', psgn = 1._wp, kfill = jpfillcopy )
+      CALL iom_get( inum, jpdom_global, 'e2v'  , pe2v , cd_type = 'V', psgn = 1._dp, kfill = jpfillcopy )
+      CALL iom_get( inum, jpdom_global, 'e2f'  , pe2f , cd_type = 'F', psgn = 1._dp, kfill = jpfillcopy )
       !
       IF(  iom_varid( inum, 'ff_f', ldstop = .FALSE. ) > 0  .AND.  &
          & iom_varid( inum, 'ff_t', ldstop = .FALSE. ) > 0    ) THEN

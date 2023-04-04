@@ -44,7 +44,7 @@ CONTAINS
       !!
       INTEGER                     , INTENT(in   )           ::  kt          ! ocean time-step index
       INTEGER                     , INTENT(in   )           ::  kjpt        ! number of tracers
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(in   )           ::  pta         ! 4D tracers fields
+      REAL(dp), DIMENSION(:,:,:,:), INTENT(in   )           ::  pta         ! 4D tracers fields
       REAL(wp), DIMENSION(:,:,:)  , INTENT(  out)           ::  pgtu, pgtv  ! hor. grad. of ptra at u- & v-pts
       REAL(wp), DIMENSION(:,:,:)  , INTENT(in   ), OPTIONAL ::  prd         ! 3D density anomaly fields
       REAL(wp), DIMENSION(:,:)    , INTENT(  out), OPTIONAL ::  pgru, pgrv  ! hor. grad of prd at u- & v-pts (bottom)
@@ -107,7 +107,7 @@ CONTAINS
       INTEGER                                , INTENT(in   )           ::  kt          ! ocean time-step index
       INTEGER                                , INTENT(in   )           ::  kjpt        ! number of tracers
       INTEGER                                , INTENT(in   )           ::  ktta, ktgt, ktrd, ktgr
-      REAL(wp), DIMENSION(A2D_T(ktta),JPK,KJPT), INTENT(in   )           ::  pta         ! 4D tracers fields
+      REAL(dp), DIMENSION(A2D_T(ktta),JPK,KJPT), INTENT(in   )           ::  pta         ! 4D tracers fields
       REAL(wp), DIMENSION(A2D_T(ktgt)    ,KJPT), INTENT(  out)           ::  pgtu, pgtv  ! hor. grad. of ptra at u- & v-pts
       REAL(wp), DIMENSION(A2D_T(ktrd),JPK     ), INTENT(in   ), OPTIONAL ::  prd         ! 3D density anomaly fields
       REAL(wp), DIMENSION(A2D_T(ktgr)         ), INTENT(  out), OPTIONAL ::  pgru, pgrv  ! hor. grad of prd at u- & v-pts (bottom)
@@ -211,7 +211,7 @@ CONTAINS
       !!
       INTEGER                     , INTENT(in   )           ::  kt           ! ocean time-step index
       INTEGER                     , INTENT(in   )           ::  kjpt         ! number of tracers
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(in   )           ::  pta          ! 4D tracers fields
+      REAL(dp), DIMENSION(:,:,:,:), INTENT(in   )           ::  pta          ! 4D tracers fields
       REAL(wp), DIMENSION(:,:,:)  , INTENT(  out)           ::  pgtu, pgtv   ! hor. grad. of ptra at u- & v-pts
       REAL(wp), DIMENSION(:,:,:)  , INTENT(  out)           ::  pgtui, pgtvi ! hor. grad. of stra at u- & v-pts (ISF)
       REAL(wp), DIMENSION(:,:,:)  , INTENT(in   ), OPTIONAL ::  prd          ! 3D density anomaly fields
@@ -280,7 +280,7 @@ CONTAINS
       INTEGER                                , INTENT(in   )           ::  kt           ! ocean time-step index
       INTEGER                                , INTENT(in   )           ::  kjpt         ! number of tracers
       INTEGER                                , INTENT(in   )           ::  ktta, ktgt, ktgti, ktrd, ktgr, ktgri
-      REAL(wp), DIMENSION(A2D_T(ktta),JPK,KJPT), INTENT(in   )           ::  pta          ! 4D tracers fields
+      REAL(dp), DIMENSION(A2D_T(ktta),JPK,KJPT), INTENT(in   )           ::  pta          ! 4D tracers fields
       REAL(wp), DIMENSION(A2D_T(ktgt)    ,KJPT), INTENT(  out)           ::  pgtu, pgtv   ! hor. grad. of ptra at u- & v-pts
       REAL(wp), DIMENSION(A2D_T(ktgti)   ,KJPT), INTENT(  out)           ::  pgtui, pgtvi ! hor. grad. of stra at u- & v-pts (ISF)
       REAL(wp), DIMENSION(A2D_T(ktrd),JPK     ), INTENT(in   ), OPTIONAL ::  prd          ! 3D density anomaly fields

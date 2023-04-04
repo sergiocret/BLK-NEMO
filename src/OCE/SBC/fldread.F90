@@ -129,6 +129,7 @@ MODULE fldread
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -1100,7 +1101,7 @@ CONTAINS
       CHARACTER (len=5) ::   clname   !
       INTEGER , DIMENSION(4) ::   ddims
       INTEGER                ::   isrc
-      REAL(wp), DIMENSION(jpi,jpj) ::   data_tmp
+      REAL(dp), DIMENSION(jpi,jpj) ::   data_tmp
       !!----------------------------------------------------------------------
       !
       IF( nxt_wgt > tot_wgts ) THEN

@@ -132,11 +132,11 @@ CONTAINS
       !!
       !! ** Action  : - calculate flux limiter and W/D flag
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:)            , INTENT(inout) ::   psshb1
+      REAL(dp), DIMENSION(:,:)            , INTENT(inout) ::   psshb1
       REAL(wp), DIMENSION(:,:)            , INTENT(in   ) ::   psshemp
       REAL(wp)                            , INTENT(in   ) ::   z2dt
       INTEGER                             , INTENT(in   ) ::   Kmm       ! time level index
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv  ! velocity arrays
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::   puu, pvv  ! velocity arrays
       !
       INTEGER  ::   ji, jj, jk, jk1     ! dummy loop indices
       INTEGER  ::   jflag               ! local scalar
@@ -258,7 +258,7 @@ CONTAINS
       vv_b(:,:,Kmm) = vv_b(:,:,Kmm) * zwdlmtv(:, :)
       !
 !!gm TO BE SUPPRESSED ?  these lbc_lnk are useless since zwdlmtu and zwdlmtv are defined everywhere !
-      CALL lbc_lnk( 'wet_dry', puu(:,:,:,Kmm)  , 'U', -1.0_wp, pvv(:,:,:,Kmm)  , 'V', -1.0_wp )
+      CALL lbc_lnk( 'wet_dry', puu(:,:,:,Kmm)  , 'U', -1.0_dp, pvv(:,:,:,Kmm)  , 'V', -1.0_dp )
       CALL lbc_lnk( 'wet_dry', uu_b(:,:,Kmm), 'U', -1.0_wp, vv_b(:,:,Kmm), 'V', -1.0_wp )
 !!gm
       !
@@ -281,8 +281,9 @@ CONTAINS
       !!
       !! ** Action  : - calculate flux limiter and W/D flag
       !!----------------------------------------------------------------------
-      REAL(wp)                , INTENT(in   ) ::   rDt_e    ! ocean time-step index
-      REAL(wp), DIMENSION(:,:), INTENT(inout) ::   zflxu,  zflxv, sshn_e, zssh_frc  
+      REAL(dp)                , INTENT(in   ) ::   rDt_e    ! ocean time-step index
+      REAL(wp), DIMENSION(:,:), INTENT(inout)  :: zflxv
+      REAL(dp), DIMENSION(:,:), INTENT(inout)  :: zflxu, sshn_e, zssh_frc
       !
       INTEGER  ::   ji, jj, jk, jk1     ! dummy loop indices
       INTEGER  ::   jflag               ! local integer
@@ -379,7 +380,8 @@ CONTAINS
       zflxv(:,:) = zflxv(:,:) * zwdlmtv(:, :) 
       !
 !!gm THIS lbc_lnk is useless since it is already done at the end of the jk1-loop
-      CALL lbc_lnk( 'wet_dry', zflxu, 'U', -1.0_wp, zflxv, 'V', -1.0_wp )
+      CALL lbc_lnk( 'wet_dry', zflxu, 'U', -1.0_dp)
+      CALL lbc_lnk( 'wet_dry', zflxv, 'V', -1.0_wp)
 !!gm end
       !
       IF( jflag == 1 .AND. lwp )   WRITE(numout,*) 'Need more iterations in wad_lmt_bt!!!'

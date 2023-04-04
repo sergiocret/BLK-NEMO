@@ -1,5 +1,4 @@
-
-   SUBROUTINE lbc_lnk_neicoll_/**/PRECISION( cdname, ptab, cd_nat, psgn, kfld, kfillmode, pfillval, khls, lsend, lrecv, ld4only )
+SUBROUTINE lbc_lnk_neicoll_/**/PRECISION( cdname, ptab, cd_nat, psgn, kfld, kfillmode, pfillval, khls, lsend, lrecv, ld4only )
       CHARACTER(len=*)              , INTENT(in   ) ::   cdname      ! name of the calling subroutine
       TYPE(PTR_4d_/**/PRECISION),  DIMENSION(:), INTENT(inout) ::   ptab        ! pointer of arrays on which apply the b.c.
       CHARACTER(len=1), DIMENSION(:), INTENT(in   ) ::   cd_nat      ! nature of array grid-points
@@ -270,4 +269,3 @@
       ENDIF
       !
    END SUBROUTINE lbc_lnk_neicoll_/**/PRECISION
-

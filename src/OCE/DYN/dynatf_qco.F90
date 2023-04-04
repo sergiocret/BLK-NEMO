@@ -94,13 +94,13 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT(in   ) :: kt               ! ocean time-step index
       INTEGER                             , INTENT(in   ) :: Kbb, Kmm, Kaa    ! before and after time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) :: puu, pvv         ! velocities to be time filtered
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) :: puu, pvv         ! velocities to be time filtered
       !
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
       REAL(wp) ::   zue3a, zue3n, zue3b, zcoef    ! local scalars
       REAL(wp) ::   zve3a, zve3n, zve3b           !   -      -
       REAL(wp), ALLOCATABLE, DIMENSION(:,:)   ::   zue, zve
-      REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) ::   zua, zva
+      REAL(dp), ALLOCATABLE, DIMENSION(:,:,:) ::   zua, zva
       REAL(wp), ALLOCATABLE, DIMENSION(:,:)   ::   zutau, zvtau
       !!----------------------------------------------------------------------
       !
@@ -195,7 +195,7 @@ CONTAINS
       ENDIF ! .NOT. l_1st_euler
       !
       ! This is needed for dyn_ldf_blp to be restartable
-      IF( nn_hls == 2 ) CALL lbc_lnk( 'dynatfqco', puu(:,:,:,Kmm), 'U', -1.0_wp, pvv(:,:,:,Kmm), 'V', -1.0_wp )
+      IF( nn_hls == 2 ) CALL lbc_lnk( 'dynatfqco', puu(:,:,:,Kmm), 'U', -1.0_dp, pvv(:,:,:,Kmm), 'V', -1.0_dp )
 
       ! Set "now" and "before" barotropic velocities for next time step:
       ! JC: Would be more clever to swap variables than to make a full vertical

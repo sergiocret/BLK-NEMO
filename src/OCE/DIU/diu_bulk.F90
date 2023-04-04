@@ -96,9 +96,9 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj)          , INTENT(in) ::   psolflux       ! solar flux (Watts)
       REAL(wp), DIMENSION(jpi,jpj)          , INTENT(in) ::   pqflux         ! heat (non-solar) flux (Watts)
       REAL(wp), DIMENSION(jpi,jpj)          , INTENT(in) ::   ptauflux       ! wind stress  (kg/ m s^2)
-      REAL(wp), DIMENSION(jpi,jpj)          , INTENT(in) ::   prho           ! water density  (kg/m^3)
+      REAL(dp), DIMENSION(jpi,jpj)          , INTENT(in) ::   prho           ! water density  (kg/m^3)
       REAL(wp)                              , INTENT(in) ::   p_rdt          ! time-step
-      REAL(wp), DIMENSION(jpi,jpj), OPTIONAL, INTENT(in) ::   pLa            ! Langmuir number
+      REAL(wp), DIMENSION(jpi,jpj), OPTIONAL, INTENT(in) ::   pla            ! Langmuir number
       REAL(wp), DIMENSION(jpi,jpj), OPTIONAL, INTENT(in) ::   pthick         ! warm layer thickness (m)
       REAL(wp), DIMENSION(jpi,jpj), OPTIONAL, INTENT(in) ::   pcoolthick     ! cool skin thickness (m)
       REAL(wp), DIMENSION(jpi,jpj), OPTIONAL, INTENT(in) ::   pmu            ! mu parameter
@@ -185,7 +185,7 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj), INTENT(IN) :: p_fla      ! Langmuir number
       REAL(wp), DIMENSION(jpi,jpj), INTENT(IN) :: pmu        ! Structure parameter
       REAL(wp), DIMENSION(jpi,jpj), INTENT(IN) :: pthick     ! Layer thickness
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(IN) :: prho       ! Water density
+      REAL(dp), DIMENSION(jpi,jpj), INTENT(IN) :: prho       ! Water density
    
       ! Local variables
       REAL(wp) :: z_olength          ! Obukhov length

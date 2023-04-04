@@ -94,6 +94,7 @@ MODULE asminc
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -119,11 +120,11 @@ CONTAINS
       INTEGER :: ios             ! Local integer output status for namelist read
       INTEGER :: iiauper         ! Number of time steps in the IAU period
       INTEGER :: icycper         ! Number of time steps in the cycle
-      REAL(KIND=dp) :: ditend_date     ! Date YYYYMMDD.HHMMSS of final time step
-      REAL(KIND=dp) :: ditbkg_date     ! Date YYYYMMDD.HHMMSS of background time step for Jb term
-      REAL(KIND=dp) :: ditdin_date     ! Date YYYYMMDD.HHMMSS of background time step for DI
-      REAL(KIND=dp) :: ditiaustr_date  ! Date YYYYMMDD.HHMMSS of IAU interval start time step
-      REAL(KIND=dp) :: ditiaufin_date  ! Date YYYYMMDD.HHMMSS of IAU interval final time step
+      REAL(KIND=wp) :: ditend_date     ! Date YYYYMMDD.HHMMSS of final time step
+      REAL(KIND=wp) :: ditbkg_date     ! Date YYYYMMDD.HHMMSS of background time step for Jb term
+      REAL(KIND=wp) :: ditdin_date     ! Date YYYYMMDD.HHMMSS of background time step for DI
+      REAL(KIND=wp) :: ditiaustr_date  ! Date YYYYMMDD.HHMMSS of IAU interval start time step
+      REAL(KIND=wp) :: ditiaufin_date  ! Date YYYYMMDD.HHMMSS of IAU interval final time step
 
       REAL(wp) :: znorm        ! Normalization factor for IAU weights
       REAL(wp) :: ztotwgt      ! Value of time-integrated IAU weights (should be equal to one)
@@ -514,7 +515,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                                  , INTENT(in   ) :: kt             ! Current time step
       INTEGER                                  , INTENT(in   ) :: Kbb, Kmm, Krhs ! Time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts            ! active tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts            ! active tracers and RHS of tracer equation
       !
       INTEGER  :: ji, jj, jk
       INTEGER  :: it
@@ -526,7 +527,7 @@ CONTAINS
       ! used to prevent the applied increments taking the temperature below the local freezing point
       IF( ln_temnofreeze ) THEN
          DO jk = 1, jpkm1
-           CALL eos_fzp( pts(:,:,jk,jp_sal,Kmm), fzptnz(:,:,jk), gdept(:,:,jk,Kmm) )
+           CALL eos_fzp( CASTSP(pts(:,:,jk,jp_sal,Kmm)), fzptnz(:,:,jk), gdept(:,:,jk,Kmm) )
          END DO
       ENDIF
          !
@@ -648,7 +649,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt             ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kbb, Kmm, Krhs ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv       ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv       ! ocean velocities and RHS of momentum equation
       !
       INTEGER :: ji, jj, jk
       INTEGER :: it

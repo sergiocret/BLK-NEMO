@@ -37,6 +37,7 @@ MODULE zdfmxl
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -115,7 +116,7 @@ CONTAINS
          ENDIF
       ENDIF
       !
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=REAL(nmln,wp), clinfo1=' nmln : ', tab2d_2=hmlp, clinfo2=' hmlp : ' )
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=REAL(nmln,dp), clinfo1=' nmln : ', tab2d_2=CASTDP(hmlp), clinfo2=' hmlp : ' )
       !
    END SUBROUTINE zdf_mxl
 

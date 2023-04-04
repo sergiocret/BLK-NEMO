@@ -43,7 +43,7 @@ CONTAINS
       !!                around every model grid point
       !!
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(inout) ::   pts   ! 1 : potential temperature  [Celsius]
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(inout) ::   pts   ! 1 : potential temperature  [Celsius]
       !                                                               ! 2 : salinity               [psu]
       INTEGER  ::   ji, jj, jk, jts, jdof ! dummy loop indices
       INTEGER  ::   jim1, jjm1, jkm1  ! incremented indices
@@ -53,7 +53,7 @@ CONTAINS
       !!----------------------------------------------------------------------
 
       DO jts = 1, jpts
-        CALL lbc_lnk( 'stopts', pts(:,:,:,jts), 'T' , 1._wp )
+        CALL lbc_lnk( 'stopts', pts(:,:,:,jts), 'T' , 1._dp )
       ENDDO
 
       DO jdof = 1, nn_sto_eos

@@ -333,7 +333,7 @@ CONTAINS
       !! * Arguments
       TYPE(obs_surf), INTENT(IN)    :: surf      ! Original surface data
       TYPE(obs_surf), INTENT(INOUT) :: newsurf   ! New surface data with a subset of the original data
-      LOGICAL :: lallocate     ! Allocate newsurf data
+      LOGICAL, INTENT(IN) :: lallocate     ! Allocate newsurf data
       INTEGER,INTENT(IN) :: kumout        ! Fortran unit for messages
       LOGICAL, OPTIONAL, INTENT(in), DIMENSION(:) :: &
          & lvalid         ! Valid of surface observations
@@ -462,7 +462,7 @@ CONTAINS
       !! * Arguments
       TYPE(obs_surf),INTENT(INOUT) :: surf       ! Updated surface data
       TYPE(obs_surf),INTENT(INOUT) :: oldsurf    ! Original surface data
-      LOGICAL :: ldeallocate ! Deallocate the updated data of insertion
+      LOGICAL, INTENT(IN) :: ldeallocate ! Deallocate the updated data of insertion
       INTEGER,INTENT(in) :: kumout      ! Output unit
       
       !!* Local variables
@@ -527,4 +527,3 @@ CONTAINS
    END SUBROUTINE obs_surf_decompress
    
 END MODULE obs_surf_def
-

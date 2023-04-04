@@ -102,6 +102,7 @@ MODULE zdftke
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -701,8 +702,8 @@ CONTAINS
       ENDIF
       !
       IF(sn_cfctl%l_prtctl) THEN
-         CALL prt_ctl( tab3d_1=en   , clinfo1=' tke  - e: ', tab3d_2=p_avt, clinfo2=' t: ' )
-         CALL prt_ctl( tab3d_1=p_avm, clinfo1=' tke  - m: ' )
+         CALL prt_ctl( tab3d_1=CASTDP(en) , clinfo1=' tke  - e: ', tab3d_2=CASTDP(p_avt), clinfo2=' t: ' )
+         CALL prt_ctl( tab3d_1=CASTDP(p_avm), clinfo1=' tke  - m: ' )
       ENDIF
       !
    END SUBROUTINE tke_avn

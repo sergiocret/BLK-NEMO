@@ -32,6 +32,7 @@ MODULE crsfld
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -116,30 +117,30 @@ CONTAINS
       CALL iom_put( "sss"  , tsn_crs(:,:,1,jp_sal) )    ! sss
 
       !  U-velocity
-      CALL crs_dom_ope( uu(:,:,:,Kmm), 'SUM', 'U', umask, un_crs, p_e12=e2u, p_e3=ze3u, p_surf_crs=e2e3u_msk, psgn=-1.0_wp )
+      CALL crs_dom_ope( CASTSP(uu(:,:,:,Kmm)), 'SUM', 'U', umask, un_crs, p_e12=CASTDP(e2u), p_e3=ze3u, p_surf_crs=e2e3u_msk, psgn=-1.0_wp )
       !
       zt(:,:,:) = 0._wp     ;    zs(:,:,:) = 0._wp  ;   zt_crs(:,:,:) = 0._wp   ;    zs_crs(:,:,:) = 0._wp
       DO_3D( 0, 0, 0, 0, 1, jpkm1 )
          zt(ji,jj,jk)  = uu(ji,jj,jk,Kmm) * 0.5 * ( ts(ji,jj,jk,jp_tem,Kmm) + ts(ji+1,jj,jk,jp_tem,Kmm) ) 
          zs(ji,jj,jk)  = uu(ji,jj,jk,Kmm) * 0.5 * ( ts(ji,jj,jk,jp_sal,Kmm) + ts(ji+1,jj,jk,jp_sal,Kmm) ) 
       END_3D
-      CALL crs_dom_ope( zt, 'SUM', 'U', umask, zt_crs, p_e12=e2u, p_e3=ze3u, p_surf_crs=e2e3u_msk, psgn=-1.0_wp )
-      CALL crs_dom_ope( zs, 'SUM', 'U', umask, zs_crs, p_e12=e2u, p_e3=ze3u, p_surf_crs=e2e3u_msk, psgn=-1.0_wp )
+      CALL crs_dom_ope( zt, 'SUM', 'U', umask, zt_crs, p_e12=CASTDP(e2u), p_e3=ze3u, p_surf_crs=e2e3u_msk, psgn=-1.0_wp )
+      CALL crs_dom_ope( zs, 'SUM', 'U', umask, zs_crs, p_e12=CASTDP(e2u), p_e3=ze3u, p_surf_crs=e2e3u_msk, psgn=-1.0_wp )
 
       CALL iom_put( "uoce"  , un_crs )   ! i-current 
       CALL iom_put( "uocet" , zt_crs )   ! uT
       CALL iom_put( "uoces" , zs_crs )   ! uS
 
       !  V-velocity
-      CALL crs_dom_ope( vv(:,:,:,Kmm), 'SUM', 'V', vmask, vn_crs, p_e12=e1v, p_e3=ze3v, p_surf_crs=e1e3v_msk, psgn=-1.0_wp )
+      CALL crs_dom_ope( CASTSP(vv(:,:,:,Kmm)), 'SUM', 'V', vmask, vn_crs, p_e12=CASTDP(e1v), p_e3=ze3v, p_surf_crs=e1e3v_msk, psgn=-1.0_wp )
       !                                                                                 
       zt(:,:,:) = 0._wp     ;    zs(:,:,:) = 0._wp  ;   zt_crs(:,:,:) = 0._wp   ;    zs_crs(:,:,:) = 0._wp
       DO_3D( 0, 0, 0, 0, 1, jpkm1 )
          zt(ji,jj,jk)  = vv(ji,jj,jk,Kmm) * 0.5 * ( ts(ji,jj,jk,jp_tem,Kmm) + ts(ji,jj+1,jk,jp_tem,Kmm) ) 
          zs(ji,jj,jk)  = vv(ji,jj,jk,Kmm) * 0.5 * ( ts(ji,jj,jk,jp_sal,Kmm) + ts(ji,jj+1,jk,jp_sal,Kmm) ) 
       END_3D
-      CALL crs_dom_ope( zt, 'SUM', 'V', vmask, zt_crs, p_e12=e1v, p_e3=ze3v, p_surf_crs=e1e3v_msk, psgn=-1.0_wp )
-      CALL crs_dom_ope( zs, 'SUM', 'V', vmask, zs_crs, p_e12=e1v, p_e3=ze3v, p_surf_crs=e1e3v_msk, psgn=-1.0_wp )
+      CALL crs_dom_ope( zt, 'SUM', 'V', vmask, zt_crs, p_e12=CASTDP(e1v), p_e3=ze3v, p_surf_crs=e1e3v_msk, psgn=-1.0_wp )
+      CALL crs_dom_ope( zs, 'SUM', 'V', vmask, zs_crs, p_e12=CASTDP(e1v), p_e3=ze3v, p_surf_crs=e1e3v_msk, psgn=-1.0_wp )
  
       CALL iom_put( "voce"  , vn_crs )   ! i-current 
       CALL iom_put( "vocet" , zt_crs )   ! vT
@@ -210,9 +211,9 @@ CONTAINS
       CALL iom_put( "avs", avs_crs )   !  Kz on S
       
       !  sbc fields  
-      CALL crs_dom_ope( ssh(:,:,Kmm) , 'VOL', 'T', tmask, sshn_crs , p_e12=e1e2t, p_e3=ze3t           , psgn=1.0_wp )  
-      CALL crs_dom_ope( utau , 'SUM', 'U', umask, utau_crs , p_e12=e2u  , p_surf_crs=e2u_crs  , psgn=1.0_wp )
-      CALL crs_dom_ope( vtau , 'SUM', 'V', vmask, vtau_crs , p_e12=e1v  , p_surf_crs=e1v_crs  , psgn=1.0_wp )
+      CALL crs_dom_ope( CASTSP(ssh(:,:,Kmm)) , 'VOL', 'T', tmask, sshn_crs , p_e12=e1e2t, p_e3=ze3t   , psgn=1.0_wp )
+      CALL crs_dom_ope( utau , 'SUM', 'U', umask, utau_crs , p_e12=CASTDP(e2u)  , p_surf_crs=e2u_crs  , psgn=1.0_wp )
+      CALL crs_dom_ope( vtau , 'SUM', 'V', vmask, vtau_crs , p_e12=CASTDP(e1v)  , p_surf_crs=e1v_crs  , psgn=1.0_wp )
       CALL crs_dom_ope( wndm , 'SUM', 'T', tmask, wndm_crs , p_e12=e1e2t, p_surf_crs=e1e2t_crs, psgn=1.0_wp )
       CALL crs_dom_ope( rnf  , 'MAX', 'T', tmask, rnf_crs                                     , psgn=1.0_wp )
       CALL crs_dom_ope( qsr  , 'SUM', 'T', tmask, qsr_crs  , p_e12=e1e2t, p_surf_crs=e1e2t_crs, psgn=1.0_wp )

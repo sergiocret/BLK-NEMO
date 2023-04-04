@@ -67,9 +67,9 @@ CONTAINS
       USE netcdf             ! NetCDF library
 
       !! * Arguments
-      INTEGER :: kstatus
-      INTEGER :: klineno
-      CHARACTER(LEN=*) :: cd_name
+      INTEGER, INTENT(IN) :: kstatus
+      INTEGER, INTENT(IN) :: klineno
+      CHARACTER(LEN=*), INTENT(IN) :: cd_name
       
       !! * Local declarations
       CHARACTER(len=200) :: clineno
@@ -166,7 +166,7 @@ CONTAINS
       !! * Modules used
 
       !! * Arguments
-      INTEGER :: klineno
+      INTEGER, INTENT(IN) :: klineno
       CHARACTER(LEN=*) :: cd_name
       !! * Local declarations
       CHARACTER(len=200) :: clineno
@@ -193,7 +193,7 @@ CONTAINS
       !! * Modules used
 
       !! * Arguments
-      INTEGER :: klineno
+      INTEGER, INTENT(IN) :: klineno
       CHARACTER(LEN=*) :: cd_name
       !! * Local declarations
       CHARACTER(len=200) :: clineno

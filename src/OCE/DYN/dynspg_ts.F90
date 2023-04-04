@@ -72,9 +72,10 @@ MODULE dynspg_ts
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   un_adv , vn_adv   !: Advection vel. at "now" barocl. step
    !
    INTEGER, SAVE :: icycle      ! Number of barotropic sub-steps for each internal step nn_e <= 2.5 nn_e
-   REAL(wp),SAVE :: rDt_e       ! Barotropic time step
+   REAL(dp),SAVE :: rDt_e       ! Barotropic time step
    !
-   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:)   ::   wgtbtp1, wgtbtp2   ! 1st & 2nd weights used in time filtering of barotropic fields
+   REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:)    :: wgtbtp2! 1st & 2nd weights used in time filtering of barotropic fields
+   REAL(dp), ALLOCATABLE, SAVE, DIMENSION(:)    :: wgtbtp1! 1st & 2nd weights used in time filtering of barotropic fields
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:) ::   zwz                ! ff_f/h at F points
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:) ::   ftnw, ftne         ! triad of coriolis parameter
    REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:) ::   ftsw, ftse         ! (only used with een vorticity scheme)
@@ -86,6 +87,7 @@ MODULE dynspg_ts
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -143,8 +145,9 @@ CONTAINS
       !!---------------------------------------------------------------------
       INTEGER                             , INTENT( in )  ::  kt                  ! ocean time-step index
       INTEGER                             , INTENT( in )  ::  Kbb, Kmm, Krhs, Kaa ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv            ! ocean velocities and RHS of momentum equation
-      REAL(wp), DIMENSION(jpi,jpj,jpt)    , INTENT(inout) ::  pssh, puu_b, pvv_b  ! SSH and barotropic velocities at main time levels
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(inout) ::  puu, pvv            ! ocean velocities and RHS of momentum equation
+      REAL(wp), DIMENSION(jpi,jpj,jpt)    , INTENT(inout)  :: puu_b, pvv_b! SSH and barotropic velocities at main time levels
+      REAL(dp), DIMENSION(jpi,jpj,jpt)    , INTENT(inout)  :: pssh! SSH and barotropic velocities at main time levels
       INTEGER , OPTIONAL                  , INTENT( in )  ::  k_only_ADV          ! only Advection in the RHS
       !
       INTEGER  ::   ji, jj, jk, jn        ! dummy loop indices
@@ -152,16 +155,19 @@ CONTAINS
       LOGICAL  ::   ll_init               ! =T : special startup of 2d equations
       INTEGER  ::   noffset               ! local integers  : time offset for bdy update
       REAL(wp) ::   r1_Dt_b, z1_hu, z1_hv          ! local scalars
-      REAL(wp) ::   za0, za1, za2, za3              !   -      -
+      REAL(wp)  :: za0, za2, za3!   -      -
+      REAL(dp)  :: za1!   -      -
       REAL(wp) ::   zztmp, zldg               !   -      -
-      REAL(wp) ::   zhu_bck, zhv_bck, zhdiv         !   -      -
+      REAL(wp)  :: zhu_bck, zhv_bck!   -      -
+      REAL(dp)  :: zhdiv!   -      -
       REAL(wp) ::   zun_save, zvn_save              !   -      -
       REAL(wp), DIMENSION(jpi,jpj) :: zu_trd, zu_frc, zu_spg
       REAL(wp), DIMENSION(jpi,jpj) :: zv_trd, zv_frc, zv_spg
       REAL(wp), DIMENSION(jpi,jpj) :: zsshu_a, zhup2_e, zhtp2_e
       REAL(wp), DIMENSION(jpi,jpj) :: zsshv_a, zhvp2_e, zsshp2_e
       REAL(wp), DIMENSION(jpi,jpj) :: zCdU_u, zCdU_v   ! top/bottom stress at u- & v-points
-      REAL(wp), DIMENSION(jpi,jpj) :: zhU, zhV         ! fluxes
+      REAL(wp), DIMENSION(jpi,jpj)  :: zhV! fluxes
+      REAL(dp), DIMENSION(jpi,jpj)  :: zhU! fluxes
 !!st#if defined key_qco 
 !!st      REAL(wp), DIMENSION(jpi, jpj, jpk) :: ze3u, ze3v
 !!st#endif
@@ -259,7 +265,7 @@ CONTAINS
          zhU(:,:) = puu_b(:,:,Kmm) * hu(:,:,Kmm) * e2u(:,:)        ! now fluxes 
          zhV(:,:) = pvv_b(:,:,Kmm) * hv(:,:,Kmm) * e1v(:,:)        ! NB: FULL domain : put a value in last row and column
          !
-         CALL dyn_cor_2d( ht(:,:), hu(:,:,Kmm), hv(:,:,Kmm), puu_b(:,:,Kmm), pvv_b(:,:,Kmm), zhU, zhV,  &   ! <<== in
+         CALL dyn_cor_2d( CASTSP(ht(:,:)), hu(:,:,Kmm), hv(:,:,Kmm), puu_b(:,:,Kmm), pvv_b(:,:,Kmm), zhU, zhV,  &   ! <<== in
             &                                                                          zu_trd, zv_trd   )   ! ==>> out
          !
          DO_2D( 0, 0, 0, 0 )                          ! Remove coriolis term (and possibly spg) from barotropic trend
@@ -527,7 +533,8 @@ CONTAINS
             ssha_e(ji,jj) = (  sshn_e(ji,jj) - rDt_e * ( ssh_frc(ji,jj) + zhdiv )  ) * ssmask(ji,jj)
          END_2D
          !
-         CALL lbc_lnk( 'dynspg_ts', ssha_e, 'T', 1._wp,  zhU, 'U', -1._wp,  zhV, 'V', -1._wp )
+         CALL lbc_lnk( 'dynspg_ts', ssha_e, 'T', 1._dp,  zhU, 'U', -1._dp)
+         CALL lbc_lnk( 'dynspg_ts',  zhV, 'V', -1._wp )
          !
          ! Duplicate sea level across open boundaries (this is only cosmetic if linssh=T)
          IF( ln_bdy )   CALL bdy_ssh( ssha_e )
@@ -855,11 +862,13 @@ CONTAINS
       LOGICAL, INTENT(in) ::   ll_av      ! temporal averaging=.true.
       LOGICAL, INTENT(in) ::   ll_fw      ! forward time splitting =.true.
       INTEGER, INTENT(inout) :: jpit      ! cycle length    
-      REAL(wp), DIMENSION(3*nn_e), INTENT(inout) ::   zwgt1, & ! Primary weights
-                                                         zwgt2    ! Secondary weights
+      REAL(wp), DIMENSION(3*nn_e), INTENT(inout)  :: zwgt2
+      REAL(dp), DIMENSION(3*nn_e), INTENT(inout)  :: zwgt1
+
       
       INTEGER ::  jic, jn, ji                      ! temporary integers
-      REAL(wp) :: za1, za2
+      REAL(wp)  :: za2
+      REAL(dp)  :: za1
       !!----------------------------------------------------------------------
 
       zwgt1(:) = 0._wp
@@ -1028,7 +1037,7 @@ CONTAINS
       ! Estimate number of iterations to satisfy a max courant number= rn_bt_cmax
       IF( ln_bt_auto )   nn_e = CEILING( rn_Dt / rn_bt_cmax * zcmax)
       
-      rDt_e = rn_Dt / REAL( nn_e , wp )
+      rDt_e = rn_Dt / REAL( nn_e , dp )
       zcmax = zcmax * rDt_e
       ! Print results
       IF(lwp) WRITE(numout,*)
@@ -1167,7 +1176,8 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER  ::   ji ,jj                             ! dummy loop indices
       REAL(wp) ::   zx1, zx2, zy1, zy2, z1_hu, z1_hv   !   -      -
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ) :: pht, phu, phv, punb, pvnb, zhU, zhV
+      REAL(wp), DIMENSION(jpi,jpj), INTENT(in   )  :: pht, phu, phv, punb, pvnb, zhV
+      REAL(dp), DIMENSION(jpi,jpj), INTENT(in   )  :: zhU
       REAL(wp), DIMENSION(jpi,jpj), INTENT(  out) :: zu_trd, zv_trd
       !!----------------------------------------------------------------------
       SELECT CASE( nvor_scheme )
@@ -1273,7 +1283,8 @@ CONTAINS
       !! ** Action  :  ptmsk : wetting & drying t-mask
       !!----------------------------------------------------------------------
       REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ) ::   pTmsk              ! W & D t-mask
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(inout) ::   phU, phV, pu, pv   ! ocean velocities and transports
+      REAL(wp), DIMENSION(jpi,jpj), INTENT(inout)  :: phV, pu, pv! ocean velocities and transports
+      REAL(dp), DIMENSION(jpi,jpj), INTENT(inout)  :: phU! ocean velocities and transports
       REAL(wp), DIMENSION(jpi,jpj), INTENT(inout) ::   pUmsk, pVmsk       ! W & D u- and v-mask
       !
       INTEGER  ::   ji, jj   ! dummy loop indices
@@ -1362,7 +1373,7 @@ CONTAINS
       !! ** Method  :   computation done over the INNER domain only 
       !!----------------------------------------------------------------------
       INTEGER                             , INTENT(in   ) ::  Kbb, Kmm           ! ocean time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(in   ) ::  puu, pvv           ! ocean velocities and RHS of momentum equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpt), INTENT(in   ) ::  puu, pvv           ! ocean velocities and RHS of momentum equation
       REAL(wp), DIMENSION(jpi,jpj,jpt)    , INTENT(in   ) ::  puu_b, pvv_b       ! barotropic velocities at main time levels
       REAL(wp), DIMENSION(jpi,jpj)        , INTENT(inout) ::  pu_RHSi, pv_RHSi   ! baroclinic part of the barotropic RHS
       REAL(wp), DIMENSION(jpi,jpj)        , INTENT(  out) ::  pCdU_u , pCdU_v    ! barotropic drag coefficients
@@ -1462,7 +1473,8 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER ,INTENT(in   ) ::   jn                   ! index of sub time step
       LOGICAL ,INTENT(in   ) ::   ll_init              !
-      REAL(wp),INTENT(  out) ::   za0, za1, za2, za3   ! Half-step back interpolation coefficient
+      REAL(wp),INTENT(  out)  :: za0, za2, za3! Half-step back interpolation coefficient
+      REAL(dp),INTENT(  out)  :: za1! Half-step back interpolation coefficient
       !
       REAL(wp) ::   zepsilon, zgamma                   !   -      -
       !!----------------------------------------------------------------------

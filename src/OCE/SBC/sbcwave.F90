@@ -71,7 +71,8 @@ MODULE sbcwave
    REAL(wp), PUBLIC, ALLOCATABLE, DIMENSION(:,:)   ::   tsd2d           !: Surface Stokes Drift module at t-point
    REAL(wp), PUBLIC, ALLOCATABLE, DIMENSION(:,:)   ::   div_sd          !: barotropic stokes drift divergence
    REAL(wp), PUBLIC, ALLOCATABLE, DIMENSION(:,:)   ::   ut0sd, vt0sd    !: surface Stokes drift velocities at t-point
-   REAL(wp), PUBLIC, ALLOCATABLE, DIMENSION(:,:,:) ::   usd, vsd, wsd   !: Stokes drift velocities at u-, v- & w-points, resp.u
+   REAL(wp), PUBLIC, ALLOCATABLE, DIMENSION(:,:,:)  :: wsd!: Stokes drift velocities at u-, v- & w-points, resp.u
+   REAL(dp), PUBLIC, ALLOCATABLE, DIMENSION(:,:,:)  :: usd, vsd!: Stokes drift velocities at u-, v- & w-points, resp.u
 !
    REAL(wp), PUBLIC, ALLOCATABLE, DIMENSION(:,:)   ::   charn           !: charnock coefficient at t-point
    REAL(wp), PUBLIC, ALLOCATABLE, DIMENSION(:,:)   ::   tawx            !: Net wave-supported stress, u
@@ -211,7 +212,7 @@ CONTAINS
          END_3D
       ENDIF
 
-      CALL lbc_lnk( 'sbcwave', usd, 'U', -1.0_wp, vsd, 'V', -1.0_wp )
+      CALL lbc_lnk( 'sbcwave', usd, 'U', -1.0_dp, vsd, 'V', -1.0_dp )
 
       !
       !                       !==  vertical Stokes Drift 3D velocity  ==!

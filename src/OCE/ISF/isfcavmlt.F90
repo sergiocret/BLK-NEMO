@@ -32,6 +32,7 @@ MODULE isfcavmlt
    PUBLIC   isfcav_mlt
 
    !! * Substitutions
+#  include "single_precision_substitute.h90"
 #  include "do_loop_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -112,7 +113,7 @@ CONTAINS
       !!--------------------------------------------------------------------
       !
       ! Compute freezing temperature
-      CALL eos_fzp( pstbl(:,:), ztfrz(:,:), risfdep(:,:) )
+      CALL eos_fzp( pstbl(:,:), ztfrz(:,:), CASTDP(risfdep(:,:)) )
       !
       ! read input file of fwf (from isf to oce; ie melt)
       CALL fld_read ( kt, 1, sf_isfcav_fwf )
@@ -157,7 +158,7 @@ CONTAINS
       !!--------------------------------------------------------------------
       !
       ! Calculate freezing temperature
-      CALL eos_fzp( pstbl(:,:), ztfrz(:,:), risfdep(:,:) )
+      CALL eos_fzp( pstbl(:,:), ztfrz(:,:), CASTDP(risfdep(:,:)) )
       !
       ! thermal driving
       zthd (:,:) = ( pttbl(:,:) - ztfrz(:,:) ) * mskisf_cav(:,:)
@@ -281,7 +282,7 @@ CONTAINS
       !!--------------------------------------------------------------------
       !
       ! Calculate freezing temperature
-      CALL eos_fzp( pstbl(:,:), ztfrz(:,:), risfdep(:,:) )
+      CALL eos_fzp( pstbl(:,:), ztfrz(:,:), CASTDP(risfdep(:,:)) )
       !
       ! read input file of fwf from isf to oce
       CALL fld_read ( kt, 1, sf_isfcav_fwf )

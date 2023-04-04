@@ -11,8 +11,7 @@ MODULE obs_inter_z1d
    !!                     interpolating function for a cubic spline (n1dint=1)
    !!----------------------------------------------------------------------
    !! * Modules used
-   USE par_kind, ONLY : &  ! Precision variables
-      & wp
+   USE par_kind
 
    IMPLICIT NONE
 
@@ -34,4 +33,3 @@ CONTAINS
 #include "obsinter_z1d.h90"
 
 END MODULE obs_inter_z1d
-

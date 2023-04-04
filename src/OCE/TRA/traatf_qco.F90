@@ -85,10 +85,10 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                                  , INTENT(in   ) :: kt             ! ocean time-step index
       INTEGER                                  , INTENT(in   ) :: Kbb, Kmm, Kaa  ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts            ! active tracers
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts            ! active tracers
       !!
       INTEGER  ::   ji, jj, jk, jn   ! dummy loop indices
-      REAL(wp) ::   zfact            ! local scalars
+      REAL(dp) ::   zfact            ! local scalars
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:) ::   ztrdt, ztrds
       !!----------------------------------------------------------------------
       !
@@ -145,7 +145,7 @@ CONTAINS
          ELSE                    ;   CALL tra_atf_qco_lf( kt, Kbb, Kmm, Kaa, nit000, rn_Dt, 'TRA', pts, sbc_tsc, sbc_tsc_b, jpts )  ! non-linear free surface
          ENDIF
          !
-         CALL lbc_lnk( 'traatfqco', pts(:,:,:,jp_tem,Kmm) , 'T', 1._wp, pts(:,:,:,jp_sal,Kmm) , 'T', 1._wp )
+         CALL lbc_lnk( 'traatfqco', pts(:,:,:,jp_tem,Kmm) , 'T', 1._dp, pts(:,:,:,jp_sal,Kmm) , 'T', 1._dp )
          !
       ENDIF
       !
@@ -183,7 +183,7 @@ CONTAINS
       INTEGER                                  , INTENT(in   ) ::  kit000        ! first time step index
       CHARACTER(len=3)                         , INTENT(in   ) ::  cdtype        ! =TRA or TRC (tracer indicator)
       INTEGER                                  , INTENT(in   ) ::  kjpt          ! number of tracers
-      REAL(wp), DIMENSION(jpi,jpj,jpk,kjpt,jpt), INTENT(inout) ::  pt            ! tracer fields
+      REAL(dp), DIMENSION(jpi,jpj,jpk,kjpt,jpt), INTENT(inout) ::  pt            ! tracer fields
       !
       INTEGER  ::   ji, jj, jk, jn   ! dummy loop indices
       REAL(wp) ::   ztn, ztd         ! local scalars
@@ -227,14 +227,14 @@ CONTAINS
       REAL(wp)                                 , INTENT(in   ) ::  p2dt      ! time-step
       CHARACTER(len=3)                         , INTENT(in   ) ::  cdtype    ! =TRA or TRC (tracer indicator)
       INTEGER                                  , INTENT(in   ) ::  kjpt      ! number of tracers
-      REAL(wp), DIMENSION(jpi,jpj,jpk,kjpt,jpt), INTENT(inout) ::  pt        ! tracer fields
+      REAL(dp), DIMENSION(jpi,jpj,jpk,kjpt,jpt), INTENT(inout) ::  pt        ! tracer fields
       REAL(wp), DIMENSION(jpi,jpj    ,kjpt)    , INTENT(in   ) ::  psbc_tc   ! surface tracer content
       REAL(wp), DIMENSION(jpi,jpj    ,kjpt)    , INTENT(in   ) ::  psbc_tc_b ! before surface tracer content
       !
       LOGICAL  ::   ll_traqsr, ll_rnf, ll_isf   ! local logical
       INTEGER  ::   ji, jj, jk, jn              ! dummy loop indices
-      REAL(wp) ::   zfact, zfact1, ztc_a , ztc_n , ztc_b , ztc_f , ztc_d    ! local scalar
-      REAL(wp) ::   zfact2, ze3t_b, ze3t_n, ze3t_a, ze3t_f                  !   -      -
+      REAL(dp) ::   zfact, zfact1, ztc_a , ztc_n , ztc_b , ztc_f , ztc_d    ! local scalar
+      REAL(dp) ::   zfact2, ze3t_b, ze3t_n, ze3t_a, ze3t_f                  !   -      -
       REAL(wp), ALLOCATABLE, DIMENSION(:,:,:,:) ::   ztrd_atf
       !!----------------------------------------------------------------------
       !

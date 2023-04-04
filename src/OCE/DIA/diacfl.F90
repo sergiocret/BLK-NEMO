@@ -33,6 +33,7 @@ MODULE diacfl
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -87,11 +88,11 @@ CONTAINS
 
       !                    ! calculate maximum values and locations
       llmsk(Nis0:Nie0,Njs0:Nje0,:) = umask(Nis0:Nie0,Njs0:Nje0,:) == 1._wp        ! define only the inner domain
-      CALL mpp_maxloc( 'diacfl', zCu_cfl, llmsk, zCu_max, iloc_u )
+      CALL mpp_maxloc( 'diacfl', CASTDP(zCu_cfl), llmsk, zCu_max, iloc_u )
       llmsk(Nis0:Nie0,Njs0:Nje0,:) = vmask(Nis0:Nie0,Njs0:Nje0,:) == 1._wp        ! define only the inner domain
-      CALL mpp_maxloc( 'diacfl', zCv_cfl, llmsk, zCv_max, iloc_v )
+      CALL mpp_maxloc( 'diacfl', CASTDP(zCv_cfl), llmsk, zCv_max, iloc_v )
       llmsk(Nis0:Nie0,Njs0:Nje0,:) = wmask(Nis0:Nie0,Njs0:Nje0,:) == 1._wp        ! define only the inner domain
-      CALL mpp_maxloc( 'diacfl', zCw_cfl, llmsk, zCw_max, iloc_w )
+      CALL mpp_maxloc( 'diacfl', CASTDP(zCw_cfl), llmsk, zCw_max, iloc_w )
       !
       IF( lwp ) THEN       ! write out to file
          WRITE(numcfl,FMT='(2x,i6,3x,a6,4x,f7.4,1x,i4,1x,i4,1x,i4)') kt, 'Max Cu', zCu_max, iloc_u(1), iloc_u(2), iloc_u(3)

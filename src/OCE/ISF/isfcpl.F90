@@ -48,6 +48,7 @@ MODULE isfcpl
    !
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -200,7 +201,8 @@ CONTAINS
                zssmask_b(ji,jj) = 1._wp
             ENDIF
          END_2D
-         CALL lbc_lnk( 'isfcpl', ssh(:,:,Kmm), 'T', 1.0_wp, zssmask_b(:,:), 'T', 1.0_wp )
+         CALL lbc_lnk( 'isfcpl', ssh(:,:,Kmm), 'T', 1.0_dp)
+         CALL lbc_lnk( 'isfcpl', zssmask_b(:,:), 'T', 1.0_wp )
          !
          zssh(:,:) = ssh(:,:,Kmm)
          zssmask0(:,:) = zssmask_b(:,:)
@@ -213,7 +215,7 @@ CONTAINS
       !
       ssh(:,:,Kbb) = ssh(:,:,Kmm)
       !
-      IF ( ln_isfdebug ) CALL debug('isfcpl_ssh: sshn',ssh(:,:,Kmm))
+      IF ( ln_isfdebug ) CALL debug('isfcpl_ssh: sshn',CASTSP(ssh(:,:,Kmm)))
       !
       ! recompute the vertical scale factor, depth and water thickness
       IF(lwp) write(numout,*) 'isfcpl_ssh : recompute scale factor from ssh (new wet cell,Kmm)'
@@ -358,7 +360,8 @@ CONTAINS
             END_2D
          END DO
          !
-         CALL lbc_lnk( 'isfcpl', ts(:,:,:,jp_tem,Kmm), 'T', 1.0_wp, ts(:,:,:,jp_sal,Kmm), 'T', 1.0_wp, ztmask1, 'T', 1.0_wp)
+         CALL lbc_lnk( 'isfcpl', ts(:,:,:,jp_tem,Kmm), 'T', 1.0_dp, ts(:,:,:,jp_sal,Kmm), 'T', 1.0_dp)
+         CALL lbc_lnk( 'isfcpl', ztmask1, 'T', 1.0_wp)
          !
          ! update temperature and salinity and mask
          zts0(:,:,:,:)  = ts(:,:,:,:,Kmm)

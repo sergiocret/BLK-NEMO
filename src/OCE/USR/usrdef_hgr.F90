@@ -62,8 +62,10 @@ CONTAINS
       REAL(wp), DIMENSION(:,:), INTENT(out) ::   pphit, pphiu, pphiv, pphif   ! latitude outputs                      [degrees]
       INTEGER                 , INTENT(out) ::   kff                          ! =1 Coriolis parameter computed here, =0 otherwise
       REAL(wp), DIMENSION(:,:), INTENT(out) ::   pff_f, pff_t                 ! Coriolis factor at f-point                [1/s]
-      REAL(wp), DIMENSION(:,:), INTENT(out) ::   pe1t, pe1u, pe1v, pe1f       ! i-scale factors                             [m]
-      REAL(wp), DIMENSION(:,:), INTENT(out) ::   pe2t, pe2u, pe2v, pe2f       ! j-scale factors                             [m]
+      REAL(wp), DIMENSION(:,:), INTENT(out)  :: pe1v! i-scale factors                             [m]
+      REAL(dp), DIMENSION(:,:), INTENT(out)  :: pe1t, pe1u, pe1f! i-scale factors                             [m]
+      REAL(wp), DIMENSION(:,:), INTENT(out)  :: pe2u! j-scale factors                             [m]
+      REAL(dp), DIMENSION(:,:), INTENT(out)  :: pe2t, pe2v, pe2f! j-scale factors                             [m]
       INTEGER                 , INTENT(out) ::   ke1e2u_v                     ! =1 u- & v-surfaces computed here, =0 otherwise 
       REAL(wp), DIMENSION(:,:), INTENT(out) ::   pe1e2u, pe1e2v               ! u- & v-surfaces (if reduction in strait)   [m2]
       !

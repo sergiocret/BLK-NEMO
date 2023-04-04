@@ -178,6 +178,7 @@ MODULE eosbn2
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -188,7 +189,7 @@ CONTAINS
 
    SUBROUTINE eos_insitu( pts, prd, pdep )
       !!
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pts   ! 1 : potential temperature  [Celsius]
+      REAL(dp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pts   ! 1 : potential temperature  [Celsius]
       !                                                      ! 2 : salinity               [psu]
       REAL(wp), DIMENSION(:,:,:)  , INTENT(  out) ::   prd   ! in situ density            [-]
       REAL(wp), DIMENSION(:,:,:)  , INTENT(in   ) ::   pdep  ! depth                      [m]
@@ -231,14 +232,16 @@ CONTAINS
       !!                TEOS-10 Manual, 2010
       !!----------------------------------------------------------------------
       INTEGER                                 , INTENT(in   ) ::   ktts, ktrd, ktdep
-      REAL(wp), DIMENSION(A2D_T(ktts) ,JPK,JPTS), INTENT(in   ) ::   pts   ! 1 : potential temperature  [Celsius]
+      REAL(dp), DIMENSION(A2D_T(ktts) ,JPK,JPTS), INTENT(in   ) ::   pts   ! 1 : potential temperature  [Celsius]
       !                                                                  ! 2 : salinity               [psu]
       REAL(wp), DIMENSION(A2D_T(ktrd) ,JPK     ), INTENT(  out) ::   prd   ! in situ density            [-]
       REAL(wp), DIMENSION(A2D_T(ktdep),JPK     ), INTENT(in   ) ::   pdep  ! depth                      [m]
       !
       INTEGER  ::   ji, jj, jk                ! dummy loop indices
-      REAL(wp) ::   zt , zh , zs , ztm        ! local scalars
-      REAL(wp) ::   zn , zn0, zn1, zn2, zn3   !   -      -
+      REAL(wp)  :: zt, zh, ztm! local scalars
+      REAL(dp)  :: zs! local scalars
+      REAL(wp)  :: zn1, zn2!   -      -
+      REAL(dp)  :: zn, zn0, zn3!   -      -
       !!----------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('eos-insitu')
@@ -298,7 +301,7 @@ CONTAINS
          !
       END SELECT
       !
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=prd, clinfo1=' eos-insitu  : ' )
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=CASTDP(prd), clinfo1=' eos-insitu  : ' )
       !
       IF( ln_timing )   CALL timing_stop('eos-insitu')
       !
@@ -307,10 +310,10 @@ CONTAINS
 
    SUBROUTINE eos_insitu_pot( pts, prd, prhop, pdep )
       !!
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pts    ! 1 : potential temperature  [Celsius]
+      REAL(dp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pts    ! 1 : potential temperature  [Celsius]
       !                                                       ! 2 : salinity               [psu]
       REAL(wp), DIMENSION(:,:,:)  , INTENT(  out) ::   prd    ! in situ density            [-]
-      REAL(wp), DIMENSION(:,:,:)  , INTENT(  out) ::   prhop  ! potential density (surface referenced)
+      REAL(dp), DIMENSION(:,:,:)  , INTENT(  out) ::   prhop  ! potential density (surface referenced)
       REAL(wp), DIMENSION(:,:,:)  , INTENT(in   ) ::   pdep   ! depth                      [m]
       !!
       CALL eos_insitu_pot_t( pts, is_tile(pts), prd, is_tile(prd), prhop, is_tile(prhop), pdep, is_tile(pdep) )
@@ -331,16 +334,18 @@ CONTAINS
       !!
       !!----------------------------------------------------------------------
       INTEGER                                  , INTENT(in   ) ::   ktts, ktrd, ktrhop, ktdep
-      REAL(wp), DIMENSION(A2D_T(ktts)  ,JPK,JPTS), INTENT(in   ) ::   pts    ! 1 : potential temperature  [Celsius]
+      REAL(dp), DIMENSION(A2D_T(ktts)  ,JPK,JPTS), INTENT(in   ) ::   pts    ! 1 : potential temperature  [Celsius]
       !                                                                    ! 2 : salinity               [psu]
       REAL(wp), DIMENSION(A2D_T(ktrd)  ,JPK     ), INTENT(  out) ::   prd    ! in situ density            [-]
-      REAL(wp), DIMENSION(A2D_T(ktrhop),JPK     ), INTENT(  out) ::   prhop  ! potential density (surface referenced)
+      REAL(dp), DIMENSION(A2D_T(ktrhop),JPK     ), INTENT(  out) ::   prhop  ! potential density (surface referenced)
       REAL(wp), DIMENSION(A2D_T(ktdep) ,JPK     ), INTENT(in   ) ::   pdep   ! depth                      [m]
       !
       INTEGER  ::   ji, jj, jk, jsmp             ! dummy loop indices
       INTEGER  ::   jdof
-      REAL(wp) ::   zt , zh , zstemp, zs , ztm   ! local scalars
-      REAL(wp) ::   zn , zn0, zn1, zn2, zn3      !   -      -
+      REAL(wp)  :: zt, zh, zstemp, ztm! local scalars
+      REAL(dp)  :: zs! local scalars
+      REAL(wp)  :: zn1, zn2, zn3!   -      -
+      REAL(dp)  :: zn, zn0!   -      -
       REAL(wp), DIMENSION(:), ALLOCATABLE :: zn0_sto, zn_sto, zsign    ! local vectors
       !!----------------------------------------------------------------------
       !
@@ -466,7 +471,7 @@ CONTAINS
          !
       END SELECT
       !
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=prd, clinfo1=' eos-pot: ', tab3d_2=prhop, clinfo2=' pot : ' )
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=CASTDP(prd), clinfo1=' eos-pot: ', tab3d_2=prhop, clinfo2=' pot : ' )
       !
       IF( ln_timing )   CALL timing_stop('eos-pot')
       !
@@ -565,7 +570,7 @@ CONTAINS
          !
       END SELECT
       !
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=prd, clinfo1=' eos2d: ' )
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=CASTDP(prd), clinfo1=' eos2d: ' )
       !
       IF( ln_timing )   CALL timing_stop('eos2d')
       !
@@ -647,9 +652,9 @@ CONTAINS
          END_2D
          !
       END SELECT
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=prhop, clinfo1=' pot: ', kdim=1 )
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=CASTDP(prhop), clinfo1=' pot: ', kdim=1 )
       !
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=prhop, clinfo1=' eos-pot: ' )
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=CASTDP(prhop), clinfo1=' eos-pot: ' )
       !
       IF( ln_timing )   CALL timing_stop('eos-pot')
       !
@@ -659,7 +664,7 @@ CONTAINS
    SUBROUTINE rab_3d( pts, pab, Kmm )
       !!
       INTEGER                     , INTENT(in   ) ::   Kmm   ! time level index
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pts   ! pot. temperature & salinity
+      REAL(dp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pts   ! pot. temperature & salinity
       REAL(wp), DIMENSION(:,:,:,:), INTENT(  out) ::   pab   ! thermal/haline expansion ratio
       !!
       CALL rab_3d_t( pts, is_tile(pts), pab, is_tile(pab), Kmm )
@@ -678,7 +683,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                                , INTENT(in   ) ::   Kmm   ! time level index
       INTEGER                                , INTENT(in   ) ::   ktts, ktab
-      REAL(wp), DIMENSION(A2D_T(ktts),JPK,JPTS), INTENT(in   ) ::   pts   ! pot. temperature & salinity
+      REAL(dp), DIMENSION(A2D_T(ktts),JPK,JPTS), INTENT(in   ) ::   pts   ! pot. temperature & salinity
       REAL(wp), DIMENSION(A2D_T(ktab),JPK,JPTS), INTENT(  out) ::   pab   ! thermal/haline expansion ratio
       !
       INTEGER  ::   ji, jj, jk                ! dummy loop indices
@@ -765,8 +770,8 @@ CONTAINS
          !
       END SELECT
       !
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=pab(:,:,:,jp_tem), clinfo1=' rab_3d_t: ', &
-         &                                  tab3d_2=pab(:,:,:,jp_sal), clinfo2=' rab_3d_s : ' )
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=CASTDP(pab(:,:,:,jp_tem)), clinfo1=' rab_3d_t: ', &
+         &                                  tab3d_2=CASTDP(pab(:,:,:,jp_sal)), clinfo2=' rab_3d_s : ' )
       !
       IF( ln_timing )   CALL timing_stop('rab_3d')
       !
@@ -884,8 +889,8 @@ CONTAINS
          !
       END SELECT
       !
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=pab(:,:,jp_tem), clinfo1=' rab_2d_t: ', &
-         &                                  tab2d_2=pab(:,:,jp_sal), clinfo2=' rab_2d_s : ' )
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=CASTDP(pab(:,:,jp_tem)), clinfo1=' rab_2d_t: ', &
+         &                                  tab2d_2=CASTDP(pab(:,:,jp_sal)), clinfo2=' rab_2d_s : ' )
       !
       IF( ln_timing )   CALL timing_stop('rab_2d')
       !
@@ -992,7 +997,7 @@ CONTAINS
    SUBROUTINE bn2( pts, pab, pn2, Kmm )
       !!
       INTEGER                              , INTENT(in   ) ::  Kmm   ! time level index
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(in   ) ::  pts   ! pot. temperature and salinity   [Celsius,psu]
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(in   ) ::  pts   ! pot. temperature and salinity   [Celsius,psu]
       REAL(wp), DIMENSION(:,:,:,:)         , INTENT(in   ) ::  pab   ! thermal/haline expansion coef.  [Celsius-1,psu-1]
       REAL(wp), DIMENSION(:,:,:)           , INTENT(  out) ::  pn2   ! Brunt-Vaisala frequency squared [1/s^2]
       !!
@@ -1016,7 +1021,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                                , INTENT(in   ) ::  Kmm   ! time level index
       INTEGER                                , INTENT(in   ) ::  ktab, ktn2
-      REAL(wp), DIMENSION(jpi,jpj,  jpk,jpts), INTENT(in   ) ::  pts   ! pot. temperature and salinity   [Celsius,psu]
+      REAL(dp), DIMENSION(jpi,jpj,  jpk,jpts), INTENT(in   ) ::  pts   ! pot. temperature and salinity   [Celsius,psu]
       REAL(wp), DIMENSION(A2D_T(ktab),JPK,JPTS), INTENT(in   ) ::  pab   ! thermal/haline expansion coef.  [Celsius-1,psu-1]
       REAL(wp), DIMENSION(A2D_T(ktn2),JPK     ), INTENT(  out) ::  pn2   ! Brunt-Vaisala frequency squared [1/s^2]
       !
@@ -1038,7 +1043,7 @@ CONTAINS
             &            / e3w(ji,jj,jk,Kmm) * wmask(ji,jj,jk)
       END_3D
       !
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=pn2, clinfo1=' bn2  : ' )
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=CASTDP(pn2), clinfo1=' bn2  : ' )
       !
       IF( ln_timing )   CALL timing_stop('bn2')
       !
@@ -1105,7 +1110,7 @@ CONTAINS
    SUBROUTINE eos_fzp_2d( psal, ptf, pdep )
       !!
       REAL(wp), DIMENSION(jpi,jpj), INTENT(in   )           ::   psal   ! salinity   [psu]
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ), OPTIONAL ::   pdep   ! depth      [m]
+      REAL(dp), DIMENSION(jpi,jpj), INTENT(in   ), OPTIONAL ::   pdep   ! depth      [m]
       REAL(wp), DIMENSION(:,:)    , INTENT(out  )           ::   ptf    ! freezing temperature [Celsius]
       !!
       CALL eos_fzp_2d_t( psal, ptf, is_tile(ptf), pdep )
@@ -1126,7 +1131,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                       , INTENT(in   )           ::   kttf
       REAL(wp), DIMENSION(jpi,jpj)  , INTENT(in   )           ::   psal   ! salinity   [psu]
-      REAL(wp), DIMENSION(jpi,jpj)  , INTENT(in   ), OPTIONAL ::   pdep   ! depth      [m]
+      REAL(dp), DIMENSION(jpi,jpj)  , INTENT(in   ), OPTIONAL ::   pdep   ! depth      [m]
       REAL(wp), DIMENSION(A2D_T(kttf)), INTENT(out  )           ::   ptf    ! freezing temperature [Celsius]
       !
       INTEGER  ::   ji, jj          ! dummy loop indices
@@ -1230,7 +1235,7 @@ CONTAINS
       !!                    pab_pe(:,:,:,jp_sal) is beta_pe
       !!----------------------------------------------------------------------
       INTEGER                              , INTENT(in   ) ::   Kmm   ! time level index
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(in   ) ::   pts     ! pot. temperature & salinity
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(in   ) ::   pts     ! pot. temperature & salinity
       REAL(wp), DIMENSION(jpi,jpj,jpk,jpts), INTENT(  out) ::   pab_pe  ! alpha_pe and beta_pe
       REAL(wp), DIMENSION(jpi,jpj,jpk)     , INTENT(  out) ::   ppen     ! potential energy anomaly
       !

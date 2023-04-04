@@ -134,8 +134,8 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                           , INTENT(in   ) ::   kt     ! ocean time-step
       INTEGER                           , INTENT(in   ) ::   Kmm    ! time level index
-      REAL(wp), DIMENSION(jpi,jpj,jpk)  , INTENT(  out) ::   pud    ! U & V current data
-      REAL(wp), DIMENSION(jpi,jpj,jpk)  , INTENT(  out) ::   pvd    ! U & V current data
+      REAL(dp), DIMENSION(jpi,jpj,jpk)  , INTENT(  out) ::   pud    ! U & V current data
+      REAL(dp), DIMENSION(jpi,jpj,jpk)  , INTENT(  out) ::   pvd    ! U & V current data
       !
       INTEGER ::   ji, jj, jk, jl, jkk               ! dummy loop indicies
       INTEGER ::   ik, il0, il1, ii0, ii1, ij0, ij1  ! local integers

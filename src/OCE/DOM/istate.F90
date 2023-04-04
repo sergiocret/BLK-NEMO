@@ -132,8 +132,8 @@ CONTAINS
                END DO
                CALL usr_def_istate( zgdept, tmask, ts(:,:,:,:,Kbb), uu(:,:,:,Kbb), vv(:,:,:,Kbb) )
                ! make sure that periodicities are properly applied 
-               CALL lbc_lnk( 'istate', ts(:,:,:,jp_tem,Kbb), 'T',  1._wp, ts(:,:,:,jp_sal,Kbb), 'T',  1._wp,   &
-                  &                    uu(:,:,:,       Kbb), 'U', -1._wp, vv(:,:,:,       Kbb), 'V', -1._wp )
+               CALL lbc_lnk( 'istate', ts(:,:,:,jp_tem,Kbb), 'T',  1._dp, ts(:,:,:,jp_sal,Kbb), 'T',  1._dp,   &
+                  &                    uu(:,:,:,       Kbb), 'U', -1._dp, vv(:,:,:,       Kbb), 'V', -1._dp )
             ENDIF
             ts  (:,:,:,:,Kmm) = ts (:,:,:,:,Kbb)       ! set now values from to before ones
             uu    (:,:,:,Kmm) = uu   (:,:,:,Kbb)

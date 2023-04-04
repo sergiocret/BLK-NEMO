@@ -80,13 +80,14 @@ CONTAINS
       REAL(wp)                                 , INTENT(in   ) ::   p2dt            ! tracer time-step
       ! TEMP: [tiling] This can be A2D(nn_hls) after all lbc_lnks removed in the nn_hls = 2 case
       REAL(wp), DIMENSION(jpi,jpj,jpk         ), INTENT(in   ) ::   pU, pV, pW      ! 3 ocean volume flux components
-      REAL(wp), DIMENSION(jpi,jpj,jpk,kjpt,jpt), INTENT(inout) ::   pt              ! tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,kjpt,jpt), INTENT(inout) ::   pt              ! tracers and RHS of tracer equation
       !
       INTEGER  ::   ji, jj, jk, jn                           ! dummy loop indices
       REAL(wp) ::   ztra                                     ! local scalar
       REAL(wp) ::   zfp_ui, zfp_vj, zfp_wk, zC2t_u, zC4t_u   !   -      -
       REAL(wp) ::   zfm_ui, zfm_vj, zfm_wk, zC2t_v, zC4t_v   !   -      -
-      REAL(wp), DIMENSION(A2D(nn_hls),jpk)        ::   zwi, zwx, zwy, zwz, ztu, ztv, zltu, zltv, ztw
+      REAL(wp), DIMENSION(A2D(nn_hls),jpk)         :: zwi, zwz, ztu, ztv, zltu, zltv, ztw
+      REAL(dp), DIMENSION(A2D(nn_hls),jpk)         :: zwx, zwy
       REAL(wp), DIMENSION(:,:,:), ALLOCATABLE ::   ztrdx, ztrdy, ztrdz, zptry
       REAL(wp), DIMENSION(:,:,:), ALLOCATABLE ::   zwinf, zwdia, zwsup
       LOGICAL  ::   ll_zAimp                                 ! flag to apply adaptive implicit vertical advection
@@ -274,7 +275,7 @@ CONTAINS
                zwx(ji,jj,jk) =  0.5_wp * pU(ji,jj,jk) * zC4t_u - zwx(ji,jj,jk)
                zwy(ji,jj,jk) =  0.5_wp * pV(ji,jj,jk) * zC4t_v - zwy(ji,jj,jk)
             END_3D
-            IF (nn_hls==2) CALL lbc_lnk( 'traadv_fct', zwx, 'U', -1.0_wp , zwy, 'V', -1.0_wp )   ! Lateral boundary cond. (unchanged sgn)
+            IF (nn_hls==2) CALL lbc_lnk( 'traadv_fct', zwx, 'U', -1.0_dp , zwy, 'V', -1.0_dp )   ! Lateral boundary cond. (unchanged sgn)
             !
          END SELECT
          !
@@ -298,7 +299,8 @@ CONTAINS
          ENDIF
          !
          IF (nn_hls==1) THEN
-            CALL lbc_lnk( 'traadv_fct', zwi, 'T', 1.0_wp, zwx, 'U', -1.0_wp , zwy, 'V', -1.0_wp, zwz, 'T', 1.0_wp )
+            CALL lbc_lnk( 'traadv_fct', zwx, 'U', -1.0_dp , zwy, 'V', -1.0_dp)
+            CALL lbc_lnk( 'traadv_fct', zwi, 'T', 1.0_wp , zwz, 'T', 1.0_wp )
          ELSE
             CALL lbc_lnk( 'traadv_fct', zwi, 'T', 1.0_wp)
          END IF
@@ -399,9 +401,10 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER                         , INTENT(in   ) ::   Kmm             ! time level index
       REAL(wp)                        , INTENT(in   ) ::   p2dt            ! tracer time-step
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) ::   pbef            ! before field
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(in   ) ::   pbef            ! before field
       REAL(wp), DIMENSION(A2D(nn_hls)    ,jpk), INTENT(in   ) ::   paft            ! after field
-      REAL(wp), DIMENSION(A2D(nn_hls)    ,jpk), INTENT(inout) ::   paa, pbb, pcc   ! monotonic fluxes in the 3 directions
+      REAL(wp), DIMENSION(A2D(nn_hls)    ,jpk), INTENT(inout)  :: pcc! monotonic fluxes in the 3 directions
+      REAL(dp), DIMENSION(A2D(nn_hls)    ,jpk), INTENT(inout)  :: paa, pbb! monotonic fluxes in the 3 directions
       !
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
       INTEGER  ::   ikm1         ! local integer
@@ -551,7 +554,7 @@ CONTAINS
       !!
       !! **  Method  :   4th order compact interpolation
       !!----------------------------------------------------------------------
-      REAL(wp),DIMENSION(jpi,jpj,jpk), INTENT(in   ) ::   pt_in    ! field at t-point
+      REAL(dp),DIMENSION(jpi,jpj,jpk), INTENT(in   ) ::   pt_in    ! field at t-point
       REAL(wp),DIMENSION(A2D(nn_hls)    ,jpk), INTENT(  out) ::   pt_out   ! field interpolated at w-point
       !
       INTEGER ::   ji, jj, jk   ! dummy loop integers
@@ -641,7 +644,7 @@ CONTAINS
       !!        The solution is pta.
       !!        The 3d array zwt is used as a work space array.
       !!----------------------------------------------------------------------
-      REAL(wp),DIMENSION(A2D(nn_hls),jpk), INTENT(in   ) ::   pD, pU, PL    ! 3-diagonal matrix
+      REAL(wp),DIMENSION(A2D(nn_hls),jpk), INTENT(in   ) ::   pD, pU, pL    ! 3-diagonal matrix
       REAL(wp),DIMENSION(A2D(nn_hls),jpk), INTENT(in   ) ::   pRHS          ! Right-Hand-Side
       REAL(wp),DIMENSION(A2D(nn_hls),jpk), INTENT(  out) ::   pt_out        !!gm field at level=F(klev)
       INTEGER                    , INTENT(in   ) ::   klev          ! =1 pt_out at w-level

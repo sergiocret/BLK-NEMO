@@ -72,7 +72,7 @@ CONTAINS
       IF ( iom_use( TRIM(cvarqlat3d) ) ) CALL isf_diags_2dto3d( Kmm, ktop, kbot, phtbl, pfrac, TRIM(cvarqlat3d) , pqoce(:,:))
       IF ( iom_use( TRIM(cvarqhc3d)  ) ) CALL isf_diags_2dto3d( Kmm, ktop, kbot, phtbl, pfrac, TRIM(cvarqhc3d)  , pqhc (:,:))
       !
-   END SUBROUTINE
+   END SUBROUTINE isf_diags_flx
 
    SUBROUTINE isf_diags_2dto3d(Kmm, ktop, kbot, phtbl, pfrac, cdvar, pvar2d)
       !!---------------------------------------------------------------------

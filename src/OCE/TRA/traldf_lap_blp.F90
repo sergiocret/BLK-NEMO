@@ -59,8 +59,8 @@ CONTAINS
       REAL(wp), DIMENSION(:,:,:)  , INTENT(in   ) ::   pahu, pahv ! eddy diffusivity at u- and v-points  [m2/s]
       REAL(wp), DIMENSION(:,:,:)  , INTENT(in   ) ::   pgu, pgv   ! tracer gradient at pstep levels
       REAL(wp), DIMENSION(:,:,:)  , INTENT(in   ) ::   pgui, pgvi ! tracer gradient at top   levels
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pt         ! before tracer fields
-      REAL(wp), DIMENSION(:,:,:,:), INTENT(inout) ::   pt_rhs     ! tracer trend
+      REAL(dp), DIMENSION(:,:,:,:), INTENT(in   ) ::   pt         ! before tracer fields
+      REAL(dp), DIMENSION(:,:,:,:), INTENT(inout) ::   pt_rhs     ! tracer trend
       !!
       CALL tra_ldf_lap_t( kt, Kmm, kit000, cdtype, pahu, pahv, is_tile(pahu),                            &
       &                                            pgu , pgv , is_tile(pgu) , pgui, pgvi, is_tile(pgui), &
@@ -98,8 +98,8 @@ CONTAINS
       REAL(wp), DIMENSION(A2D_T(ktah),   JPK)     , INTENT(in   ) ::   pahu, pahv ! eddy diffusivity at u- and v-points  [m2/s]
       REAL(wp), DIMENSION(A2D_T(ktg),        KJPT), INTENT(in   ) ::   pgu, pgv   ! tracer gradient at pstep levels
       REAL(wp), DIMENSION(A2D_T(ktgi),       KJPT), INTENT(in   ) ::   pgui, pgvi ! tracer gradient at top   levels
-      REAL(wp), DIMENSION(A2D_T(ktt),    JPK,KJPT), INTENT(in   ) ::   pt         ! before tracer fields
-      REAL(wp), DIMENSION(A2D_T(ktt_rhs),JPK,KJPT), INTENT(inout) ::   pt_rhs     ! tracer trend
+      REAL(dp), DIMENSION(A2D_T(ktt),    JPK,KJPT), INTENT(in   ) ::   pt         ! before tracer fields
+      REAL(dp), DIMENSION(A2D_T(ktt_rhs),JPK,KJPT), INTENT(inout) ::   pt_rhs     ! tracer trend
       !
       INTEGER  ::   ji, jj, jk, jn      ! dummy loop indices
       INTEGER  ::   iij
@@ -205,11 +205,11 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj,jpk)     , INTENT(in   ) ::   pahu, pahv ! eddy diffusivity at u- and v-points  [m2/s]
       REAL(wp), DIMENSION(jpi,jpj    ,kjpt), INTENT(in   ) ::   pgu, pgv   ! tracer gradient at pstep levels
       REAL(wp), DIMENSION(jpi,jpj,    kjpt), INTENT(in   ) ::   pgui, pgvi ! tracer gradient at top levels
-      REAL(wp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(in   ) ::   pt         ! before and now tracer fields
-      REAL(wp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(inout) ::   pt_rhs     ! tracer trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(in   ) ::   pt         ! before and now tracer fields
+      REAL(dp), DIMENSION(jpi,jpj,jpk,kjpt), INTENT(inout) ::   pt_rhs     ! tracer trend
       !
       INTEGER ::   ji, jj, jk, jn   ! dummy loop indices
-      REAL(wp), DIMENSION(A2D(nn_hls),jpk,kjpt) :: zlap         ! laplacian at t-point
+      REAL(dp), DIMENSION(A2D(nn_hls),jpk,kjpt) :: zlap         ! laplacian at t-point
       REAL(wp), DIMENSION(A2D(nn_hls),    kjpt) :: zglu, zglv   ! bottom GRADh of the laplacian (u- and v-points)
       REAL(wp), DIMENSION(A2D(nn_hls),    kjpt) :: zgui, zgvi   ! top    GRADh of the laplacian (u- and v-points)
       !!---------------------------------------------------------------------
@@ -238,7 +238,7 @@ CONTAINS
          CALL tra_ldf_triad( kt, Kmm, kit000, cdtype, pahu, pahv, pgu, pgv, pgui, pgvi, pt, pt, zlap, kjpt, 1 )
       END SELECT
       !
-      IF (nn_hls==1) CALL lbc_lnk( 'traldf_lap_blp', zlap(:,:,:,:) , 'T', 1.0_wp )     ! Lateral boundary conditions (unchanged sign)
+      IF (nn_hls==1) CALL lbc_lnk( 'traldf_lap_blp', zlap(:,:,:,:) , 'T', 1.0_dp )     ! Lateral boundary conditions (unchanged sign)
       !                                               ! Partial top/bottom cell: GRADh( zlap )
       IF( ln_isfcav .AND. ln_zps ) THEN   ;   CALL zps_hde_isf( kt, kjpt, zlap, zglu, zglv, zgui, zgvi )  ! both top & bottom
       ELSEIF(             ln_zps ) THEN   ;   CALL zps_hde    ( kt, kjpt, zlap, zglu, zglv )              ! only bottom

@@ -52,7 +52,7 @@ CONTAINS
       !!              integral constraints, barotropic vorticity, kinetic enrgy, 
       !!              and/or mixed layer budget.
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout) ::   putrd, pvtrd   ! U and V trends 
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout) ::   putrd, pvtrd   ! U and V trends 
       INTEGER                   , INTENT(in   ) ::   ktrd           ! trend index
       INTEGER                   , INTENT(in   ) ::   kt             ! time step
       INTEGER                   , INTENT(in   ) ::   Kmm            ! time level index
@@ -98,7 +98,7 @@ CONTAINS
       !! 
       !! ** Purpose :   output 3D trends using IOM
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout) ::   putrd, pvtrd   ! U and V trends
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout) ::   putrd, pvtrd   ! U and V trends
       INTEGER                   , INTENT(in   ) ::   ktrd           ! trend index
       INTEGER                   , INTENT(in   ) ::   kt             ! time step
       INTEGER                   , INTENT(in   ) ::   Kmm            ! time level index

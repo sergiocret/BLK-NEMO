@@ -31,6 +31,7 @@ MODULE sbcssm
 
    LOGICAL, SAVE ::   l_ssm_mean = .FALSE.   ! keep track of whether means have been read from restart file
 
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -241,7 +242,7 @@ CONTAINS
          IF(lwp) WRITE(numout,*) '   default initialisation of ss._m arrays'
          ssu_m(:,:) = uu(:,:,1,Kbb)
          ssv_m(:,:) = vv(:,:,1,Kbb)
-         IF( l_useCT )  THEN    ;   sst_m(:,:) = eos_pt_from_ct( ts(:,:,1,jp_tem,Kmm), ts(:,:,1,jp_sal,Kmm) )
+         IF( l_useCT )  THEN    ;   sst_m(:,:) =eos_pt_from_ct( CASTSP(ts(:,:,1,jp_tem,Kmm)), CASTSP(ts(:,:,1,jp_sal,Kmm)) )
          ELSE                   ;   sst_m(:,:) = ts(:,:,1,jp_tem,Kmm)
          ENDIF
          sss_m(:,:) = ts  (:,:,1,jp_sal,Kmm)

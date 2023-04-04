@@ -1,6 +1,6 @@
-                          !==  IN: ptab is an array  ==!
+!==  IN: ptab is an array  ==!
 #   if defined SINGLE_PRECISION
-#      define ARRAY_TYPE(i,j,k)    REAL(sp)        , INTENT(in   ) ::   ARRAY_IN(i,j,k)
+#      define ARRAY_TYPE(i,j,k)    REAL(dp)        , INTENT(in   ) ::   ARRAY_IN(i,j,k)
 #if ! defined key_mpi_off
 #      define MPI_TYPE MPI_2REAL
 #endif

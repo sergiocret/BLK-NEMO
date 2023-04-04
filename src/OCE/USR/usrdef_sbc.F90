@@ -31,6 +31,7 @@ MODULE usrdef_sbc
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
    !! $Id: usrdef_sbc.F90 15145 2021-07-26 16:16:45Z smasson $
@@ -67,7 +68,7 @@ CONTAINS
       REAL(wp) ::   ztimemax1, ztimemin1   ! 21th June, and 21th decem. if date0 = 1st january
       REAL(wp) ::   ztimemax2, ztimemin2   ! 21th June, and 21th decem. if date0 = 1st january
       REAL(wp) ::   ztaun                  ! intensity
-      REAL(wp) ::   zemp_s, zemp_n, zemp_sais, ztstar
+      REAL(wp) ::   zemp_S, zemp_N, zemp_sais, zTstar
       REAL(wp) ::   zcos_sais1, zcos_sais2, ztrp, zconv, t_star
       REAL(wp) ::   zsumemp, zsurf
       REAL(wp) ::   zrhoa  = 1.22         ! Air density kg/m3
@@ -130,8 +131,8 @@ CONTAINS
          ENDIF
       END_2D
 
-      zsumemp = GLOB_SUM( 'usrdef_sbc', emp  (:,:)   ) 
-      zsurf   = GLOB_SUM( 'usrdef_sbc', tmask(:,:,1) ) 
+      zsumemp = GLOB_SUM( 'usrdef_sbc', CASTDP(emp  (:,:))   )
+      zsurf   = GLOB_SUM( 'usrdef_sbc', CASTDP(tmask(:,:,1)) )
       zsumemp = zsumemp / zsurf         ! Default GYRE configuration
 
       ! freshwater (mass flux) and update of qns with heat content of emp

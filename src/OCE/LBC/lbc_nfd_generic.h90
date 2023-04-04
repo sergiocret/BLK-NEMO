@@ -1,5 +1,4 @@
-
-   SUBROUTINE lbc_nfd_/**/PRECISION( ptab, cd_nat, psgn, khls, kfld )
+SUBROUTINE lbc_nfd_/**/PRECISION( ptab, cd_nat, psgn, khls, kfld )
       TYPE(PTR_4d_/**/PRECISION),  DIMENSION(:), INTENT(inout) ::   ptab        ! pointer of arrays on which apply the b.c.
       CHARACTER(len=1), DIMENSION(:), INTENT(in   ) ::   cd_nat      ! nature of array grid-points
       REAL(PRECISION),  DIMENSION(:), INTENT(in   ) ::   psgn        ! sign used across the north fold boundary
@@ -388,4 +387,3 @@
       END DO   ! ipf
       !
    END SUBROUTINE lbc_nfd_/**/PRECISION
-

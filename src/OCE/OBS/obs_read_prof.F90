@@ -77,8 +77,8 @@ CONTAINS
       LOGICAL, INTENT(IN) :: ldignmis   ! Ignore missing files
       LOGICAL, INTENT(IN) :: ldsatt     ! Compute salinity at all temperature points
       LOGICAL, INTENT(IN) :: ldmod      ! Initialize model from input data
-      REAL(dp), INTENT(IN) :: ddobsini  ! Obs. ini time in YYYYMMDD.HHMMSS
-      REAL(dp), INTENT(IN) :: ddobsend  ! Obs. end time in YYYYMMDD.HHMMSS
+      REAL(wp), INTENT(IN) :: ddobsini  ! Obs. ini time in YYYYMMDD.HHMMSS
+      REAL(wp), INTENT(IN) :: ddobsend  ! Obs. end time in YYYYMMDD.HHMMSS
       CHARACTER(len=8), DIMENSION(kvars), INTENT(IN) :: cdvars
       INTEGER, DIMENSION(imaxavtypes), OPTIONAL :: &
          & kdailyavtypes                ! Types of daily average observations

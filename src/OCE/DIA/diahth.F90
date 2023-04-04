@@ -342,7 +342,7 @@ CONTAINS
       !
       INTEGER , INTENT(in) ::   Kmm      ! ocean time level index
       REAL(wp), INTENT(in) ::   pdep     ! depth over the heat content
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in)    ::   pt   
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(in)    ::   pt
       REAL(wp), DIMENSION(jpi,jpj),     INTENT(inout) ::   phtc  
       !
       INTEGER  ::   ji, jj, jk, ik

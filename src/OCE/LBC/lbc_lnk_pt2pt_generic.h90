@@ -1,4 +1,3 @@
-  
 #if ! defined BLOCK_ISEND && ! defined BLOCK_FILL
    SUBROUTINE lbc_lnk_pt2pt_/**/PRECISION( cdname, ptab, cd_nat, psgn, kfld, kfillmode, pfillval, khls, lsend, lrecv, ld4only )
       CHARACTER(len=*)              , INTENT(in   ) ::   cdname      ! name of the calling subroutine

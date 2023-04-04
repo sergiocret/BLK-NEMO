@@ -38,6 +38,7 @@ MODULE dynldf_iso_lf
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -286,8 +287,8 @@ CONTAINS
       !                                                ! ===============
 
       ! print sum trends (used for debugging)
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=puu(:,:,:,Krhs), clinfo1=' ldfh - Ua: ', mask1=umask, &
-         &                                  tab3d_2=pvv(:,:,:,Krhs), clinfo2=       ' Va: ', mask2=vmask, clinfo3='dyn' )
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=CASTDP(puu(:,:,:,Krhs)), clinfo1=' ldfh - Ua: ', mask1=umask, &
+         &                                  tab3d_2=CASTDP(pvv(:,:,:,Krhs)), clinfo2=       ' Va: ', mask2=vmask, clinfo3='dyn' )
 
 
       !                                                ! ===============

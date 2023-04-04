@@ -74,6 +74,7 @@ MODULE zdfdrg
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -137,7 +138,7 @@ CONTAINS
          END_2D
       ENDIF
       !
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=pCdU, clinfo1=' Cd*U ')
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab2d_1=CASTDP(pCdU), clinfo1=' Cd*U ')
       !
    END SUBROUTINE zdf_drg
 
@@ -156,14 +157,14 @@ CONTAINS
       !!---------------------------------------------------------------------
       INTEGER                         , INTENT(in   ) ::   kt         ! ocean time-step index
       INTEGER                         , INTENT(in   ) ::   Kmm        ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pub, pvb   ! the two components of the before velocity
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pua, pva   ! the two components of the velocity tendency
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pub, pvb   ! the two components of the before velocity
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(inout) ::   pua, pva   ! the two components of the velocity tendency
       !! 
       INTEGER  ::   ji, jj       ! dummy loop indexes
       INTEGER  ::   ikbu, ikbv   ! local integers
       REAL(wp) ::   zm1_2dt      ! local scalar
       REAL(wp) ::   zCdu, zCdv   !   -      -
-      REAL(wp), DIMENSION(:,:,:), ALLOCATABLE ::   ztrdu, ztrdv
+      REAL(dp), DIMENSION(:,:,:), ALLOCATABLE ::   ztrdu, ztrdv
       !!---------------------------------------------------------------------
       !
 !!gm bug : time step is only rn_Dt (not 2 rn_Dt if euler start !)

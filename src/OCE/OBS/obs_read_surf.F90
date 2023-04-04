@@ -70,8 +70,8 @@ CONTAINS
       LOGICAL, INTENT(IN) :: ldignmis   ! Ignore missing files
       LOGICAL, INTENT(IN) :: ldmod      ! Initialize model from input data
       LOGICAL, INTENT(IN) :: ldnightav  ! Observations represent a night-time average
-      REAL(dp), INTENT(IN) :: ddobsini   ! Obs. ini time in YYYYMMDD.HHMMSS
-      REAL(dp), INTENT(IN) :: ddobsend   ! Obs. end time in YYYYMMDD.HHMMSS
+      REAL(wp), INTENT(IN) :: ddobsini   ! Obs. ini time in YYYYMMDD.HHMMSS
+      REAL(wp), INTENT(IN) :: ddobsend   ! Obs. end time in YYYYMMDD.HHMMSS
       CHARACTER(len=8), DIMENSION(kvars), INTENT(IN) :: cdvars
 
       !! * Local declarations

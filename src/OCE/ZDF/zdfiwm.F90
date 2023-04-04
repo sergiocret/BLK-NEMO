@@ -53,6 +53,7 @@ MODULE zdfiwm
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -299,7 +300,7 @@ CONTAINS
          ENDIF
       ENDIF
 
-      IF(sn_cfctl%l_prtctl)   CALL prt_ctl(tab3d_1=zav_wave , clinfo1=' iwm - av_wave: ', tab3d_2=avt, clinfo2=' avt: ')
+      IF(sn_cfctl%l_prtctl)   CALL prt_ctl(tab3d_1=CASTDP(zav_wave) , clinfo1=' iwm - av_wave: ', tab3d_2=CASTDP(avt), clinfo2=' avt: ')
       !
    END SUBROUTINE zdf_iwm
 
@@ -423,7 +424,7 @@ CONTAINS
       ztmp(:,:,3) = e1e2t(:,:) * ensq_iwm(:,:)
       ztmp(:,:,4) = e1e2t(:,:) * esho_iwm(:,:)
 
-      zdia(1:4) = glob_sum_vec( 'zdfiwm', ztmp(:,:,1:4) )
+      zdia(1:4) =glob_sum_vec( 'zdfiwm', CASTDP(ztmp(:,:,1:4)) )
 
       IF(lwp) THEN
          WRITE(numout,*) '      Dissipation above abyssal hills:        ', zdia(1) * 1.e-12_wp, 'TW'

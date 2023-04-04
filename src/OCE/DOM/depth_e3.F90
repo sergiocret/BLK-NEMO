@@ -143,7 +143,8 @@ CONTAINS
       !!
       !! ** Action  : - pe3t_1d, pe3w_1d : scale factor of t- and w-point (m)
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:,:), INTENT(in   ) ::   pe3t_3d , pe3w_3d    ! vert. scale factors   [m]
+      REAL(wp), DIMENSION(:,:,:), INTENT(in   )  :: pe3w_3d! vert. scale factors   [m]
+      REAL(dp), DIMENSION(:,:,:), INTENT(in   )  :: pe3t_3d! vert. scale factors   [m]
       REAL(wp), DIMENSION(:,:,:), INTENT(  out) ::   pdept_3d, pdepw_3d   ! depth = SUM( e3 )     [m]
       !
       INTEGER  ::   jk           ! dummy loop indices

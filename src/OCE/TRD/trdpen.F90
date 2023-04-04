@@ -63,7 +63,7 @@ CONTAINS
       !!                constraints, barotropic vorticity, kinetic enrgy, 
       !!                potential energy, and/or mixed layer budget.
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:,:), INTENT(in) ::   ptrdx, ptrdy   ! Temperature & Salinity trends
+      REAL(dp), DIMENSION(:,:,:), INTENT(in) ::   ptrdx, ptrdy   ! Temperature & Salinity trends
       INTEGER                   , INTENT(in) ::   ktrd           ! tracer trend index
       INTEGER                   , INTENT(in) ::   kt             ! time step index
       INTEGER                   , INTENT(in) ::   Kmm            ! time level index
@@ -78,7 +78,7 @@ CONTAINS
       !
       IF( kt /= nkstp ) THEN     ! full eos: set partial derivatives at the 1st call of kt time step
          nkstp = kt
-         CALL eos_pen( ts(:,:,:,:,Kmm), rab_PE, zpe, Kmm )
+         CALL eos_pen( ts(:,:,:,:,Kmm), rab_pe, zpe, Kmm )
          CALL iom_put( "alphaPE", rab_pe(:,:,:,jp_tem) )
          CALL iom_put( "betaPE" , rab_pe(:,:,:,jp_sal) )
          CALL iom_put( "PEanom" , zpe )

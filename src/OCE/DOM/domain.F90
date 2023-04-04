@@ -64,6 +64,7 @@ MODULE domain
    PUBLIC   domain_cfg   ! called by nemogcm.F90
 
    !! * Substitutions
+#  include "single_precision_substitute.h90"
 #  include "do_loop_substitute.h90"
    !!-------------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -545,12 +546,12 @@ CONTAINS
       !
       llmsk = tmask_i(:,:) == 1._wp
       !
-      CALL mpp_minloc( 'domain', glamt(:,:), llmsk, zglmin, imil )
-      CALL mpp_minloc( 'domain', gphit(:,:), llmsk, zgpmin, imip )
-      CALL mpp_minloc( 'domain',   e1t(:,:), llmsk, ze1min, imi1 )
-      CALL mpp_minloc( 'domain',   e2t(:,:), llmsk, ze2min, imi2 )
-      CALL mpp_maxloc( 'domain', glamt(:,:), llmsk, zglmax, imal )
-      CALL mpp_maxloc( 'domain', gphit(:,:), llmsk, zgpmax, imap )
+      CALL mpp_minloc( 'domain', CASTDP(glamt(:,:)), llmsk, zglmin, imil )
+      CALL mpp_minloc( 'domain', CASTDP(gphit(:,:)), llmsk, zgpmin, imip )
+      CALL mpp_minloc( 'domain',   CASTDP(e1t(:,:)), llmsk, ze1min, imi1 )
+      CALL mpp_minloc( 'domain',   CASTDP(e2t(:,:)), llmsk, ze2min, imi2 )
+      CALL mpp_maxloc( 'domain', CASTDP(glamt(:,:)), llmsk, zglmax, imal )
+      CALL mpp_maxloc( 'domain', CASTDP(gphit(:,:)), llmsk, zgpmax, imap )
       CALL mpp_maxloc( 'domain',   e1t(:,:), llmsk, ze1max, ima1 )
       CALL mpp_maxloc( 'domain',   e2t(:,:), llmsk, ze2max, ima2 )
       !

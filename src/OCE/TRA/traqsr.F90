@@ -104,7 +104,7 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER,                                   INTENT(in   ) :: kt            ! ocean time-step
       INTEGER,                                   INTENT(in   ) :: Kmm, Krhs     ! time level indices
-      REAL(wp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts           ! active tracers and RHS of tracer equation
+      REAL(dp), DIMENSION(jpi,jpj,jpk,jpts,jpt), INTENT(inout) :: pts           ! active tracers and RHS of tracer equation
       !
       INTEGER  ::   ji, jj, jk               ! dummy loop indices
       INTEGER  ::   irgb                     ! local integers
@@ -316,7 +316,7 @@ CONTAINS
       ENDIF
       !                       ! print mean trends (used for debugging)
       IF(sn_cfctl%l_prtctl)   CALL prt_ctl( tab3d_1=pts(:,:,:,jp_tem,Krhs), clinfo1=' qsr  - Ta: ', mask1=tmask, clinfo3='tra-ta' )
-      !
+      
       IF( ln_timing )   CALL timing_stop('tra_qsr')
       !
    END SUBROUTINE tra_qsr

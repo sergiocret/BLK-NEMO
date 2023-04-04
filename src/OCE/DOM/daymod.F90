@@ -68,7 +68,7 @@ CONTAINS
       !!              - nmonth_len, nyear_len, nmonth_beg through day_mth
       !!----------------------------------------------------------------------
       INTEGER  ::   inbday, imonday, isecrst   ! local integers
-      REAL(wp) ::   zjul             ! local scalar
+      REAL(dp) ::   zjul             ! local scalar
       !!----------------------------------------------------------------------
       !
       ! max number of seconds between each restart
@@ -93,7 +93,7 @@ CONTAINS
       nminute = ( nn_time0 - nhour * 100 )
       isecrst = ( nhour * NINT(rhhmm) + nminute ) * NINT(rmmss)
 
-      CALL ymds2ju( nyear, nmonth, nday, REAL(isecrst,wp), fjulday )
+      CALL ymds2ju( nyear, nmonth, nday, REAL(isecrst,dp), fjulday )
       IF( ABS(fjulday - REAL(NINT(fjulday),wp)) < 0.1 / rday )   fjulday = REAL(NINT(fjulday),wp)   ! avoid truncation error
       IF( nhour*NINT(rhhmm*rmmss) + nminute*NINT(rmmss) - ndt05 .LT. 0 ) fjulday = fjulday+1.       ! move back to the day at nit000 (and not at nit000 - 1)
 
@@ -115,7 +115,8 @@ CONTAINS
       nday_year = nday + SUM( nmonth_len(1:nmonth - 1) )
 
       !compute number of days between last Monday and today
-      CALL ymds2ju( 1900, 01, 01, 0.0_wp, zjul )     ! compute julian day value of 01.01.1900 (our reference that was a Monday)
+      CALL ymds2ju( 1900, 01, 01, 0.0_dp, zjul )     ! compute julian day value of 01.01.1900 (our reference that was a Monday)
+
       inbday = FLOOR(fjulday - zjul)              ! compute nb day between  01.01.1900 and start of current day
       imonday = MOD(inbday, 7)                    ! compute nb day between last monday and current day
       IF (imonday .LT. 0) imonday = imonday + 7   ! Avoid negative values for dates before 01.01.1900
@@ -198,7 +199,7 @@ CONTAINS
          nmonth_beg(jm) = nmonth_beg(jm+1) - nsecd * nmonth_len(jm)
       END DO
       !
-   END SUBROUTINE
+   END SUBROUTINE day_mth
 
 
    SUBROUTINE day( kt )
@@ -220,7 +221,7 @@ CONTAINS
       INTEGER, INTENT(in) ::   kt        ! ocean time-step indices
       !
       CHARACTER (len=25) ::   charout
-      REAL(wp)           ::   zprec      ! fraction of day corresponding to 0.1 second
+      REAL(dp)           ::   zprec      ! fraction of day corresponding to 0.1 second
       !!----------------------------------------------------------------------
       !
       IF( ln_timing )   CALL timing_start('day')
@@ -259,7 +260,7 @@ CONTAINS
          ndastp = nyear * 10000 + nmonth * 100 + nday   ! New date
          !
          !compute first day of the year in julian days
-         CALL ymds2ju( nyear, 01, 01, 0.0_wp, fjulstartyear )
+         CALL ymds2ju( nyear, 01, 01, 0.0_dp, fjulstartyear )
          !
          IF(lwp) WRITE(numout,'(a,i8,a,i4.4,a,i2.2,a,i2.2,a,i3.3)') '======>> time-step =', kt,   &
               &   '      New day, DATE Y/M/D = ', nyear, '/', nmonth, '/', nday, '      nday_year = ', nday_year
@@ -310,7 +311,7 @@ CONTAINS
       INTEGER         , INTENT(in) ::   kt         ! ocean time-step
       CHARACTER(len=*), INTENT(in) ::   cdrw       ! "READ"/"WRITE" flag
       !
-      REAL(wp) ::   zkt, zndastp, zdayfrac, ksecs, ktime
+      REAL(dp) ::   zkt, zndastp, zdayfrac, ksecs, ktime
       INTEGER  ::   ihour, iminute, isecond
       !!----------------------------------------------------------------------
 

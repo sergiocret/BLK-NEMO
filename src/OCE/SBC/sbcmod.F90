@@ -75,6 +75,7 @@ MODULE sbcmod
    INTEGER ::   nsbc   ! type of surface boundary condition (deduced from namsbc informations)
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
    !! $Id: sbcmod.F90 15372 2021-10-14 15:47:24Z davestorkey $
@@ -607,16 +608,16 @@ CONTAINS
       ENDIF
       !
       IF(sn_cfctl%l_prtctl) THEN     ! print mean trends (used for debugging)
-         CALL prt_ctl(tab2d_1=fr_i                , clinfo1=' fr_i     - : ', mask1=tmask )
-         CALL prt_ctl(tab2d_1=(emp-rnf)           , clinfo1=' emp-rnf  - : ', mask1=tmask )
-         CALL prt_ctl(tab2d_1=(sfx-rnf)           , clinfo1=' sfx-rnf  - : ', mask1=tmask )
-         CALL prt_ctl(tab2d_1=qns                 , clinfo1=' qns      - : ', mask1=tmask )
-         CALL prt_ctl(tab2d_1=qsr                 , clinfo1=' qsr      - : ', mask1=tmask )
-         CALL prt_ctl(tab3d_1=tmask               , clinfo1=' tmask    - : ', mask1=tmask, kdim=jpk )
+         CALL prt_ctl(tab2d_1=CASTDP(fr_i)                , clinfo1=' fr_i     - : ', mask1=tmask )
+         CALL prt_ctl(tab2d_1=CASTDP((emp-rnf))           , clinfo1=' emp-rnf  - : ', mask1=tmask )
+         CALL prt_ctl(tab2d_1=CASTDP((sfx-rnf))           , clinfo1=' sfx-rnf  - : ', mask1=tmask )
+         CALL prt_ctl(tab2d_1=CASTDP(qns)                 , clinfo1=' qns      - : ', mask1=tmask )
+         CALL prt_ctl(tab2d_1=CASTDP(qsr)                , clinfo1=' qsr      - : ', mask1=tmask )
+         CALL prt_ctl(tab3d_1=CASTDP(tmask)              , clinfo1=' tmask    - : ', mask1=tmask, kdim=jpk )
          CALL prt_ctl(tab3d_1=ts(:,:,:,jp_tem,Kmm), clinfo1=' sst      - : ', mask1=tmask, kdim=1   )
          CALL prt_ctl(tab3d_1=ts(:,:,:,jp_sal,Kmm), clinfo1=' sss      - : ', mask1=tmask, kdim=1   )
-         CALL prt_ctl(tab2d_1=utau                , clinfo1=' utau     - : ', mask1=umask,                      &
-            &         tab2d_2=vtau                , clinfo2=' vtau     - : ', mask2=vmask )
+         CALL prt_ctl(tab2d_1=CASTDP(utau)               , clinfo1=' utau     - : ', mask1=umask,                      &
+            &         tab2d_2=CASTDP(vtau)               , clinfo2=' vtau     - : ', mask2=vmask )
       ENDIF
 
       IF( kt == nitend )   CALL sbc_final         ! Close down surface module if necessary

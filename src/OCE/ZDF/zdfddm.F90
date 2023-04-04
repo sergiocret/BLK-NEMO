@@ -30,6 +30,7 @@ MODULE zdfddm
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -158,7 +159,7 @@ CONTAINS
       !                                                   ! ===============
       !
       IF(sn_cfctl%l_prtctl) THEN
-         CALL prt_ctl(tab3d_1=avt , clinfo1=' ddm  - t: ', tab3d_2=avs , clinfo2=' s: ')
+         CALL prt_ctl(tab3d_1=CASTDP(avt), clinfo1=' ddm  - t: ', tab3d_2=CASTDP(avs) , clinfo2=' s: ')
       ENDIF
       !
    END SUBROUTINE zdf_ddm

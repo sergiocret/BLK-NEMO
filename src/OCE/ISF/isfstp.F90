@@ -35,6 +35,7 @@ MODULE isfstp
    PUBLIC   isf_stp, isf_init, isf_nam  ! routine called in sbcmod and divhor
 
    !! * Substitutions
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -86,7 +87,7 @@ CONTAINS
          DO jk = 1, jpk
             ze3t(:,:,jk) = e3t(:,:,jk,Kmm)
          END DO 
-         CALL isf_tbl_lvl( ht(:,:), ze3t           , misfkt_cav, misfkb_cav, rhisf_tbl_cav, rfrac_tbl_cav )
+         CALL isf_tbl_lvl( CASTSP(ht(:,:)), ze3t           , misfkt_cav, misfkb_cav, rhisf_tbl_cav, rfrac_tbl_cav )
 #else
          CALL isf_tbl_lvl( ht(:,:),  e3t(:,:,:,Kmm), misfkt_cav, misfkb_cav, rhisf_tbl_cav, rfrac_tbl_cav )
 #endif
@@ -115,7 +116,7 @@ CONTAINS
          DO jk = 1, jpk
             ze3t(:,:,jk) = e3t(:,:,jk,Kmm)
          END DO
-         CALL isf_tbl_lvl( ht(:,:), ze3t           , misfkt_par, misfkb_par, rhisf_tbl_par, rfrac_tbl_par )
+         CALL isf_tbl_lvl( CASTSP(ht(:,:)), ze3t           , misfkt_par, misfkb_par, rhisf_tbl_par, rfrac_tbl_par )
 #else
          CALL isf_tbl_lvl( ht(:,:),  e3t(:,:,:,Kmm), misfkt_par, misfkb_par, rhisf_tbl_par, rfrac_tbl_par )
 #endif

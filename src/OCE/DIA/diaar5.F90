@@ -38,6 +38,7 @@ MODULE diaar5
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -117,7 +118,7 @@ CONTAINS
       !
       IF( iom_use( 'voltot' ) .OR. iom_use( 'sshtot' )  .OR. iom_use( 'sshdyn' )  ) THEN
          !                                         ! total volume of liquid seawater
-         zvolssh = glob_sum( 'diaar5', zarea_ssh(:,:) )
+         zvolssh =glob_sum( 'diaar5', CASTDP(zarea_ssh(:,:)) )
          zvol    = vol0 + zvolssh
 
          CALL iom_put( 'voltot', zvol               )
@@ -134,7 +135,7 @@ CONTAINS
          DO jk = 1, jpk
             zgdept(:,:,jk) = gdept(:,:,jk,Kmm)
          END DO
-         CALL eos( ztsn, zrhd, zgdept)                       ! now in situ density using initial salinity
+         CALL eos( CASTDP(ztsn), zrhd, zgdept)                       ! now in situ density using initial salinity
          !
          zbotpres(:,:) = 0._wp                        ! no atmospheric surface pressure, levitating sea-ice
          DO jk = 1, jpkm1
@@ -212,8 +213,8 @@ CONTAINS
             END IF
          ENDIF
          !
-         ztemp = glob_sum( 'diaar5', ztsn(:,:,1,jp_tem) )
-         zsal  = glob_sum( 'diaar5', ztsn(:,:,1,jp_sal) )
+         ztemp =glob_sum( 'diaar5', CASTDP(ztsn(:,:,1,jp_tem)) )
+         zsal  =glob_sum( 'diaar5', CASTDP(ztsn(:,:,1,jp_sal)) )
          zmass = rho0 * ( zarho + zvol )
          !
          CALL iom_put( 'masstot', zmass )
@@ -229,7 +230,7 @@ CONTAINS
             ALLOCATE( ztpot(jpi,jpj,jpk) )
             ztpot(:,:,jpk) = 0._wp
             DO jk = 1, jpkm1
-               ztpot(:,:,jk) = eos_pt_from_ct( ts(:,:,jk,jp_tem,Kmm), ts(:,:,jk,jp_sal,Kmm) )
+               ztpot(:,:,jk) =eos_pt_from_ct( CASTSP(ts(:,:,jk,jp_tem,Kmm)), CASTSP(ts(:,:,jk,jp_sal,Kmm)) )
             END DO
             !
             CALL iom_put( 'toce_pot', ztpot(:,:,:) )  ! potential temperature (TEOS-10 case)
@@ -240,7 +241,7 @@ CONTAINS
                DO jk = 1, jpkm1
                  z2d(:,:) = z2d(:,:) + e1e2t(:,:) * e3t(:,:,jk,Kmm) * ztpot(:,:,jk)
                END DO
-               ztemp = glob_sum( 'diaar5', z2d(:,:)  )
+               ztemp =glob_sum( 'diaar5', CASTDP(z2d(:,:))  )
                CALL iom_put( 'temptot_pot', ztemp / zvol )
              ENDIF
              !
@@ -388,7 +389,7 @@ CONTAINS
             zvol0 (ji,jj) = zvol0 (ji,jj) + zztmp * e1e2t(ji,jj)
             thick0(ji,jj) = thick0(ji,jj) + zztmp
          END_3D
-         vol0 = glob_sum( 'diaar5', zvol0 )
+         vol0 =glob_sum( 'diaar5', CASTDP(zvol0) )
          DEALLOCATE( zvol0 )
 
          IF( iom_use( 'sshthster' ) ) THEN

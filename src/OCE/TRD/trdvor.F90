@@ -50,12 +50,13 @@ MODULE trdvor
    REAL(wp), SAVE, ALLOCATABLE, DIMENSION(:,:)   ::   rotot        ! begining of the NN_WRITE-1 timesteps
    REAL(wp), SAVE, ALLOCATABLE, DIMENSION(:,:)   ::   vor_avrtot   !
    REAL(wp), SAVE, ALLOCATABLE, DIMENSION(:,:)   ::   vor_avrres   !
-   REAL(wp), SAVE, ALLOCATABLE, DIMENSION(:,:,:) ::   vortrd       ! curl of trends
+   REAL(dp), SAVE, ALLOCATABLE, DIMENSION(:,:,:) ::   vortrd       ! curl of trends
          
    CHARACTER(len=12) ::   cvort
 
    !! * Substitutions
 #  include "do_loop_substitute.h90"
+#  include "single_precision_substitute.h90"
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -85,7 +86,7 @@ CONTAINS
       !! ** Purpose :  computation of cumulated trends over analysis period
       !!               and make outputs (NetCDF format)
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout) ::   putrd, pvtrd   ! U and V trends 
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout) ::   putrd, pvtrd   ! U and V trends
       INTEGER                   , INTENT(in   ) ::   ktrd           ! trend index
       INTEGER                   , INTENT(in   ) ::   kt             ! time step
       INTEGER                   , INTENT(in   ) ::   Kmm            ! time level index
@@ -94,7 +95,7 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj) ::   ztswu, ztswv    ! 2D workspace 
       !!----------------------------------------------------------------------
 
-      CALL lbc_lnk( 'trdvor', putrd, 'U', -1.0_wp , pvtrd, 'V', -1.0_wp )      ! lateral boundary condition
+      CALL lbc_lnk( 'trdvor', putrd, 'U', -1.0_dp , pvtrd, 'V', -1.0_dp )      ! lateral boundary condition
 
       SELECT CASE( ktrd ) 
       CASE( jpdyn_hpg )   ;   CALL trd_vor_zint( putrd, pvtrd, jpvor_prg, Kmm )   ! Hydrostatique Pressure Gradient 
@@ -227,8 +228,8 @@ CONTAINS
       !
       INTEGER                         , INTENT(in) ::   ktrd       ! ocean trend index
       INTEGER                         , INTENT(in) ::   Kmm        ! time level index
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in) ::   putrdvor   ! u vorticity trend 
-      REAL(wp), DIMENSION(jpi,jpj,jpk), INTENT(in) ::   pvtrdvor   ! v vorticity trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(in) ::   putrdvor   ! u vorticity trend
+      REAL(dp), DIMENSION(jpi,jpj,jpk), INTENT(in) ::   pvtrdvor   ! v vorticity trend
       !
       INTEGER ::   ji, jj, jk   ! dummy loop indices
       REAL(wp), DIMENSION(jpi,jpj) :: zudpvor, zvdpvor  ! total cmulative trends
@@ -403,8 +404,8 @@ CONTAINS
          CALL histwrite( nidvor,"sovortbv",it,vortrd(:,:,jpvor_bev),ndimvor1,ndexvor1)  ! beta.V
          CALL histwrite( nidvor,"sovowind",it,vortrd(:,:,jpvor_swf),ndimvor1,ndexvor1) ! wind stress
          CALL histwrite( nidvor,"sovobfri",it,vortrd(:,:,jpvor_bfr),ndimvor1,ndexvor1) ! bottom friction
-         CALL histwrite( nidvor,"1st_mbre",it,vor_avrtot    ,ndimvor1,ndexvor1) ! First membre
-         CALL histwrite( nidvor,"sovorgap",it,vor_avrres    ,ndimvor1,ndexvor1) ! gap between 1st and 2 nd mbre
+         CALL histwrite( nidvor,"1st_mbre",it,CASTDP(vor_avrtot)    ,ndimvor1,ndexvor1) ! First membre
+         CALL histwrite( nidvor,"sovorgap",it,CASTDP(vor_avrres)    ,ndimvor1,ndexvor1) ! gap between 1st and 2 nd mbre
          !
          IF( ndebug /= 0 ) THEN
             WRITE(numout,*) ' debuging trd_vor: III.4 done'
@@ -427,7 +428,7 @@ CONTAINS
       !! ** Purpose :   computation of vertically integrated T and S budgets
       !!      from ocean surface down to control surface (NetCDF output)
       !!----------------------------------------------------------------------
-      REAL(wp) ::   zjulian, zsto, zout
+      REAL(dp) ::   zjulian, zsto, zout
       CHARACTER (len=40) ::   clhstnam
       CHARACTER (len=40) ::   clop
       !!----------------------------------------------------------------------
@@ -490,7 +491,7 @@ CONTAINS
 
       ! II.2 Compute julian date from starting date of the run
       ! ------------------------
-      CALL ymds2ju( nyear, nmonth, nday, rn_Dt, zjulian )
+      CALL ymds2ju( nyear, nmonth, nday, CASTDP(rn_Dt), zjulian )
       zjulian = zjulian - adatrj   !   set calendar origin to the beginning of the experiment
       IF(lwp) WRITE(numout,*)' '  
       IF(lwp) WRITE(numout,*)'               Date 0 used :',nit000,    &
@@ -501,8 +502,8 @@ CONTAINS
       ! ---------------------------------
       CALL dia_nam( clhstnam, nn_trd, 'vort' )                  ! filename
       IF(lwp) WRITE(numout,*) ' Name of NETCDF file ', clhstnam
-      CALL histbeg( clhstnam, jpi, glamf, jpj, gphif,1, jpi,   &  ! Horizontal grid : glamt and gphit
-         &          1, jpj, nit000-1, zjulian, rn_Dt, nh_t, nidvor, domain_id=nidom, snc4chunks=snc4set )
+      CALL histbeg( clhstnam, jpi, CASTDP(glamf), jpj, CASTDP(gphif),1, jpi,   &  ! Horizontal grid : glamt and gphit
+         &          1, jpj, nit000-1, zjulian, CASTDP(rn_Dt), nh_t, nidvor, domain_id=nidom, snc4chunks=snc4set )
       CALL wheneq( jpi*jpj, fmask, 1, 1., ndexvor1, ndimvor1 )    ! surface
 
       ! Declare output fields as netCDF variables

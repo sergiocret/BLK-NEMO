@@ -77,7 +77,7 @@ CONTAINS
       !
       !
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(:,:,:), INTENT(inout) ::   putrd, pvtrd   ! U and V masked trends
+      REAL(dp), DIMENSION(:,:,:), INTENT(inout) ::   putrd, pvtrd   ! U and V masked trends
       INTEGER                   , INTENT(in   ) ::   ktrd           ! trend index
       INTEGER                   , INTENT(in   ) ::   kt             ! time step
       INTEGER                   , INTENT(in   ) ::   Kmm            ! time level index
@@ -89,7 +89,7 @@ CONTAINS
       REAL(wp), DIMENSION(jpi,jpj,jpk)      ::   zke                 ! 3D workspace 
       !!----------------------------------------------------------------------
       !
-      CALL lbc_lnk( 'trdken', putrd, 'U', -1.0_wp , pvtrd, 'V', -1.0_wp )      ! lateral boundary conditions
+      CALL lbc_lnk( 'trdken', putrd, 'U', -1.0_dp , pvtrd, 'V', -1.0_dp )      ! lateral boundary conditions
       !
       nkstp = kt
       DO jk = 1, jpkm1
