@@ -1942,7 +1942,9 @@ CONTAINS
       IF( iom_use(cdname) ) THEN
 #if defined key_xios
          IF( is_tile(pfield2d) == 1 ) THEN
+#if ! defined key_xios3
             CALL xios_send_field( cdname, pfield2d, ntile - 1 )
+#endif
          ELSE IF( .NOT. l_istiled .OR. ntile == nijtile ) THEN
             CALL xios_send_field( cdname, pfield2d )
          ENDIF
@@ -1958,7 +1960,9 @@ CONTAINS
       IF( iom_use(cdname) ) THEN
 #if defined key_xios
          IF( is_tile(pfield2d) == 1 ) THEN
+#if ! defined key_xios3
             CALL xios_send_field( cdname, pfield2d, ntile - 1 )
+#endif
          ELSE IF( .NOT. l_istiled .OR. ntile == nijtile ) THEN
             CALL xios_send_field( cdname, pfield2d )
          ENDIF
@@ -1974,7 +1978,9 @@ CONTAINS
       IF( iom_use(cdname) ) THEN
 #if defined key_xios
          IF( is_tile(pfield3d) == 1 ) THEN
+#if ! defined key_xios3
             CALL xios_send_field( cdname, pfield3d, ntile - 1 )
+#endif
          ELSE IF( .NOT. l_istiled .OR. ntile == nijtile ) THEN
             CALL xios_send_field( cdname, pfield3d )
          ENDIF
@@ -1990,7 +1996,9 @@ CONTAINS
       IF( iom_use(cdname) ) THEN
 #if defined key_xios
          IF( is_tile(pfield3d) == 1 ) THEN
+#if ! defined key_xios3
             CALL xios_send_field( cdname, pfield3d, ntile - 1 )
+#endif
          ELSE IF( .NOT. l_istiled .OR. ntile == nijtile ) THEN
             CALL xios_send_field( cdname, pfield3d )
          ENDIF
@@ -2006,7 +2014,9 @@ CONTAINS
       IF( iom_use(cdname) ) THEN
 #if defined key_xios
          IF( is_tile(pfield4d) == 1 ) THEN
+#if ! defined key_xios3
             CALL xios_send_field( cdname, pfield4d, ntile - 1 )
+#endif
          ELSE IF( .NOT. l_istiled .OR. ntile == nijtile ) THEN
             CALL xios_send_field( cdname, pfield4d )
          ENDIF
@@ -2022,7 +2032,9 @@ CONTAINS
       IF( iom_use(cdname) ) THEN
 #if defined key_xios
          IF( is_tile(pfield4d) == 1 ) THEN
+#if ! defined key_xios3
             CALL xios_send_field( cdname, pfield4d, ntile - 1 )
+#endif
          ELSE IF( .NOT. l_istiled .OR. ntile == nijtile ) THEN
             CALL xios_send_field( cdname, pfield4d )
          ENDIF
@@ -2058,18 +2070,22 @@ CONTAINS
       IF( xios_is_valid_domain     (cdid) ) THEN
          CALL xios_set_domain_attr     ( cdid, ni_glo=ni_glo, nj_glo=nj_glo, ibegin=ibegin, jbegin=jbegin, ni=ni, nj=nj,   &
             &    data_dim=data_dim, data_ibegin=data_ibegin, data_ni=data_ni, data_jbegin=data_jbegin, data_nj=data_nj ,   &
+#if ! defined key_xios3
             &    ntiles=ntiles, tile_ibegin=tile_ibegin, tile_jbegin=tile_jbegin, tile_ni=tile_ni, tile_nj=tile_nj,        &
             &    tile_data_ibegin=tile_data_ibegin, tile_data_jbegin=tile_data_jbegin,                                     &
             &    tile_data_ni=tile_data_ni, tile_data_nj=tile_data_nj,                                                     &
+#endif
             &    lonvalue_1D=lonvalue, latvalue_1D=latvalue, mask_1D=mask, nvertex=nvertex, bounds_lon_1D=bounds_lon,      &
             &    bounds_lat_1D=bounds_lat, area=area, type='curvilinear')
       ENDIF
       IF( xios_is_valid_domaingroup(cdid) ) THEN
          CALL xios_set_domaingroup_attr( cdid, ni_glo=ni_glo, nj_glo=nj_glo, ibegin=ibegin, jbegin=jbegin, ni=ni, nj=nj,   &
             &    data_dim=data_dim, data_ibegin=data_ibegin, data_ni=data_ni, data_jbegin=data_jbegin, data_nj=data_nj ,   &
+#if ! defined key_xios3
             &    ntiles=ntiles, tile_ibegin=tile_ibegin, tile_jbegin=tile_jbegin, tile_ni=tile_ni, tile_nj=tile_nj,        &
             &    tile_data_ibegin=tile_data_ibegin, tile_data_jbegin=tile_data_jbegin,                                     &
             &    tile_data_ni=tile_data_ni, tile_data_nj=tile_data_nj,                                                     &
+#endif
             &    lonvalue_1D=lonvalue, latvalue_1D=latvalue, mask_1D=mask, nvertex=nvertex, bounds_lon_1D=bounds_lon,      &
             &    bounds_lat_1D=bounds_lat, area=area, type='curvilinear' )
       ENDIF
