@@ -28,11 +28,11 @@ MODULE zdfosm
    !! 28/09/2017 (15) Calculation of Stokes drift moved into separate do-loops to allow for different options for the determining the Stokes drift to be added.
    !!            (16) Calculation of Stokes drift from windspeed for PM spectrum (for testing, commented out)
    !!            (17) Modification to Langmuir velocity scale to include effects due to the Stokes penetration depth (for testing, commented out)
-   !! ??/??/2018 (18) Revision to code structure, selected using key_osmldpth1. Inline code moved into subroutines. Changes to physics made,
+   !! ??/??/2018 (18) Revision to code structure, selected using fortran macro. Inline code moved into subroutines. Changes to physics made,
    !!                  (a) Pycnocline temperature and salinity profies changed for unstable layers
    !!                  (b) The stable OSBL depth parametrization changed.
    !! 16/05/2019 (19) Fox-Kemper parametrization of restratification through mixed layer eddies added to revised code.
-   !! 23/05/19   (20) Old code where key_osmldpth1` is *not* set removed, together with the key key_osmldpth1
+   !! 23/05/19   (20) Remove old code excluded by fortran macro along with the fortran macro that is not needed
    !!             4.2  !  2021-05  (S. Mueller)  Efficiency improvements, source-code clarity enhancements, and adaptation to tiling
    !!----------------------------------------------------------------------
 
