@@ -55,8 +55,6 @@ CONTAINS
       !!              add this trend now to the general trend of tracer (ta,sa,tr(:,:,:,:,Krhs)):
       !!                             tr(:,:,:,:,Krhs) = tr(:,:,:,:,Krhs) + dz(tr(:,:,:,:,Kmm) ww)
       !!        
-      !!              IF 'key_diabio' is defined, the now vertical advection
-      !!              trend of passive tracers is saved for futher diagnostics.
       !!---------------------------------------------------------------------
       INTEGER, INTENT( in ) ::   kt         ! ocean time-step index      
       INTEGER, INTENT( in ) ::   Kmm, Krhs  ! time level indices

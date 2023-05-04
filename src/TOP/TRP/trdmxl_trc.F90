@@ -5,7 +5,6 @@ MODULE trdmxl_trc
    !!======================================================================
    !! History :  9.0  !  06-08  (C. Deltel)  Original code (from trdmxl.F90)
    !!                 !  07-04  (C. Deltel)  Bug fix : add trcrad trends
-   !!                 !  07-06  (C. Deltel)  key_gyre : do not call lbc_lnk
    !!----------------------------------------------------------------------
 #if   defined key_top   &&   defined key_trdmxl_trc
    !!----------------------------------------------------------------------
