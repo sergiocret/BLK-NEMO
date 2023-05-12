@@ -945,7 +945,7 @@ CONTAINS
          !
          !        !==  monotonicity algorithm  ==!
          !
-         CALL nonosc( Kmm, pt(:,:,:,jn,Kbb), zwx_3d, zwy_3d, zwz, zwi, p2dt )
+         CALL nonosc( Krhs, pt(:,:,:,jn,Kbb), zwx_3d, zwy_3d, zwz, zwi, p2dt )
          !
          !        !==  final trend with corrected fluxes  ==!
          !
