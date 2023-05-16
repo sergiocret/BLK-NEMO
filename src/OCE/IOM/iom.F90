@@ -2266,9 +2266,11 @@ CONTAINS
       LOGICAL, INTENT(IN) :: ldxios, ldrxios
       !!----------------------------------------------------------------------
       !
+      ! nn_hls halo points
       CALL iom_set_domain_attr("grid_"//cdgrd, ni_glo=Ni0glo,nj_glo=Nj0glo,ibegin=mig0(Nis0)-1,jbegin=mjg0(Njs0)-1,ni=Ni_0,nj=Nj_0)
       CALL iom_set_domain_attr("grid_"//cdgrd, data_dim=2, data_ibegin = -nn_hls, data_ni=jpi, data_jbegin = -nn_hls, data_nj=jpj)
 
+      ! Inner domain only
       CALL iom_set_domain_attr("grid_"//cdgrd//"_inner", ni_glo = Ni0glo, nj_glo = Nj0glo,   &
          &                     ibegin = mig0(Nis0) - 1, jbegin = mjg0(Njs0) - 1, ni = Ni_0, nj = Nj_0)
       CALL iom_set_domain_attr("grid_"//cdgrd//"_inner", data_dim=2, data_ibegin = 0, data_ni=Ni_0, data_jbegin = 0, data_nj=Nj_0)
@@ -2280,14 +2282,16 @@ CONTAINS
             idb(jn) = -nn_hls                         ! Tile data offset (halo size)
          END DO
 
-         ! Tile_[ij]begin are defined with respect to the processor data domain, so data_[ij]begin is added
+         ! Data includes all halo points
          CALL iom_set_domain_attr("grid_"//cdgrd, ntiles=nijtile,                                     &
-            & tile_ibegin=ntsi_a(1:nijtile) + idb(:) - 1, tile_jbegin=ntsj_a(1:nijtile) + idb(:) - 1, &
+            & tile_ibegin=ntsi_a(1:nijtile) - nn_hls - 1, tile_jbegin=ntsj_a(1:nijtile) - nn_hls - 1, &
             & tile_ni=ini(:), tile_nj=inj(:),                                                         &
             & tile_data_ibegin=idb(:), tile_data_jbegin=idb(:),                                       &
             & tile_data_ni=ini(:) - 2 * idb(:), tile_data_nj=inj(:) - 2 * idb(:))
+         ! Data contains no halo points
+         idb(:) = 0
          CALL iom_set_domain_attr("grid_"//cdgrd//"_inner", ntiles=nijtile,                           &
-            & tile_ibegin=ntsi_a(1:nijtile) + idb(:) - 1, tile_jbegin=ntsj_a(1:nijtile) + idb(:) - 1, &
+            & tile_ibegin=ntsi_a(1:nijtile) - nn_hls - 1, tile_jbegin=ntsj_a(1:nijtile) - nn_hls - 1, &
             & tile_ni=ini(:), tile_nj=inj(:),                                                         &
             & tile_data_ibegin=idb(:), tile_data_jbegin=idb(:),                                       &
             & tile_data_ni=ini(:) - 2 * idb(:), tile_data_nj=inj(:) - 2 * idb(:))
