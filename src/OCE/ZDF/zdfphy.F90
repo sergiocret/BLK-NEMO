@@ -379,10 +379,10 @@ CONTAINS
       ! diagnostics of energy dissipation
       IF( iom_use('avt_k') .OR. iom_use('avm_k') .OR. iom_use('eshear_k') .OR. iom_use('estrat_k') ) THEN
          IF( l_zdfsh2 ) THEN
-            CALL iom_put( 'avt_k'   ,   avt_k       * wmask )
-            CALL iom_put( 'avm_k'   ,   avm_k       * wmask )
-            CALL iom_put( 'eshear_k',   zsh2        * wmask )
-            CALL iom_put( 'estrat_k', - avt_k * rn2 * wmask )
+            CALL iom_put( 'avt_k'   ,   avt_k          * wmask           )
+            CALL iom_put( 'avm_k'   ,   avm_k          * wmask           )
+            CALL iom_put( 'eshear_k',   zsh2(A2D(0),:) * wmask(A2D(0),:) )
+            CALL iom_put( 'estrat_k', - avt_k * rn2    * wmask           )
          ENDIF
       ENDIF
       !

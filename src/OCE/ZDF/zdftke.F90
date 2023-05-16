@@ -219,7 +219,7 @@ CONTAINS
       INTEGER , DIMENSION(A2D(nn_hls))     ::   imlc
       REAL(wp), DIMENSION(A2D(nn_hls))     ::   zice_fra, zhlc, zus3, zWlc2
       REAL(wp), DIMENSION(A2D(nn_hls),jpk) ::   zpelc, zdiag, zd_up, zd_lw
-      REAL(wp), DIMENSION(:,:,:), ALLOCATABLE ::   ztmp ! for diags
+      REAL(wp), DIMENSION(:,:,:), ALLOCATABLE, SAVE ::   ztmp ! for diags
       REAL(wp) :: zdiv
       !!--------------------------------------------------------------------
       !
@@ -462,15 +462,17 @@ CONTAINS
       !    ediss = Ce*sqrt(en)/L*en
       !    dissl = sqrt(en)/L
       IF( iom_use('ediss_k') ) THEN
-         ALLOCATE( ztmp(A2D(nn_hls),jpk) )
-         DO_3D( nn_hls-1, nn_hls-1, nn_hls-1, nn_hls-1, 1, jpkm1 )
+         IF( .NOT. l_istiled .OR. ntile == 1 ) THEN
+            ALLOCATE( ztmp(jpi,jpj,jpk) )
+            ztmp(:,:,:) = 0._wp
+         ENDIF
+         DO_3D_OVR( nn_hls-1, nn_hls-1, nn_hls-1, nn_hls-1, 1, jpkm1 )
             ztmp(ji,jj,jk) = zfact3 * dissl(ji,jj,jk) * en(ji,jj,jk) * wmask(ji,jj,jk)
          END_3D
-         DO_2D( nn_hls-1, nn_hls-1, nn_hls-1, nn_hls-1 )
-            ztmp(ji,jj,jpk) = 0._wp
-         END_2D
-         CALL iom_put( 'ediss_k', ztmp )
-         DEALLOCATE( ztmp )
+         IF( .NOT. l_istiled .OR. ntile == nijtile ) THEN
+            CALL iom_put( 'ediss_k', ztmp )
+            DEALLOCATE( ztmp )
+         ENDIF
       ENDIF
       !
       !                            !<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

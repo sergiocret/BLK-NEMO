@@ -87,7 +87,7 @@ CONTAINS
 
       IF( l_ar5 ) THEN
          ALLOCATE( zarea_ssh(jpi,jpj), zbotpres(jpi,jpj), z2d(jpi,jpj) )
-         ALLOCATE( zrhd(jpi,jpj,jpk) )
+         ALLOCATE( zrhd(jpi,jpj,jpk), z3d(jpi,jpj,jpk) )
          ALLOCATE( ztsn(jpi,jpj,jpk,jpts) )
          zarea_ssh(:,:) = e1e2t(:,:) * ssh(:,:,Kmm)
       ENDIF
@@ -295,8 +295,9 @@ CONTAINS
       ENDIF
 
       IF( l_ar5 ) THEN
-        DEALLOCATE( zarea_ssh , zbotpres, z2d )
-        DEALLOCATE( ztsn                 )
+        DEALLOCATE( zarea_ssh, zbotpres, z2d )
+        DEALLOCATE( z3d )
+        DEALLOCATE( ztsn )
       ENDIF
       !
       IF( ln_timing )   CALL timing_stop('dia_ar5')
