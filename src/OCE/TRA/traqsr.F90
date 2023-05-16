@@ -293,7 +293,7 @@ CONTAINS
       END_2D
       !
       IF( iom_use('qsr3d') ) THEN      ! output the shortwave Radiation distribution
-         ALLOCATE( zetot(A2D(nn_hls),jpk) )
+         ALLOCATE( zetot(A2D(0),jpk) )
          zetot(:,:,nksr+1:jpk) = 0._wp     ! below ~400m set to zero
          DO_3DS(0, 0, 0, 0, nksr, 1, -1)
             zetot(ji,jj,jk) = zetot(ji,jj,jk+1) + qsr_hc(ji,jj,jk) * rho0_rcp
