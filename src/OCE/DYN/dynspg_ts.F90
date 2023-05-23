@@ -177,13 +177,11 @@ CONTAINS
       INTEGER  :: iwdg, jwdg, kwdg   ! short-hand values for the indices of the output point
 
       REAL(wp) ::   zepsilon, zgamma            !   -      -
-      REAL(wp), ALLOCATABLE, DIMENSION(:,:) :: zcpx, zcpy   ! Wetting/Dying gravity filter coef.
       REAL(wp), ALLOCATABLE, DIMENSION(:,:) :: ztwdmask, zuwdmask, zvwdmask ! ROMS wetting and drying masks at t,u,v points
       REAL(wp), ALLOCATABLE, DIMENSION(:,:) :: zuwdav2, zvwdav2    ! averages over the sub-steps of zuwdmask and zvwdmask
       REAL(wp) ::   zt0substep !   Time of day at the beginning of the time substep
       !!----------------------------------------------------------------------
       !
-      IF( ln_wd_il ) ALLOCATE( zcpx(jpi,jpj), zcpy(jpi,jpj) )
       !                                         !* Allocate temporary arrays
       IF( ln_wd_dl ) ALLOCATE( ztwdmask(jpi,jpj), zuwdmask(jpi,jpj), zvwdmask(jpi,jpj), zuwdav2(jpi,jpj), zvwdav2(jpi,jpj))
       !
@@ -515,7 +513,6 @@ CONTAINS
          ! Set fluxes during predictor step to ensure volume conservation
          IF( ln_bt_fw )   CALL agrif_dyn_ts_flux( jn, zhU, zhV )
 #endif
-         IF( ln_wd_il )   CALL wad_lmt_bt(zhU, zhV, sshn_e, ssh_frc, rDt_e)    !!gm wad_lmt_bt use of lbc_lnk on zhU, zhV
 
          IF( ln_wd_dl ) THEN           ! un_e and vn_e are set to zero at faces where 
             !                          ! the direction of the flow is from dry cells
@@ -591,13 +588,6 @@ CONTAINS
             zu_spg(ji,jj) = - zldg * ( zsshp2_e(ji+1,jj) - zsshp2_e(ji,jj) ) * r1_e1u(ji,jj)
             zv_spg(ji,jj) = - zldg * ( zsshp2_e(ji,jj+1) - zsshp2_e(ji,jj) ) * r1_e2v(ji,jj)
          END_2D
-         IF( ln_wd_il ) THEN        ! W/D : gravity filters applied on pressure gradient
-            CALL wad_spg( zsshp2_e, zcpx, zcpy )   ! Calculating W/D gravity filters
-            DO_2D( 0, 0, 0, 0 )
-               zu_spg(ji,jj) = zu_spg(ji,jj) * zcpx(ji,jj)
-               zv_spg(ji,jj) = zv_spg(ji,jj) * zcpy(ji,jj)
-            END_2D
-         ENDIF
          !
          ! Add Coriolis trend:
          ! zwz array below or triads normally depend on sea level with ln_linssh=F and should be updated
@@ -844,7 +834,6 @@ CONTAINS
       !                                   !* write time-spliting arrays in the restart
       IF( lrst_oce .AND.ln_bt_fw )   CALL ts_rst( kt, 'WRITE' )
       !
-      IF( ln_wd_il )   DEALLOCATE( zcpx, zcpy )
       IF( ln_wd_dl )   DEALLOCATE( ztwdmask, zuwdmask, zvwdmask, zuwdav2, zvwdav2 )
       !
       CALL iom_put( "baro_u" , puu_b(:,:,Kmm) )  ! Barotropic  U Velocity
@@ -1234,7 +1223,7 @@ CONTAINS
 
    SUBROUTINE wad_tmsk( pssh, ptmsk )
       !!----------------------------------------------------------------------
-      !!                  ***  ROUTINE wad_lmt  ***
+      !!                  ***  ROUTINE wad_tmsk  ***
       !!                    
       !! ** Purpose :   set wetting & drying mask at tracer points 
       !!              for the current barotropic sub-step 
@@ -1273,7 +1262,7 @@ CONTAINS
 
    SUBROUTINE wad_Umsk( pTmsk, phU, phV, pu, pv, pUmsk, pVmsk )
       !!----------------------------------------------------------------------
-      !!                  ***  ROUTINE wad_lmt  ***
+      !!                  ***  ROUTINE wad_Umsk  ***
       !!                    
       !! ** Purpose :   set wetting & drying mask at tracer points 
       !!              for the current barotropic sub-step 
@@ -1307,60 +1296,6 @@ CONTAINS
       END_2D
       !
    END SUBROUTINE wad_Umsk
-
-
-   SUBROUTINE wad_spg( pshn, zcpx, zcpy )
-      !!---------------------------------------------------------------------
-      !!                   ***  ROUTINE  wad_sp  ***
-      !!
-      !! ** Purpose : 
-      !!----------------------------------------------------------------------
-      INTEGER  ::   ji ,jj               ! dummy loop indices
-      LOGICAL  ::   ll_tmp1, ll_tmp2
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ) :: pshn
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(inout) :: zcpx, zcpy
-      !!----------------------------------------------------------------------
-      DO_2D( 0, 0, 0, 0 )
-         ll_tmp1 = MIN(  pshn(ji,jj)               ,  pshn(ji+1,jj) ) >                &
-              &      MAX( -ht_0(ji,jj)               , -ht_0(ji+1,jj) ) .AND.            &
-              &      MAX(  pshn(ji,jj) + ht_0(ji,jj) ,  pshn(ji+1,jj) + ht_0(ji+1,jj) )  &
-              &                                                         > rn_wdmin1 + rn_wdmin2
-         ll_tmp2 = ( ABS( pshn(ji+1,jj)            -  pshn(ji  ,jj))  > 1.E-12 ).AND.( &
-              &      MAX(   pshn(ji,jj)              ,  pshn(ji+1,jj) ) >                &
-              &      MAX(  -ht_0(ji,jj)              , -ht_0(ji+1,jj) ) + rn_wdmin1 + rn_wdmin2 )
-         IF(ll_tmp1) THEN
-            zcpx(ji,jj) = 1.0_wp
-         ELSEIF(ll_tmp2) THEN
-            ! no worries about  pshn(ji+1,jj) -  pshn(ji  ,jj) = 0, it won't happen ! here
-            zcpx(ji,jj) = ABS( (pshn(ji+1,jj) + ht_0(ji+1,jj) - pshn(ji,jj) - ht_0(ji,jj)) &
-                 &           / (pshn(ji+1,jj) - pshn(ji  ,jj)) )
-            zcpx(ji,jj) = max(min( zcpx(ji,jj) , 1.0_wp),0.0_wp)
-         ELSE
-            zcpx(ji,jj) = 0._wp
-         ENDIF
-         !
-         ll_tmp1 = MIN(  pshn(ji,jj)               ,  pshn(ji,jj+1) ) >                &
-              &      MAX( -ht_0(ji,jj)               , -ht_0(ji,jj+1) ) .AND.            &
-              &      MAX(  pshn(ji,jj) + ht_0(ji,jj) ,  pshn(ji,jj+1) + ht_0(ji,jj+1) )  &
-              &                                                       > rn_wdmin1 + rn_wdmin2
-         ll_tmp2 = ( ABS( pshn(ji,jj)              -  pshn(ji,jj+1))  > 1.E-12 ).AND.( &
-              &      MAX(   pshn(ji,jj)              ,  pshn(ji,jj+1) ) >                &
-              &      MAX(  -ht_0(ji,jj)              , -ht_0(ji,jj+1) ) + rn_wdmin1 + rn_wdmin2 )
-         
-         IF(ll_tmp1) THEN
-            zcpy(ji,jj) = 1.0_wp
-         ELSE IF(ll_tmp2) THEN
-            ! no worries about  pshn(ji,jj+1) -  pshn(ji,jj  ) = 0, it won't happen ! here
-            zcpy(ji,jj) = ABS( (pshn(ji,jj+1) + ht_0(ji,jj+1) - pshn(ji,jj) - ht_0(ji,jj)) &
-                 &           / (pshn(ji,jj+1) - pshn(ji,jj  )) )
-            zcpy(ji,jj) = MAX(  0._wp , MIN( zcpy(ji,jj) , 1.0_wp )  )
-         ELSE
-            zcpy(ji,jj) = 0._wp
-         ENDIF
-      END_2D
-            
-   END SUBROUTINE wad_spg
-     
 
    SUBROUTINE dyn_drg_init( Kbb, Kmm, puu, pvv, puu_b ,pvv_b, pu_RHSi, pv_RHSi, pCdU_u, pCdU_v )
       !!----------------------------------------------------------------------
@@ -1419,21 +1354,12 @@ CONTAINS
          END_2D
       ENDIF
       !
-      IF( ln_wd_il ) THEN      ! W/D : use the "clipped" bottom friction   !!gm   explain WHY, please !
-         zztmp = -1._wp / rDt_e
-         DO_2D( 0, 0, 0, 0 )
-            pu_RHSi(ji,jj) = pu_RHSi(ji,jj) + zu_i(ji,jj) *  wdrampu(ji,jj) * MAX(                                 & 
-                 &                              r1_hu(ji,jj,Kmm) * r1_2*( rCdU_bot(ji+1,jj)+rCdU_bot(ji,jj) ) , zztmp  )
-            pv_RHSi(ji,jj) = pv_RHSi(ji,jj) + zv_i(ji,jj) *  wdrampv(ji,jj) * MAX(                                 & 
-                 &                              r1_hv(ji,jj,Kmm) * r1_2*( rCdU_bot(ji,jj+1)+rCdU_bot(ji,jj) ) , zztmp  )
-         END_2D
-      ELSE                    ! use "unclipped" drag (even if explicit friction is used in 3D calculation)
+      ! use "unclipped" drag (even if explicit friction is used in 3D calculation)
          
-         DO_2D( 0, 0, 0, 0 )
-            pu_RHSi(ji,jj) = pu_RHSi(ji,jj) + r1_hu(ji,jj,Kmm) * r1_2*( rCdU_bot(ji+1,jj)+rCdU_bot(ji,jj) ) * zu_i(ji,jj)
-            pv_RHSi(ji,jj) = pv_RHSi(ji,jj) + r1_hv(ji,jj,Kmm) * r1_2*( rCdU_bot(ji,jj+1)+rCdU_bot(ji,jj) ) * zv_i(ji,jj)
-         END_2D
-      END IF
+      DO_2D( 0, 0, 0, 0 )
+         pu_RHSi(ji,jj) = pu_RHSi(ji,jj) + r1_hu(ji,jj,Kmm) * r1_2*( rCdU_bot(ji+1,jj)+rCdU_bot(ji,jj) ) * zu_i(ji,jj)
+         pv_RHSi(ji,jj) = pv_RHSi(ji,jj) + r1_hv(ji,jj,Kmm) * r1_2*( rCdU_bot(ji,jj+1)+rCdU_bot(ji,jj) ) * zv_i(ji,jj)
+      END_2D
       !
       !                    !==  TOP stress contribution from baroclinic velocities  ==!   (no W/D case)
       !

@@ -95,9 +95,6 @@ CONTAINS
       !                                           !------------------------------!
       !                                           !   After Sea Surface Height   !
       !                                           !------------------------------!
-      IF(ln_wd_il) THEN
-         CALL wad_lmt(pssh(:,:,Kbb), zcoef * (emp_b(:,:) + emp(:,:)), rDt, Kmm, uu, vv )
-      ENDIF
 
       CALL div_hor( kt, Kbb, Kmm )                     ! Horizontal divergence
       !

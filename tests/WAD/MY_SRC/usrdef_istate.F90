@@ -44,7 +44,7 @@ CONTAINS
       !! ** Purpose :   Initialization of the dynamics and tracers
       !!                Here WAD_TEST_CASES configuration 
       !!
-q      !! ** Method  : - set temprature field
+      !! ** Method  : - set temprature field
       !!              - set salinity   field
       !!----------------------------------------------------------------------
       REAL(wp), DIMENSION(jpi,jpj,jpk)     , INTENT(in   ) ::   pdept   ! depth of t-point               [m]

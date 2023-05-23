@@ -698,15 +698,8 @@ CONTAINS
       !
       INTEGER ::   ji, jj, jk                                       ! dummy loop indices
       INTEGER ::   iku, ikum1, ikv, ikvm1, ikf, ikfm1
-      REAL(wp) ::  zlnwd                                            ! =1./0. when ln_wd_il = T/F
       REAL(wp), DIMENSION(jpi,jpj) :: zssh                          ! work array to retrieve ssh (nn_vvl_interp > 1)
       !!----------------------------------------------------------------------
-      !
-      IF(ln_wd_il) THEN
-        zlnwd = 1.0_wp
-      ELSE
-        zlnwd = 0.0_wp
-      END IF
       !
       SELECT CASE ( pout )    !==  type of interpolation  ==!
          !
@@ -715,7 +708,7 @@ CONTAINS
          CASE ( 0 ) 
             !
             DO_3D( 1, 0, 1, 0, 1, jpk )
-               pe3_out(ji,jj,jk) = 0.5_wp * (  umask(ji,jj,jk) * (1.0_wp - zlnwd) + zlnwd ) * r1_e1e2u(ji,jj)   &
+               pe3_out(ji,jj,jk) = 0.5_wp * umask(ji,jj,jk) * r1_e1e2u(ji,jj)                                   &
                   &                       * (   e1e2t(ji  ,jj) * ( pe3_in(ji  ,jj,jk) - e3t_0(ji  ,jj,jk) )     &
                   &                           + e1e2t(ji+1,jj) * ( pe3_in(ji+1,jj,jk) - e3t_0(ji+1,jj,jk) ) )
             END_3D
@@ -723,7 +716,7 @@ CONTAINS
          CASE ( 1 )
             !
             DO_3D( 1, 0, 1, 0, 1, jpk )
-               pe3_out(ji,jj,jk) = 0.5_wp * (  umask(ji,jj,jk) * (1.0_wp - zlnwd) + zlnwd ) * r1_e1e2u(ji,jj)   &
+               pe3_out(ji,jj,jk) = 0.5_wp * umask(ji,jj,jk) * r1_e1e2u(ji,jj)                                   &
                   &                       * (   e1e2t(ji  ,jj) * ( pe3_in(ji  ,jj,jk) - e3t_0(ji  ,jj,jk) )     &
                   &                           + e1e2t(ji+1,jj) * ( pe3_in(ji+1,jj,jk) - e3t_0(ji+1,jj,jk) ) )
             END_3D
@@ -732,8 +725,7 @@ CONTAINS
             DO_2D( 1, 0, 1, 0 )
                iku    = mbku(ji  ,jj)
                ikum1  = iku - 1
-               pe3_out(ji,jj,iku) = ( umask(ji,jj,iku) * (1.0_wp - zlnwd) + zlnwd )    & 
-                  &     * ( 0.5_wp *  r1_e1e2u(ji,jj)                                  &
+               pe3_out(ji,jj,iku) = umask(ji,jj,iku) * ( 0.5_wp *  r1_e1e2u(ji,jj)                                 &
                   &     * (    e1e2t(ji  ,jj) * ( SUM(tmask(ji  ,jj,:)*(pe3_in(ji  ,jj,:) - e3t_0(ji  ,jj,:))) )   &               
                   &          + e1e2t(ji+1,jj) * ( SUM(tmask(ji+1,jj,:)*(pe3_in(ji+1,jj,:) - e3t_0(ji+1,jj,:))) ) ) &
                   &     - SUM(pe3_out(ji,jj,1:ikum1)))
@@ -743,7 +735,7 @@ CONTAINS
             zssh(:,:) = SUM(tmask(:,:,:)*(pe3_in(:,:,:)-e3t_0(:,:,:)), DIM=3)
             !
             DO_3D( 1, 0, 1, 0, 1, jpk )
-               pe3_out(ji,jj,jk) = 0.5_wp * (  umask(ji,jj,jk) * (1.0_wp - zlnwd) + zlnwd ) * r1_e1e2u(ji,jj)    &
+               pe3_out(ji,jj,jk) = 0.5_wp *    umask(ji,jj,jk) * r1_e1e2u(ji,jj)                                 &
                   &                       * (   e1e2t(ji  ,jj) * zssh(ji  ,jj) + e1e2t(ji+1,jj) * zssh(ji+1,jj)) &
                   &                       * e3u_0(ji,jj,jk) / ( hu_0(ji,jj) + 1._wp - ssumask(ji,jj) )
             END_3D   
@@ -758,7 +750,7 @@ CONTAINS
          CASE ( 0 ) 
             !
             DO_3D( 1, 0, 1, 0, 1, jpk )
-               pe3_out(ji,jj,jk) = 0.5_wp * ( vmask(ji,jj,jk)  * (1.0_wp - zlnwd) + zlnwd ) * r1_e1e2v(ji,jj)   &
+               pe3_out(ji,jj,jk) = 0.5_wp * vmask(ji,jj,jk) * r1_e1e2v(ji,jj)                                   &
                   &                       * (   e1e2t(ji,jj  ) * ( pe3_in(ji,jj  ,jk) - e3t_0(ji,jj  ,jk) )     &
                   &                           + e1e2t(ji,jj+1) * ( pe3_in(ji,jj+1,jk) - e3t_0(ji,jj+1,jk) ) )
             END_3D
@@ -766,7 +758,7 @@ CONTAINS
          CASE ( 1 )
                         !
             DO_3D( 1, 0, 1, 0, 1, jpk )
-               pe3_out(ji,jj,jk) = 0.5_wp * ( vmask(ji,jj,jk)  * (1.0_wp - zlnwd) + zlnwd ) * r1_e1e2v(ji,jj)   &
+               pe3_out(ji,jj,jk) = 0.5_wp * vmask(ji,jj,jk) * r1_e1e2v(ji,jj)                                   &
                   &                       * (   e1e2t(ji,jj  ) * ( pe3_in(ji,jj  ,jk) - e3t_0(ji,jj  ,jk) )     &
                   &                           + e1e2t(ji,jj+1) * ( pe3_in(ji,jj+1,jk) - e3t_0(ji,jj+1,jk) ) )
             END_3D
@@ -775,8 +767,7 @@ CONTAINS
             DO_2D( 1, 0, 1, 0 )
                ikv    = mbkv(ji  ,jj)
                ikvm1  = ikv - 1
-               pe3_out(ji,jj,ikv) = ( vmask(ji,jj,ikv) * (1.0_wp - zlnwd) + zlnwd )    & 
-                  &     * ( 0.5_wp *  r1_e1e2v(ji,jj)                                  &
+               pe3_out(ji,jj,ikv) = vmask(ji,jj,ikv) * ( 0.5_wp *  r1_e1e2v(ji,jj)                                 &
                   &     * (    e1e2t(ji,jj  ) * ( SUM(tmask(ji,jj  ,:)*(pe3_in(ji,jj  ,:) - e3t_0(ji,jj  ,:))) )   &               
                   &          + e1e2t(ji,jj+1) * ( SUM(tmask(ji,jj+1,:)*(pe3_in(ji,jj+1,:) - e3t_0(ji,jj+1,:))) ) ) &
                   &     - SUM(pe3_out(ji,jj,1:ikvm1)))
@@ -786,7 +777,7 @@ CONTAINS
             zssh(:,:) = SUM(tmask(:,:,:)*(pe3_in(:,:,:)-e3t_0(:,:,:)), DIM=3)
             !
             DO_3D( 1, 0, 1, 0, 1, jpk )
-               pe3_out(ji,jj,jk) = 0.5_wp * (  vmask(ji,jj,jk) * (1.0_wp - zlnwd) + zlnwd ) * r1_e1e2v(ji,jj)    &
+               pe3_out(ji,jj,jk) = 0.5_wp * vmask(ji,jj,jk) * r1_e1e2v(ji,jj)                                    &
                   &                       * (   e1e2t(ji  ,jj) * zssh(ji  ,jj) + e1e2t(ji,jj+1) * zssh(ji,jj+1)) &
                   &                       * e3v_0(ji,jj,jk) / ( hv_0(ji,jj) + 1._wp - ssvmask(ji,jj) )
             END_3D 
@@ -801,7 +792,7 @@ CONTAINS
          CASE ( 0 )
             !
             DO_3D( 0, 0, 0, 0, 1, jpk )
-               pe3_out(ji,jj,jk) = 0.5_wp * (  umask(ji,jj,jk) * umask(ji,jj+1,jk) * (1.0_wp - zlnwd) + zlnwd ) &
+               pe3_out(ji,jj,jk) = 0.5_wp *    umask(ji,jj,jk) * umask(ji,jj+1,jk)                              &
                   &                       *    r1_e1e2f(ji,jj)                                                  &
                   &                       * (   e1e2u(ji,jj  ) * ( pe3_in(ji,jj  ,jk) - e3u_0(ji,jj  ,jk) )     &
                   &                           + e1e2u(ji,jj+1) * ( pe3_in(ji,jj+1,jk) - e3u_0(ji,jj+1,jk) ) )
@@ -810,7 +801,7 @@ CONTAINS
          CASE ( 1 )
             !
             DO_3D( 0, 0, 0, 0, 1, jpk )
-               pe3_out(ji,jj,jk) = 0.5_wp * (  umask(ji,jj,jk) * umask(ji,jj+1,jk) * (1.0_wp - zlnwd) + zlnwd ) &
+               pe3_out(ji,jj,jk) = 0.5_wp *    umask(ji,jj,jk) * umask(ji,jj+1,jk)                              &
                   &                       *    r1_e1e2f(ji,jj)                                                  &
                   &                       * (   e1e2u(ji,jj  ) * ( pe3_in(ji,jj  ,jk) - e3u_0(ji,jj  ,jk) )     &
                   &                           + e1e2u(ji,jj+1) * ( pe3_in(ji,jj+1,jk) - e3u_0(ji,jj+1,jk) ) )
@@ -820,7 +811,7 @@ CONTAINS
             DO_2D( 0, 0, 0, 0 )
                ikf    = MIN(mbku(ji  ,jj),mbku(ji,jj+1))
                ikfm1  = ikf - 1
-               pe3_out(ji,jj,ikf) = ( umask(ji,jj,ikf) * umask(ji,jj+1,ikf) * (1.0_wp - zlnwd) + zlnwd )           & 
+               pe3_out(ji,jj,ikf) =   umask(ji,jj,ikf) * umask(ji,jj+1,ikf)                                        & 
                   &     * ( 0.5_wp *  r1_e1e2f(ji,jj)                                                              &
                   &     * (    e1e2u(ji,jj  ) * ( SUM(umask(ji,jj  ,:)*(pe3_in(ji,jj  ,:) - e3u_0(ji,jj  ,:))) )   &               
                   &          + e1e2u(ji,jj+1) * ( SUM(umask(ji,jj+1,:)*(pe3_in(ji,jj+1,:) - e3u_0(ji,jj+1,:))) ) ) &
@@ -831,7 +822,7 @@ CONTAINS
             zssh(:,:) = SUM(umask(:,:,:)*(pe3_in(:,:,:)-e3u_0(:,:,:)), DIM=3)
             !
             DO_3D( 0, 0, 0, 0, 1, jpk )
-               pe3_out(ji,jj,jk) =  (  umask(ji,jj,jk)* umask(ji,jj+1,jk) * (1.0_wp - zlnwd) + zlnwd )   &
+               pe3_out(ji,jj,jk) =    umask(ji,jj,jk)* umask(ji,jj+1,jk)                                &
                   &                 * 0.5_wp * r1_e1e2f(ji,jj)                                           &
                   &                 * (e1e2u(ji  ,jj) * zssh(ji  ,jj) + e1e2u(ji,jj+1) * zssh(ji,jj+1))  &
                   &                 * e3f_0(ji,jj,jk) / ( hf_0(ji,jj) + 1._wp - ssumask(ji,jj)*ssumask(ji,jj+1) )
@@ -848,9 +839,9 @@ CONTAINS
          ! - ML - The use of mask in this formulea enables the special treatment of the last w-point without indirect adressing
 !!gm BUG? use here wmask in case of ISF ?  to be checked
          DO jk = 2, jpk
-            pe3_out(:,:,jk) = e3w_0(:,:,jk) + ( 1.0_wp - 0.5_wp * ( tmask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd ) )   &
-               &                            * ( pe3_in(:,:,jk-1) - e3t_0(:,:,jk-1) )                               &
-               &                            +            0.5_wp * ( tmask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd )     &
+            pe3_out(:,:,jk) = e3w_0(:,:,jk) + ( 1.0_wp - 0.5_wp *  tmask(:,:,jk)  )   &
+               &                            * ( pe3_in(:,:,jk-1) - e3t_0(:,:,jk-1) )  &
+               &                            +            0.5_wp *  tmask(:,:,jk)      &
                &                            * ( pe3_in(:,:,jk  ) - e3t_0(:,:,jk  ) )
          END DO
          !
@@ -860,9 +851,9 @@ CONTAINS
          ! - ML - The use of mask in this formaula enables the special treatment of the last w- point without indirect adressing
 !!gm BUG? use here wumask in case of ISF ?  to be checked
          DO jk = 2, jpk
-            pe3_out(:,:,jk) = e3uw_0(:,:,jk) + ( 1.0_wp - 0.5_wp * ( umask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd ) )  &
-               &                             * ( pe3_in(:,:,jk-1) - e3u_0(:,:,jk-1) )                              &
-               &                             +            0.5_wp * ( umask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd )    &
+            pe3_out(:,:,jk) = e3uw_0(:,:,jk) + ( 1.0_wp - 0.5_wp *  umask(:,:,jk)   )  &
+               &                             * ( pe3_in(:,:,jk-1) - e3u_0(:,:,jk-1) )  &
+               &                             +            0.5_wp *  umask(:,:,jk)      &
                &                             * ( pe3_in(:,:,jk  ) - e3u_0(:,:,jk  ) )
          END DO
          !
@@ -872,9 +863,9 @@ CONTAINS
          ! - ML - The use of mask in this formaula enables the special treatment of the last w- point without indirect adressing
 !!gm BUG? use here wvmask in case of ISF ?  to be checked
          DO jk = 2, jpk
-            pe3_out(:,:,jk) = e3vw_0(:,:,jk) + ( 1.0_wp - 0.5_wp * ( vmask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd ) )  &
-               &                             * ( pe3_in(:,:,jk-1) - e3v_0(:,:,jk-1) )                              &
-               &                             +            0.5_wp * ( vmask(:,:,jk) * (1.0_wp - zlnwd) + zlnwd )    &
+            pe3_out(:,:,jk) = e3vw_0(:,:,jk) + ( 1.0_wp - 0.5_wp *  vmask(:,:,jk)   )  &
+               &                             * ( pe3_in(:,:,jk-1) - e3v_0(:,:,jk-1) )  &
+               &                             +            0.5_wp *  vmask(:,:,jk)      &
                &                             * ( pe3_in(:,:,jk  ) - e3v_0(:,:,jk  ) )
          END DO
       END SELECT
