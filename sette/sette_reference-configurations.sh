@@ -983,7 +983,7 @@ if [ ${config} == "ORCA2_ICE_OBS" ] ;  then
     #
     . ./makenemo -m ${CMP_NAM} -n ${SETTE_CONFIG} -r ORCA2_ICE_PISCES -d "OCE ICE"  -j ${CMPL_CORES} add_key "key_asminc ${ADD_KEYS}" del_key "key_top ${DEL_KEYS}"
 fi
-if [ ${config} == "ORCA2_ICE_OBS" ] && [ ${DO_RESTART} == "1" ] ;  then
+if [ ${config} == "ORCA2_ICE_OBS" ] && [ ${DO_REPRO} == "1" ] ;  then
 ## Reproducibility tests
     export TEST_NAME="REPRO_4_8"
     cd ${SETTE_DIR}
