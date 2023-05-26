@@ -26,6 +26,7 @@ MODULE diadct
    USE dom_oce         ! ocean space and time domain
    USE phycst          ! physical constants
    USE in_out_manager  ! I/O manager
+   USE iom
    USE daymod          ! calendar
    USE dianam          ! build name of file
    USE lib_mpp         ! distributed memory computing library
@@ -42,9 +43,7 @@ MODULE diadct
    PUBLIC   dia_dct_init ! routine called by nemogcm.F90
 
    !                         !!** namelist variables **
-   LOGICAL, PUBLIC ::   ln_diadct     !: Calculate transport thru a section or not
    INTEGER         ::   nn_dct        !  Frequency of computation
-   INTEGER         ::   nn_dctwri     !  Frequency of output
    INTEGER         ::   nn_secdebug   !  Number of the section to debug
    
    INTEGER, PARAMETER :: nb_class_max  = 10
@@ -53,7 +52,6 @@ MODULE diadct
    INTEGER, PARAMETER :: nb_type_class = 10
    INTEGER, PARAMETER :: nb_3d_vars    = 3 
    INTEGER, PARAMETER :: nb_2d_vars    = 2 
-   INTEGER            :: nb_sec 
 
    TYPE POINT_SECTION
       INTEGER :: I,J
@@ -87,10 +85,15 @@ MODULE diadct
  
    REAL(wp), ALLOCATABLE, DIMENSION(:,:,:,:) ::  transports_3d 
    REAL(wp), ALLOCATABLE, DIMENSION(:,:,:)   ::  transports_2d  
+#if defined key_xios
+   REAL(wp), ALLOCATABLE, DIMENSION(:)   ::  heat_transport
+   REAL(wp), ALLOCATABLE, DIMENSION(:)   ::  salt_transport
+   REAL(wp), ALLOCATABLE, DIMENSION(:)   ::  vol_transport
+#endif
 
 
    !! * Substitutions
-#  include "single_precision_substitute.h90"
+#  include "single_precision_substitute.h90"  
 #  include "domzgr_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
@@ -160,13 +163,14 @@ CONTAINS
         !Read section_ijglobal.diadct
         CALL readsec
 
+#if ! defined key_xios   
         !open output file
         IF( lwm ) THEN
            CALL ctl_opn( numdct_vol,  'volume_transport', 'NEW', 'FORMATTED', 'SEQUENTIAL', -1, numout,  .FALSE. )
            CALL ctl_opn( numdct_heat, 'heat_transport'  , 'NEW', 'FORMATTED', 'SEQUENTIAL', -1, numout,  .FALSE. )
            CALL ctl_opn( numdct_salt, 'salt_transport'  , 'NEW', 'FORMATTED', 'SEQUENTIAL', -1, numout,  .FALSE. )
         ENDIF
-
+#endif
         ! Initialise arrays to zero 
         transports_3d(:,:,:,:)=0.0 
         transports_2d(:,:,:)  =0.0 
@@ -252,7 +256,10 @@ CONTAINS
            ENDDO 
 
            !Sum on all procs 
-           IF( lk_mpp )THEN
+!           IF( lk_mpp )THEN 
+! removed by AV do not know the significance of this test, following test taken from diaprt 
+#if ! defined key_mpi_off
+           IF( .NOT. l_istiled .OR. ntile == nijtile ) THEN
               ish(1)  =  nb_sec_max*nb_type_class*nb_class_max 
               ish2    = (/nb_sec_max,nb_type_class,nb_class_max/)
               DO jsec=1,nb_sec ; zsum(jsec,:,:) = secs(jsec)%transport(:,:) ; ENDDO
@@ -261,11 +268,21 @@ CONTAINS
               zsum(:,:,:)= RESHAPE(zwork,ish2)
               DO jsec=1,nb_sec ; secs(jsec)%transport(:,:) = zsum(jsec,:,:) ; ENDDO
            ENDIF
+#endif
 
            !Write the transport
+#if defined key_xios   
+!        IF( lwm ) sec_transport(:) = 0
+           ALLOCATE(heat_transport(nb_sec),salt_transport(nb_sec),vol_transport(nb_sec))
+#endif
            DO jsec=1,nb_sec
 
+#if defined key_xios   
+              ! xios waits for a send from all procs 
+              CALL dia_dct_wri(kt,jsec,secs(jsec))
+#else
               IF( lwm )CALL dia_dct_wri(kt,jsec,secs(jsec))
+#endif
             
               !nullify transports values after writing
               transports_3d(:,jsec,:,:)=0.
@@ -273,6 +290,14 @@ CONTAINS
               secs(jsec)%transport(:,:)=0.  
 
            ENDDO
+#if defined key_xios   
+          IF ( .NOT. l_istiled .OR. ntile == nijtile ) THEN
+             CALL iom_put('mfo' ,  vol_transport )
+             CALL iom_put('sfo' ,  salt_transport )
+             CALL iom_put('hfo' ,  heat_transport )
+          ENDIF
+          DEALLOCATE(heat_transport, salt_transport, vol_transport)
+#endif
 
         ENDIF 
 
@@ -1040,6 +1065,7 @@ CONTAINS
            zbnd2 = sec%ztem(jclass+1)
         ENDIF
                   
+#if ! defined key_xios   
         !write volume transport per class
         WRITE(numdct_vol,118) ndastp,kt,ksec,sec%name,zslope, &
                               jclass,classe,zbnd1,zbnd2,&
@@ -1059,9 +1085,16 @@ CONTAINS
                               sec%transport(5,jclass)*1.e-9,sec%transport(6,jclass)*1.e-9,&
                               (sec%transport(5,jclass)+sec%transport(6,jclass))*1.e-9
         ENDIF
-
+#endif
      ENDDO
 
+#if defined key_xios   
+     IF ( .NOT. l_istiled .OR. ntile == nijtile ) THEN
+         vol_transport(ksec) = zsumclasses(1)+zsumclasses(2)
+         salt_transport(ksec) = ( zsumclasses(5)+zsumclasses(6) )*1e-9
+         heat_transport(ksec) = ( zsumclasses(3)+zsumclasses(4) )*1e-15
+     ENDIF
+#else
      zbnd1 = 0._wp
      zbnd2 = 0._wp
      jclass=0
@@ -1101,7 +1134,7 @@ CONTAINS
                                               
 118   FORMAT(I8,1X,I8,1X,I4,1X,A30,1X,f9.2,1X,I4,3X,A8,1X,2F12.4,5X,3F12.4)
 119   FORMAT(I8,1X,I8,1X,I4,1X,A30,1X,f9.2,1X,I4,3X,A8,1X,2F12.4,5X,3E15.6)
-      !
+#endif
    END SUBROUTINE dia_dct_wri
 
 

@@ -263,7 +263,9 @@ CONTAINS
 # if defined key_si3
          CALL iom_set_axis_attr( "ncatice", (/ (REAL(ji,wp), ji=1,jpl) /) )
          ! SIMIP diagnostics (4 main arctic straits)
-         CALL iom_set_axis_attr( "nstrait", (/ (REAL(ji,wp), ji=1,4) /) )
+!         remove from si3 case to general case to use dct diagnostics over
+!         oce+ice
+!         CALL iom_set_axis_attr( "nstrait", (/ (REAL(ji,wp), ji=1,4) /) )
 # endif
 #if defined key_top
          IF( ALLOCATED(profsed) ) CALL iom_set_axis_attr( "profsed", paxis = profsed )
@@ -276,6 +278,12 @@ CONTAINS
          INQUIRE( FILE = 'subbasins.nc', EXIST = ll_exist )
          nbasin = 1 + 4 * COUNT( (/ll_exist/) )
          CALL iom_set_axis_attr( "basin"  , (/ (REAL(ji,wp), ji=1,nbasin) /) )
+         ! Transport diagnostics diadct - max number of section 150 in diadct -> ! pb to ensure consistency here
+         IF( ln_diadct  ) THEN
+            CALL iom_set_axis_attr( "nstrait"  , (/ (REAL(ji,wp), ji=1,nb_sec) /) )
+         ELSE
+            CALL iom_set_axis_attr( "nstrait", (/ (REAL(ji,wp), ji=1,4) /) )
+         ENDIF
       ENDIF
       !
       ! automatic definitions of some of the xml attributs
@@ -2460,6 +2468,9 @@ CONTAINS
       f_op%timestep = nn_fsbc  ;  f_of%timestep =  0  ; CALL iom_set_field_attr('SBC'             , freq_op=f_op, freq_offset=f_of)
       f_op%timestep = nn_fsbc  ;  f_of%timestep =  0  ; CALL iom_set_field_attr('SBC_scalar'      , freq_op=f_op, freq_offset=f_of)
       f_op%timestep = nn_fsbc  ;  f_of%timestep =  0  ; CALL iom_set_field_attr('ABL'             , freq_op=f_op, freq_offset=f_of)
+      IF( ln_diadct  ) THEN
+        f_op%timestep = nn_dctwri ;  f_of%timestep =  0  ; CALL iom_set_field_attr('DCT'          , freq_op=f_op, freq_offset=f_of)
+      ENDIF
 
       ! output file names (attribut: name)
       DO ji = 1, 9
