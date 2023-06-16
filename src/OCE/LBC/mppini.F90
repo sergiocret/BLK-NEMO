@@ -166,6 +166,7 @@ CONTAINS
 902   IF( ios >  0 )   CALL ctl_nam ( ios , 'nammpp in configuration namelist' )
       !
       nn_hls = MAX(1, nn_hls)   ! nn_hls must be > 0
+      IF( nn_hls > 1 )   CALL ctl_warn( 'mpp_init', 'you use nn_hls > 1, this may significantly slow down NEMO performances' )
       IF(lwp) THEN
             WRITE(numout,*) '   Namelist nammpp'
          IF( jpni < 1 .OR. jpnj < 1 ) THEN
