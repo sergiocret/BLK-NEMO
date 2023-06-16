@@ -19,9 +19,10 @@ MODULE dianam
    IMPLICIT NONE
    PRIVATE
 
-   INTEGER, PUBLIC ::   nn_dctwri     !  Frequency of output for dct diags
-   LOGICAL, PUBLIC ::   ln_diadct     !: Calculate transport thru a section or not
-   INTEGER, PUBLIC ::   nb_sec        ! nb of sections
+   INTEGER, PUBLIC ::   nn_dctwri             ! Frequency of output for dct diags
+   LOGICAL, PUBLIC ::   ln_diadct = .FALSE.   ! Calculate transport thru a section or not
+                                              ! set to FALSE because some configs do not read it in nml
+   INTEGER, PUBLIC ::   nb_sec                ! nb of sections
 
    PUBLIC dia_nam
 
