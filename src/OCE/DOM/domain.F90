@@ -493,6 +493,7 @@ CONTAINS
          WRITE(numout,*)
          IF( ln_tile ) THEN
             WRITE(numout,*) '      The domain will be decomposed into tiles of size', nn_ltile_i, 'x', nn_ltile_j
+            CALL ctl_warn( 'dom_nam', 'you use ln_tile=.true., this may slow down NEMO performances' )
          ELSE
             WRITE(numout,*) '      Domain tiling will NOT be used'
          ENDIF

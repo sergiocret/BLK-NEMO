@@ -12,17 +12,17 @@ NO_REPORT=0
 #
 export USING_TIMING='yes'      # Default: yes => set ln_timing=.true.   ; use -T to disable
 export USING_ICEBERGS='yes'    # Default: yes => set ln_icebergs=.true. ; use -i to disable
-export USING_EXTRA_HALO='yes'  # Default: yes => set nn_hls=2           ; use -e to set nn_hls=1
+export USING_EXTRA_HALO='no'   # Default: no  => set nn_hls=1           ; use "--halo 2" to set nn_hls=2
 export USING_COLLECTIVES='yes' # Default: yes => set nn_comm=2          ; use -C to set nn_comm=1
 export USING_NOGATHER='yes'    # Default: yes => set ln_nnogather=.true.; use -N to set ln_nnogather=.false.
-export USING_TILING='yes'      # Default: yes => set ln_tile=.true.     ; use -t to disable
+export USING_TILING='no'       # Default: no  => set ln_tile=.false.    ; use "--tiling yes" to set ln_tile=.true.
                                #    Note: yes also ensures nn_hls=2 but -t will not alter nn_hls 
 #
 # controls for some common compile-time keys:
 #
 export USING_QCO='yes'         # Default: yes => add key_qco            ; use -q to delete key_qco
 export USING_RK3='no'          # Default: yes => add key_RK3 & key_qco  ; use -Q to delete key_RK3
-export USING_LOOP_FUSION='yes' # Default: yes => add key_loop_fusion    ; use -F to delete key_loop_fusion
+export USING_LOOP_FUSION='no'  # Default: no  => del key_loop_fusion    ; use "--loop_fusion yes" to add key_loop_fusion
 export USING_XIOS='yes'        # Default: yes => add key_xios           ; use -X to delete key_xios
                                #    Note: changing USING_XIOS may require a change in arch file
 #
@@ -62,22 +62,40 @@ else
   export SETTE_THIS_BRANCH="Unknown"
 fi
 
+# small functions
+getyn() {
+    case $( echo $1 | tr '[:upper:]' '[:lower:]' ) in
+	0|1) [ $1 -eq 0 ] && echo 'no' || echo 'yes' ;;
+	'no'|'yes') echo $1 ;;
+	*) echo 'err' ;;
+    esac
+}
+prtopt() {
+    [ "$3" == "err" ] && echo -e "\033[0;31m\n \"$2\" BAD OPTION for ${1}\033[0m\n" && exit 2
+    echo "$1 $2: $4"
+    echo ""
+    }
+yn2tf (){
+    [ "$1" == "no" ] && echo false || echo true
+}
+yn2not (){
+    [ "$1" == "no" ] && echo "not " || echo ""
+}
 # Parse command-line arguments
-if [ $# -gt 0 ]; then
-  while getopts n:x:v:g:cdrshTqQteiACFNXu option; do 
-     case $option in
-        c) export SETTE_CLEAN_CONFIGS='yes'
+while [ ${#1} -gt 0 ]; do
+    case $1 in
+        -c) export SETTE_CLEAN_CONFIGS='yes'
            export SETTE_SYNC_CONFIGS='yes'
            echo "-c: Configuration ${SETTE_TEST_CONFIGS[@]} will be cleaned; this option enforces also synchronisation"
            echo "";;
-        d) dry_run=1
+        -d) dry_run=1
            echo "";;
-        r) NO_REPORT=1
+        -r) NO_REPORT=1
            echo "";;
-        s) export SETTE_SYNC_CONFIGS='yes'
+        -s) export SETTE_SYNC_CONFIGS='yes'
            echo "-s: MY_SRC and EXP00 in ${SETTE_TEST_CONFIGS[@]} will be synchronised with the MY_SRC and EXPREF from the reference configuration"
            echo "";;
-        n) OPTSTR="$OPTARG"
+        -n) OPTSTR=$2
            OPTSTR="${OPTSTR/ORCA2_SAS_ICE/SAS}"              # Permit either shortened (expected) or full name for SAS
            OPTSTR="${OPTSTR/AGRIF_DEMO/AGRIF}"               # Permit either shortened (expected) or full name for AGRIF
            export SETTE_TEST_CONFIGS=(${OPTSTR})
@@ -87,66 +105,88 @@ if [ $# -gt 0 ]; then
            else
              echo "-n: Configuration ${SETTE_TEST_CONFIGS[@]} will be tested if it is available"
            fi
-           echo "";;
-        g) case $OPTARG in
-             [0-9,a-z,A-Z] ) echo "-g: Using ${SETTE_STG}${OPTARG} as the configuration suffix";;
+           echo ""
+	   shift ;;
+        -g) case $2 in
+             [0-9,a-z,A-Z] ) echo "-g: Using ${SETTE_STG}${2} as the configuration suffix";;
              * ) echo "-g only accepts a single, alphanumeric character. Processing halted"; exit 42;;
            esac
-           export SETTE_STG=${SETTE_STG}${OPTARG}
-           echo "";;
-        x) export SETTE_TEST_TYPES=(${OPTARG})
+           export SETTE_STG=${SETTE_STG}${2}
+           echo ""
+	   shift ;;
+        -x) export SETTE_TEST_TYPES=(${2})   # SETTE_TEST_TYPES is an array
            echo "-x: ${SETTE_TEST_TYPES[@]} tests requested"
-           echo "";;
-        v) export SETTE_SUB_VAL=($OPTARG)
+           echo ""
+	   shift ;;
+        -v) export SETTE_SUB_VAL=(${2})   # SETTE_SUB_VAL is an array
            echo "-v: $SETTE_SUB_VAL validation sub-directory requested"
-           echo "";;
-        T) export USING_TIMING='no'
+           echo ""
+	   shift ;;
+        -T) export USING_TIMING='no'
            echo "-T: ln_timing will be set to false"
            echo "";;
-        t) export USING_TILING='no'
+	--tiling)
+	   export USING_TILING=$( getyn $2 )
+	   prtopt $1 $2 $USING_TILING "ln_tile will be set to "$( yn2tf $USING_TILING )
+	   shift ;;
+	-t) export USING_TILING='no'
            echo "-t: ln_tile will be set to false"
            echo "";;
-        e) export USING_EXTRA_HALO='no'
+	--halo)
+	   case $2 in
+	       1|2) export USING_EXTRA_HALO=$2 ;;
+	       *  ) export USING_EXTRA_HALO='err' ;;
+	   esac
+	   prtopt $1 $2 $USING_EXTRA_HALO "nn_hls will be set to "$2
+	   shift ;;
+        -e) export USING_EXTRA_HALO='no'
            echo "-e: nn_hls will be set to 1"
            echo "";;
-        i) export USING_ICEBERGS='no'
+        -i) export USING_ICEBERGS='no'
            echo "-i: ln_icebergs will be set to false"
            echo "";;
-        C) export USING_COLLECTIVES='no'
+        -C) export USING_COLLECTIVES='no'
            echo "-C: nn_comm will be set to 1"
            echo "";;
-        N) export USING_NOGATHER='no'
+        -N) export USING_NOGATHER='no'
            echo "-N: ln_nnogather will be set to false"
            echo "";;
-        q) export USING_QCO='no'
+        -q) export USING_QCO='no'
            echo "-q: key_qco and key_linssh will NOT be activated"
            echo "";;
-        Q) export USING_RK3='no'
+        -Q) export USING_RK3='no'
            echo "-Q: key_qco and key_RK3 will not be activated"
            echo "    This is the curent default for now since RK3 is not ready"
            echo "";;
-        F) export USING_LOOP_FUSION='no'
+	--loop_fusion)
+	   export USING_LOOP_FUSION=$( getyn $2 )
+	   prtopt $1 $2 $USING_LOOP_FUSION "key_loop_fusion will $( yn2not $USING_LOOP_FUSION )be activated"
+	   shift ;;
+        -F) export USING_LOOP_FUSION='no'
            echo "-F: key_loop_fusion will not be activated"
            echo "";;
-        X) export USING_XIOS='no'
+        -X) export USING_XIOS='no'
            echo "-X: key_xios will not be activated"
            echo "";;
-        A) export USING_MPMD='no'
+        -A) export USING_MPMD='no'
            echo "-A: Tasks will be run in attached (SPMD) mode"
            echo "";;
-        u) export USER_INPUT='no'
+        -u) export USER_INPUT='no'
            echo "-u: sette.sh will not expect any user interaction == no safety net!" 
            echo "";;
-        h | *) echo 'sette.sh with no arguments (in this case all configuration will be tested with default options)'
+        -h | *) echo 'sette.sh with no arguments (in this case all configuration will be tested with default options)'
                echo '-T to set ln_timing false for all non-AGRIF configurations (default: true)'
-               echo '-t set ln_tile false in all tests that support it (default: true)'
-               echo '-e set nn_hls=1 (default: nn_hls=2)'
+               echo '-t set ln_tile false in all tests that support it (default: false)'
+               echo '"--tiling $opt" with opt=yes|1|no|0, set ln_tile true/false in all tests that support it (default: false)'
+               echo '-e set nn_hls=1 (default: nn_hls=1)'
+               echo '"--halo $opt", with opt=1|2, set nn_hls=1 or 2 (default: nn_hls=1)'
                echo '-i set ln_icebergs false (default: true)'
                echo '-C set nn_comm=1 (default: nn_comm=2 ==> use MPI3 collective comms)'
                echo '-N set ln_nnogather false for ORCA2 configurations (default: true)'
                echo '-q to remove the key_qco key (default: added)'
                echo '-X to remove the key_xios key (default: added)'
-               echo '-F to remove the key_loop_fusion key (default: added)'
+               echo '-F to remove the key_loop_fusion key (default: removed)'
+               echo '"--loop_fusion $opt" with opt=yes|1|no|0, to add/remove the key_loop_fusion key (default: removed)'
                echo '-Q to remove the key_RK3 key (currently a null-op since key_RK3 is not used)'
                echo '-A to run tests in attached (SPMD) mode (default: MPMD with key_xios)'
                echo '-n "CFG1_to_test CFG2_to_test ..." to test some specific configurations'
@@ -161,10 +201,9 @@ if [ $# -gt 0 ]; then
                echo '-s to synchronise the sette MY_SRC and EXP00 with the reference MY_SRC and EXPREF'
                echo '-u to run sette.sh without any user interaction. This means no checks on creating'
                echo '          directories etc. i.e. no safety net!' ; exit 42 ;;
-     esac
-  done
-  shift $((OPTIND - 1))
-fi
+    esac
+    shift
+done
 #
 # Option dependency tests
 #
@@ -172,16 +211,16 @@ if [ ${USING_TILING} == "yes" ] ; then
  if [ ${USING_EXTRA_HALO} == "no" ] ; then
   if [ ${USER_INPUT} == "yes" ] ; then
    while true; do
-       read -p "Tiling requires the extra halo but you have used -e to deselect it. Would you like to reselect it? (y/n)?: " yn
+       read -p 'Tiling requires the extra halo but you did not used "--halo 2" to select it. Would you like to select it? (y/n)?: ' yn
        case $yn in
-           [Yy]* ) echo "Ok, ignoring the -e option"; USING_EXTRA_HALO="yes"; break;;
+           [Yy]* ) echo 'Ok, selecting the "--halo 2" option'; USING_EXTRA_HALO="yes"; break;;
            [Nn]* ) echo "Ok, exiting instead"; exit 42;;
            * ) echo "Please answer yes or no.";;
        esac
    done
   else
    # Without user input, the best option is to disable tiling
-   echo "Tiling requires the extra halo but you have used -e to deselect it. Tiling will not be used."
+   echo 'Tiling requires the extra halo but you did not used "--halo 2" to select it. Tiling will not be used.'
    USING_TILING="no"
   fi
  fi
@@ -190,16 +229,16 @@ if [ ${USING_LOOP_FUSION} == "yes" ] ; then
  if [ ${USING_EXTRA_HALO} == "no" ] ; then
   if [ ${USER_INPUT} == "yes" ] ; then
    while true; do
-       read -p "Loop fusion requires the extra halo but you have used -e to deselect it. Would you like to reselect it? (y/n)?: " yn
+       read -p 'Loop fusion requires the extra halo but you did not used "--halo 2" to select it. Would you like to select it? (y/n)?: ' yn
        case $yn in
-           [Yy]* ) echo "Ok, ignoring the -e option"; USING_EXTRA_HALO="yes"; break;;
+           [Yy]* ) echo 'Ok, selecting the "--halo 2" option'; USING_EXTRA_HALO="yes"; break;;
            [Nn]* ) echo "Ok, exiting instead"; exit 42;;
            * ) echo "Please answer yes or no.";;
        esac
    done
   else
    # Without user input, the best option is to disable loop fusion
-   echo "Loop fusion requires the extra halo but you have used -e to deselect it. Loop fusion will not be used."
+   echo 'Loop fusion requires the extra halo but you did not used "--halo 2" to select it. Loop fusion will not be used.'
    USING_LOOP_FUSION="no"
   fi
  fi
