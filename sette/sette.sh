@@ -134,10 +134,11 @@ while [ ${#1} -gt 0 ]; do
            echo "";;
 	--halo)
 	   case $2 in
-	       1|2) export USING_EXTRA_HALO=$2 ;;
-	       *  ) export USING_EXTRA_HALO='err' ;;
+	       1|2) USING_HALO_SIZE=$2 ;;
+	       *  ) USING_HALO_SIZE='err' ;;
 	   esac
-	   prtopt $1 $2 $USING_EXTRA_HALO "nn_hls will be set to "$2
+	   prtopt "$1" "$2" $USING_HALO_SIZE "nn_hls will be set to $2"
+           [ "${USING_HALO_SIZE}" == "2" ] && export USING_EXTRA_HALO='yes'
 	   shift ;;
         -e) export USING_EXTRA_HALO='no'
            echo "-e: nn_hls will be set to 1"
