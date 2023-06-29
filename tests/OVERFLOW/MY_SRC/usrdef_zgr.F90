@@ -93,15 +93,6 @@ CONTAINS
          zhu(ji,jj) = 0.5_wp * ( zht(ji,jj) + zht(ji+1,jj) )
       END_2D
       CALL lbc_lnk( 'usrdef_zgr', zhu, 'U', 1._wp )     ! boundary condition: this mask the surrouding grid-points
-      !                                ! ==>>>  set by hand non-zero value on first/last columns & rows 
-      DO ji = mi0(1), mi1(1)              ! first row of global domain only
-         zhu(ji,2) = zht(ji,2)
-      END DO
-       DO ji = mi0(jpiglo), mi1(jpiglo)   ! last  row of global domain only
-         zhu(ji,2) = zht(ji,2)
-      END DO
-      zhu(:,1) = zhu(:,2)
-      zhu(:,3) = zhu(:,2)
       !     
       CALL zgr_z1d( pdept_1d, pdepw_1d, pe3t_1d , pe3w_1d )   ! Reference z-coordinate system
       !
