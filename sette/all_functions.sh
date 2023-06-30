@@ -172,7 +172,7 @@ clean_config() {
 # define validation dir
 set_valid_dir () {
     if [ ${DETACHED_HEAD} == "no" ] ; then
-      REVISION_NB=`git -C ${MAIN_DIR} rev-list --abbrev-commit origin | head -1l`
+      REVISION_NB=`git -C ${MAIN_DIR} rev-parse --short HEAD 2> /dev/null`
     else
       REVISION_NB=${DETACHED_CMIT}
     fi

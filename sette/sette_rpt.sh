@@ -591,7 +591,7 @@ if [[ $? == 0 ]] ; then
      branchname="Unknown"
    fi
   else
-   revision=`git rev-list --abbrev-commit origin | head -1l`
+   revision=`git rev-parse --short HEAD 2> /dev/null`
   fi
 else
   branchname="Unknown"
