@@ -177,7 +177,7 @@ CONTAINS
          zdiffdn = exp( -ABS(log(1.67 * sizen(ji,jj,jk) / (5.0 * sized(ji,jj,jk) + rtrn )) )**2 / zsigma**2 )
          ztmp1 = xpref2n * zcompaph * ( zcompaph + zdiffdn * zcompadi ) / ( 1.0 + zdiffdn )
          ztmp2 = xpref2c * zcompapoc**2
-         ztmp3 = xpref2d * zcompadi * ( zdiffdn * zcompadi + zcompaph ) / ( 1.0 + zdiffdn )
+         ztmp3 = xpref2d * zcompadi * ( zcompadi + zdiffdn * zcompaph ) / ( 1.0 + zdiffdn )
          ztmp4 = xpref2z * zcompaz**2
          ztmptot = ztmp1 + ztmp2 + ztmp3 + ztmp4 + rtrn
          ztmp1 = ztmp1 / ztmptot
