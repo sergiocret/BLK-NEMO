@@ -426,6 +426,9 @@ CONTAINS
       ENDIF
       !
       IF( ln_grid_global ) THEN
+         IF( jpnij < jpni * jpnj ) THEN
+            CALL ctl_stop( 'STOP', 'dia_obs_init: ln_grid_global=T is not available when land subdomains are suppressed' )
+         END IF
          CALL ctl_warn( 'dia_obs_init: ln_grid_global=T may cause memory issues when used with a large number of processors' )
       ENDIF
       !
