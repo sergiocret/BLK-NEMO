@@ -84,6 +84,8 @@ MODULE obs_grid
    CHARACTER(LEN=44), PUBLIC :: &
       & cn_gridsearchfile    ! file name head for grid search lookup 
 
+   !! * Substitutions
+#  include "do_loop_substitute.h90"
    !!----------------------------------------------------------------------
    !! NEMO/OCE 4.0 , NEMO Consortium (2018)
    !! $Id: obs_grid.F90 14275 2021-01-07 12:13:16Z smasson $
@@ -128,28 +130,24 @@ CONTAINS
          ELSE
             IF ( cdgrid == 'T' ) THEN
                CALL obs_grd_bruteforce( jpi, jpj, jpiglo, jpjglo, &
-                  &                             1, jpi, 1, jpj,           &
                   &                             narea-1, jpnij,           &
                   &                             glamt, gphit, tmask,      &
                   &                             kobsin, plam, pphi,       &
                   &                             kobsi, kobsj, kproc )
             ELSEIF ( cdgrid == 'U' ) THEN
                CALL obs_grd_bruteforce( jpi, jpj, jpiglo, jpjglo, &
-                  &                             1, jpi, 1, jpj,           &
                   &                             narea-1, jpnij,           &
                   &                             glamu, gphiu, umask,      &
                   &                             kobsin, plam, pphi,       &
                   &                             kobsi, kobsj, kproc )
             ELSEIF ( cdgrid == 'V' ) THEN
                CALL obs_grd_bruteforce( jpi, jpj, jpiglo, jpjglo, &
-                  &                             1, jpi, 1, jpj,           &
                   &                             narea-1, jpnij,           &
                   &                             glamv, gphiv, vmask,      &
                   &                             kobsin, plam, pphi,       &
                   &                             kobsi, kobsj, kproc )
             ELSEIF ( cdgrid == 'F' ) THEN
                CALL obs_grd_bruteforce( jpi, jpj, jpiglo, jpjglo, &
-                  &                             1, jpi, 1, jpj,           &
                   &                             narea-1, jpnij,           &
                   &                             glamf, gphif, fmask,      &
                   &                             kobsin, plam, pphi,       &
@@ -278,16 +276,24 @@ CONTAINS
          zphig(:,:) = -1.e+10
          zmskg(:,:) = -1.e+10
          ! Add various grids here.
-         DO jj = 1, jpj
-            DO ji = 1, jpi
-               zlamg(mig(ji),mjg(jj)) = glamt(ji,jj)
-               zphig(mig(ji),mjg(jj)) = gphit(ji,jj)
-               zmskg(mig(ji),mjg(jj)) = tmask(ji,jj,1)
-            END DO
-         END DO
+         DO_2D( nn_hls, nn_hls, nn_hls, nn_hls )
+            zlamg(mig(ji),mjg(jj)) = glamt(ji,jj)
+            zphig(mig(ji),mjg(jj)) = gphit(ji,jj)
+            zmskg(mig(ji),mjg(jj)) = tmask(ji,jj,1)
+         END_2D
+         DO_2D( 0, 0, 0, 0 )
+            zlamg(mig(ji),mjg(jj)) = glamt(ji,jj)   + 1000000.0_wp
+            zphig(mig(ji),mjg(jj)) = gphit(ji,jj)   + 1000000.0_wp
+            zmskg(mig(ji),mjg(jj)) = tmask(ji,jj,1) + 1000000.0_wp
+         END_2D
          CALL mpp_global_max( zlamg )
          CALL mpp_global_max( zphig )
          CALL mpp_global_max( zmskg )
+         WHERE( zmskg(:,:) >= 1000000.0_wp )
+            zlamg(:,:) = zlamg(:,:) - 1000000.0_wp
+            zphig(:,:) = zphig(:,:) - 1000000.0_wp
+            zmskg(:,:) = zmskg(:,:) - 1000000.0_wp
+         END WHERE
       ELSE
          ! Add various grids here.
          DO jj = 1, jlat
@@ -818,7 +824,6 @@ CONTAINS
             END DO
             
             CALL obs_grd_bruteforce( jpi, jpj, jpiglo, jpjglo,  &
-               &                     1, jpi, 1, jpj,            &
                &                     narea-1, jpnij,            &
                &                     glamt, gphit, tmask,       &
                &                     nlons*nlats, lonsi, latsi, &
